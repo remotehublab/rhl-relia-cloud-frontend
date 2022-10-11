@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useEffect, useState }  from 'react';
 import { ReliaTimeSink, ReliaConstellationSink, ReliaVectorSink} from "./relia.js";
+import Main from './components/main';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
   return (
     <div className="App">
     Hello!
+    <div><Main /></div>
     <div id="const-demo"></div>
     <div id="const-demo2"></div>
     <div id="time-demo"></div>

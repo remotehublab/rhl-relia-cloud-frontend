@@ -1,7 +1,6 @@
 import './App.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
-import { ReliaWidgets } from "./relia.js";
 import Main from './components/main';
 import MainIndex from "./MainIndex.js";
 import Development from "./Development.js";

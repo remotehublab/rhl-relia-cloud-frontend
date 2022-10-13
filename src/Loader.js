@@ -2,7 +2,7 @@ import './App.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import Main from './components/main';
-import { ReliaWidgets } from "./relia.js";
+import { ReliaWidgets } from "./components/blocks/loader.js";
 
   
 const Loader = () => {

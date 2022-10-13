@@ -1,10 +1,11 @@
 import './App.css';
+import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
-import { ReliaTimeSink, ReliaConstellationSink, ReliaVectorSink} from "./relia.js";
+import { ReliaWidgets } from "./relia.js";
 import Main from './components/main';
 
 function App() {
-
+  window.API_BASE_URL = "http://localhost:3000/api/";
   const [google] = useState(null);
   useEffect(() => {
     if (!google) {
@@ -38,48 +39,16 @@ function App() {
     <div className="App">
     Hello!
     <div><Main /></div>
-    <div id="const-demo"></div>
-    <div id="const-demo2"></div>
-    <div id="time-demo"></div>
-    <div id="time-demo2"></div>
-    <div id="vector-demo"></div>
+    <div id="all-together"></div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-      window.API_BASE_URL = url_for('api.index');
-    </script>
     </div>
   );
 }
 
 function loadUI () {
-  loadReliaTimeSink(); 
-  loadReliaConstellationSink();
-  //loadReliaVectorSink();
+    var widgets = new ReliaWidgets($("#all-together"));
 }
 
-function loadReliaTimeSink() {
-  var sink = new ReliaTimeSink("time-demo", "my-device-id", "RELIA Time Sink(1)");
-  sink.redraw();
-
-  var sink2 = new ReliaTimeSink("time-demo2", "my-device-id", "RELIA Time Sink(1)");
-  sink2.redraw();/**/
-}
-
-function loadReliaConstellationSink() {
-  var sink = new ReliaConstellationSink("const-demo", "my-device-id", "RELIA Constellation Sink(2)");
-  sink.redraw();
-
-  /*var sink2 = new ReliaConstellationSink("const-demo2", "my-device-id", "RELIA Constellation Sink(2)");
-  sink2.redraw();/**/
-}
-  
-function loadReliaVectorSink() {
-  var sink = new ReliaVectorSink("vector-demo", "my-device-id", "RELIA Vector Sink(1)");
-  sink.redraw();
-
-  /*var sink2 = new ReliaConstellationSink("const-demo2", "my-device-id", "RELIA Constellation Sink(2)");
-  sink2.redraw();/**/
-}
 
 export default App;

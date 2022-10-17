@@ -8,6 +8,12 @@ const Development = () => {
   window.API_BASE_URL = "http://localhost:3000/api/";
   const [google] = useState(null);
   useEffect(() => {
+    // TODO: Brian, why does this happen?
+    if (window.reliaLoaded === true)
+       return;
+
+    window.reliaLoaded = true;
+
     if (!google) {
       const head = document.head;
       let script = document.getElementById('googleChartsScript');

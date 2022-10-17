@@ -9,27 +9,27 @@ export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifie
 	self.$div.html(
 	    "<h3>Variable Range " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div>" +
-	        "<input class=\"slider\" type=\"range\" min=\"-16000\" max=\"16000\" >" +
+	        "<input class=\"slider\" type=\"range\" min=\"0\" max=\"10\" >" +
 		"<p class=\"slider-value\" value=\"1\"></p> <br>" +
 	    "</div>"
 	);
 
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
-	self.factor = 0;
+	self.value = 0;
 
 	self.$slider = self.$div.find(".slider"); // <input>
 	self.$sliderValue = self.$div.find(".slider-value"); // <p>
 
 	self.changeSlider = function () {
-  		self.factor = self.$slider.val();
-		self.$sliderValue.text(self.factor);
+  		self.value = self.$slider.val();
+		self.$sliderValue.text(self.value);
 
 		$.ajax({
 			type: "POST",
 			url: self.url, 
 			data: JSON.stringify({
-				"value": self.factor
+				"value": self.value
 			}),
 			contentType: "application/json",
 			dataType: "json"
@@ -60,12 +60,23 @@ export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifie
 			console.log(data.data);
 
 			var params = data.data.params;
-			var max_freqqq=params.x_start+params.x_step*(params.vlen-1)
-			console.log("min", params.x_start, "; max", max_freqqq);
-			self.$slider.attr("min",params.x_start);
-			self.$slider.attr("max",max_freqqq);
+			self.$slider.attr("min", params.min);
+			self.$slider.attr("max", params.max);
 		});
 	};
+
+	$.ajax({
+		type: "POST",
+		url: self.url, 
+		data: JSON.stringify({
+			"forceUploadData": true
+		}),
+		contentType: "application/json",
+		dataType: "json"
+	}).done(function () {
+		// TBD
+	});
+
 }
 
 export default ReliaVariableRange;

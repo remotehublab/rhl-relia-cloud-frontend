@@ -4,6 +4,7 @@ import useScript from '../../useScript';
 import ReliaConstellationSink from './ConstellationSink.js';
 import ReliaTimeSink from './TimeSink.js';
 import ReliaVectorSink from './VectorSink.js';
+import ReliaVariableRange from './VariableRange.js';
 
 export function ReliaWidgets($divElement) {
 	var self = this;
@@ -43,6 +44,10 @@ export function ReliaWidgets($divElement) {
 						var vectorSink = new ReliaVectorSink($newDiv, deviceName, blockName);
 						self.blocks.push(vectorSink);
 						vectorSink.redraw();
+					} else if (blockName.startsWith("RELIA Variable Range")) {
+						var variableRange = new ReliaVariableRange($newDiv, deviceName, blockName);
+						self.blocks.push(variableRange);
+						variableRange.redraw();
 					};
 				});
 			});

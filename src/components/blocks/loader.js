@@ -7,6 +7,7 @@ import ReliaVectorSink from './VectorSink.js';
 import ReliaVariableRange from './VariableRange.js';
 import ReliaHistogramSink from './HistogramSink.js';
 import ReliaCheckBox from './VariableCheckBox.js';
+import ReliaPushButton from './VariablePushButton.js';
 
 
 export function ReliaWidgets($divElement) {
@@ -59,6 +60,10 @@ export function ReliaWidgets($divElement) {
 						var checkBox = new ReliaCheckBox($newDiv, deviceName, blockName);
 						self.blocks.push(checkBox);
 						checkBox.redraw();
+					} else if (blockName.startsWith("RELIA Variable PushButton")) {
+						var pushbutton = new ReliaPushButton($newDiv, deviceName, blockName);
+						self.blocks.push(pushbutton);
+						pushbutton.redraw();
 					};
 				});
 			});

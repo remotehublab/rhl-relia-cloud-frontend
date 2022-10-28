@@ -7,7 +7,7 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<div class=\"const-chart\" style=\"width: 900px; height: 500px\"></div>\n" +
+	    "<div class=\"const-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
 	    "<div class=\"Checkbox_ConstSink_OnOffSignal\">" +
 	        "<input type=\"checkbox\" class=\"checkbox const-sink-grid-checkbox\" checked> Grid<br>" +
 		    "<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +

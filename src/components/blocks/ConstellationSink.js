@@ -7,7 +7,6 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Constellation Sink " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div class=\"const-chart\" style=\"width: 900px; height: 500px\"></div>\n" +
 	    "<div class=\"Checkbox_ConstSink_OnOffSignal\">" +
 	        "<input type=\"checkbox\" class=\"checkbox const-sink-grid-checkbox\" checked> Grid<br>" +

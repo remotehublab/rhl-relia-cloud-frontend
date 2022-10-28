@@ -8,7 +8,6 @@ export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifie
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Histogram Sink " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div class=\"time-chart\" style=\"width: 900px; height: 500px\"></div>\n" 
 	);
 	var $constChartDiv = self.$div.find(".time-chart");

@@ -8,7 +8,6 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Frequency Sink " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div class=\"vector-chart\" style=\"width: 900px; height: 500px\"></div>\n" +
 	    "<div class=\"Checkbox_VectorSink_OnOffSignal\">" +
 	        "<input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid<br>" +

@@ -7,7 +7,6 @@ export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifie
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Variable Range " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div>" +
 	        "<input class=\"slider\" type=\"range\" min=\"0\" max=\"10\" >" +
 		"<p class=\"slider-value\" value=\"1\"></p> <br>" +

@@ -7,7 +7,6 @@ export function ReliaVariableCheckBox($divElement, deviceIdentifier, blockIdenti
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Variable CheckBox " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div>" +
 	        "<input class=\"checkbox\" type=\"checkbox\">" +
 		"<p class=\"checkbox-value\"></p> <br>" +

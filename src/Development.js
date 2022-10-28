@@ -44,7 +44,7 @@ const Development = () => {
   return (
     <div className="App">
     Development environment (Marcos)
-    <div id="all-together"></div>
+    <div id="all-together" class="row"></div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
     </div>

@@ -7,45 +7,52 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Time Sink " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
-	    "<div class=\"time-chart\" style=\"width: 900px; height: 500px\"></div>\n" +
-	    "<div class=\"Checkbox_TimeSink_OnOffSignal\">" +
-	        "<input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid<br>" +
-	        "<input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox\" checked> Real<br>" +
-	        "<input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox\" checked> Imag<br>" +
+	    "<div class=\"time-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
+	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
+		"<div class=\"col\">" +
+		        "<input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid &nbsp;" +
+		        "<input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox\" checked> Real &nbsp;" +
+		        "<input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox\" checked> Imag &nbsp;" +
+		"</div>" +
 
-	        "<input type=\"submit\" name=\"checkout\" class=\"button zoom-in-button\" value=\"Zoom In\"> <br>" +
-	        "<input type=\"submit\" name=\"checkout\" class=\"button zoom-out-button\" value=\"Zoom Out\"> <br>" +
-	        "<input type=\"submit\" name=\"checkout\" class=\"button autoscale-button\" value=\"Zoom AutoScale\"> <br>" +
-		"<br>" + 
-		"<p>Add Noise</p>" +
-	        //"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
-	        "<input class=\"noise-slider\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">" +
-		"<p class=\"noise-slider-value\" value=\"1\"></p> <br>" +
-		    "<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
-		"<p>Amplitude</p>" +
-	        //"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
-	        "<input class=\"amplitude-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
-		"<p class=\"amplitude-slider-value\" value=\"1\"></p> " +
-		"<p>Offset</p>" +
-	        //"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
-	        "<input class=\"offset-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
-		"<p class=\"offset-slider-value\" value=\"1\"></p> " +
-		"<br>" + 
+		"<div class=\"col\">" +
+		        "<button class=\"button zoom-in-button\"><i class=\"bi bi-zoom-in\"></i></button>" +
+		        "<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
+		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
+		"</div>" +
 
 
+		"<div style='display: none'>" +
+			"<br>" + 
+			"<p>Add Noise</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"noise-slider\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">" +
+			"<p class=\"noise-slider-value\" value=\"1\"></p> <br>" +
+			    "<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
+			"<p>Amplitude</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"amplitude-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
+			"<p class=\"amplitude-slider-value\" value=\"1\"></p> " +
+			"<p>Offset</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"offset-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
+			"<p class=\"offset-slider-value\" value=\"1\"></p> " +
+			"<br>" + 
 
-		"<form>" +
-		"  <select class=\"TimeSink_NumberOfPoints2Plot\">" + 
-		"    <option value=\"1024\"selected=\"selected\">1024 points</option>" + 
-		"    <option value=\"64\" >64 points</option>" + 
-		"    <option value=\"128\">128 points</option>" + 
-		"    <option value=\"256\">256 points</option>" + 
-		"    <option value=\"512\">512 points</option>" + 
-		"    <option value=\"2048\">2048 points</option>" + 
-		"    <option value=\"4096\">4096 points</option>" + 
-		"  </select>" + 
-		"</form>" +
+
+
+			"<form>" +
+			"  <select class=\"TimeSink_NumberOfPoints2Plot\">" + 
+			"    <option value=\"1024\"selected=\"selected\">1024 points</option>" + 
+			"    <option value=\"64\" >64 points</option>" + 
+			"    <option value=\"128\">128 points</option>" + 
+			"    <option value=\"256\">256 points</option>" + 
+			"    <option value=\"512\">512 points</option>" + 
+			"    <option value=\"2048\">2048 points</option>" + 
+			"    <option value=\"4096\">4096 points</option>" + 
+			"  </select>" + 
+			"</form>" +
+		"</div>" +
 	    "</div>"
 	);
 	

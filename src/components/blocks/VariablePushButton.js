@@ -7,7 +7,6 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Variable CheckBox " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div>" +
 		    "<input type=\"submit\" name=\"checkout\" class=\"button press-button\" value=\"On/Off\"> <br>" +
 	    "</div>"
@@ -20,12 +19,12 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 	self.flagPressedUnpressed=true;
 
 
-	self.$div.find(".press-button").click(function() {
+	self.changePushButton = function() {
 		if (self.flagPressedUnpressed==true) 
 			self.flagPressedUnpressed=false;
 		else self.flagPressedUnpressed=true;
 	
-		console.log("on checkbox change:", self.value);
+		console.log("on push button change:", self.value);
 
 		$.ajax({
 			type: "POST",
@@ -38,10 +37,9 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 		}).done(function () {
 			// TBD
 		});
-	});
-	self.changeCheckBox();
-
-	self.$checkbox.change(self.changeCheckBox);
+	};
+	self.$div.find(".press-button").click(self.changePushButton);
+	self.changePushButton();
 
 	self.redraw = function () {
 		$.get(self.url).done(function (data) {
@@ -66,9 +64,9 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 
 			if (!self.stateInitialized) {
 				if (params.state) {
-					self.prop('checked', true);
+//					self.prop('checked', true);
 				} else {
-					self.prop('checked', false);
+//					self.prop('checked', false);
 				}
 				self.stateInitialized = true;
 			}

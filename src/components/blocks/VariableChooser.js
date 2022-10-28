@@ -1,42 +1,52 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
+window.reliaVariableChooserIdentifierNumber = 0;
+
 export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<h3>Variable CheckBox " + blockIdentifier + " of " + deviceIdentifier + "</h3>" +
 	    "<div>" +
-		"<form>" +
-		"  <select class=\"Chooser_Input\">" + 
-		"  </select>" + 
-		"</form>" +
 	    "</div>"
 	);
 
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
-	self.$chooserInput = self.$div.find(".Chooser_Input");
-	self.$chooserInput.append( '<option value="'+1+'">'+'Option '+1+'</option>' );
+	window.reliaVariableChooserIdentifierNumber++;
+
+	self.radioButtonName = "radio-device-" + window.reliaVariableChooserIdentifierNumber++;
+
+	self.$chooserInput = self.$div.find("div");
 
 	self.stateInitialized = false;
-	self.value = false;
-	self.choices = {
-		"true": "true",
-		"false": "false",
-	};
+
+	// whenever we initialize this widget, it will obtain the options and labels
+	// and it will be filled as in:
+	// {
+	// 	option1: label1,
+	// 	option2: label2,
+	// }
+	self.choices = {};
+
 
 	self.changeChooser = function () {
+		var checked = self.$chooserInput.find("input:checked");
+		if (checked.length == 0)
+			// no checked option
+			return;
+		
+		var value = checked.attr("value");
 	
-		console.log("on chooser change:", self.value);
+		console.log("on chooser change:", value);
 
 		$.ajax({
 			type: "POST",
 			url: self.url, 
 			data: JSON.stringify({
-				"value": self.value
+				"value": value
 			}),
 			contentType: "application/json",
 			dataType: "json"
@@ -67,13 +77,30 @@ export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentif
 			console.log(data.data);
 
 			var params = data.data.params;
-			self.choices = params.choices;
+
+			// params.labels: ["Square", "Cosine"]
+			// params.options: [ 1, 2 ]
+			$.each(params.labels, function (index, label) {
+				var correspondingOption = params.options[index];
+				if (self.$chooserInput.find('input[value="' + correspondingOption + '"]').length == 0) {
+					self.choices[correspondingOption] = label;
+					self.$chooserInput.append(
+						'<div class="form-check">' +
+						'<input class="form-check-input" name="' + self.radioButtonName + '" type="radio" value="' + correspondingOption + '">' +
+						'<label class="form-check-label" for="">' +
+							label +
+						'</label>' +
+						'</div>'
+					);
+				}
+			});
 
 			if (!self.stateInitialized) {
 				if (params.state) {
-					self.$checkbox.prop('checked', true);
+					self.$chooserInput.find("input").prop("checked", false);
+					self.$chooserInput.find('input[value="' + params.state + '"]').prop("checked", true);
 				} else {
-					self.$checkbox.prop('checked', false);
+					self.$chooserInput.find("input").prop("checked", false);
 				}
 				self.stateInitialized = true;
 			}

@@ -38,7 +38,7 @@ export function ReliaWidgets($divElement) {
 				}
 				$.each(data.blocks, function (post, blockName) {
 					var $newDiv = $(
-						'<div class="col-xs-12 col-sm-6 col-md-4 col-xs-3" style="padding: 10px">' +
+						'<div class="col-xs-12 col-sm-6 col-lg-4 col-xl-3" style="padding: 10px">' +
 							'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +
 								"<h5>" + blockName + "</h5>" +
 								"<div class=\"block-contents\" style=\"width: 100%\"></div>" +

@@ -7,30 +7,37 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 	self.$div = $divElement;
 
 	self.$div.html(
-	    "<div>" +
-		    "<input type=\"submit\" name=\"checkout\" class=\"button press-button\" value=\"On/Off\"> <br>" +
-	    "</div>"
+		"<div>" +
+			"<button class=\"button press-button\">Push</button>" +
+		"</div>"
 	);
 
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.stateInitialized = false;
-	self.value = false;
-	self.flagPressedUnpressed=true;
 
+	self.flagPressedUnpressed = false;
+
+	self.$button = self.$div.find("button");
+
+	self.$button.bind('mousedown touchstart', function() {
+		self.flagPressedUnpressed = true;
+		self.changePushButton();
+	});
+
+	self.$button.bind('mouseup touchend', function() {
+		self.flagPressedUnpressed = false;
+		self.changePushButton();
+	});
 
 	self.changePushButton = function() {
-		if (self.flagPressedUnpressed==true) 
-			self.flagPressedUnpressed=false;
-		else self.flagPressedUnpressed=true;
-	
-		console.log("on push button change:", self.value);
+		console.log("on push button change:", self.flagPressedUnpressed);
 
 		$.ajax({
 			type: "POST",
 			url: self.url, 
 			data: JSON.stringify({
-				"value": self.value
+				"value": self.flagPressedUnpressed
 			}),
 			contentType: "application/json",
 			dataType: "json"
@@ -38,8 +45,7 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 			// TBD
 		});
 	};
-	self.$div.find(".press-button").click(self.changePushButton);
-	self.changePushButton();
+	// self.changePushButton();
 
 	self.redraw = function () {
 		$.get(self.url).done(function (data) {
@@ -60,16 +66,8 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 			console.log(data.data);
 
 			var params = data.data.params;
-			self.choices = params.choices;
-
-			if (!self.stateInitialized) {
-				if (params.state) {
-//					self.prop('checked', true);
-				} else {
-//					self.prop('checked', false);
-				}
-				self.stateInitialized = true;
-			}
+			if (params.label != undefined && params.label != null)
+				self.$button.text(params.label);
 		});
 	};
 

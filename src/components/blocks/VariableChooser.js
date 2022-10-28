@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
+import slugify from 'react-slugify';
 
 window.reliaVariableChooserIdentifierNumber = 0;
 
@@ -15,9 +16,9 @@ export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentif
 
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
-	window.reliaVariableChooserIdentifierNumber++;
+	window.reliaVariableChooserIdentifierNumber = window.reliaVariableChooserIdentifierNumber + 1;
 
-	self.radioButtonName = "radio-device-" + window.reliaVariableChooserIdentifierNumber++;
+	self.radioButtonName = "radio-device-" + slugify(deviceIdentifier) + "-block-" + slugify(blockIdentifier) + "-number-" + window.reliaVariableChooserIdentifierNumber;
 
 	self.$chooserInput = self.$div.find("div");
 
@@ -83,11 +84,12 @@ export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentif
 			$.each(params.labels, function (index, label) {
 				var correspondingOption = params.options[index];
 				if (self.$chooserInput.find('input[value="' + correspondingOption + '"]').length == 0) {
+					var optionIdentifier = self.radioButtonName + "-" + correspondingOption;
 					self.choices[correspondingOption] = label;
 					self.$chooserInput.append(
 						'<div class="form-check">' +
-						'<input class="form-check-input" name="' + self.radioButtonName + '" type="radio" value="' + correspondingOption + '">' +
-						'<label class="form-check-label" for="">' +
+						'<input class="form-check-input" name="' + self.radioButtonName + '" type="radio" id="' + optionIdentifier + '" value="' + correspondingOption + '">' +
+						'<label class="form-check-label" for="' + optionIdentifier + '">' +
 							label +
 						'</label>' +
 						'</div>'

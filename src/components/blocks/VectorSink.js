@@ -12,18 +12,30 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	    "<div class=\"Checkbox_VectorSink_OnOffSignal\">" +
 	        "<input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid<br>" +
 		"<br>" + 
-		"<p>Center Frequency</p>" +
+		//"<p>Center Frequency</p>" +
 	        //"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
-	        "<input class=\"frequency-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
+	        //"<input class=\"frequency-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
 		"<p class=\"frequnecy-slider-value\" value=\"1\"></p> <br>" +
-		"<br>" + 
-	        "<input type=\"submit\" name=\"checkout\" class=\"button zoom-in-button-Vector\" value=\"Zoom In\"> <br>" +
-	        "<input type=\"submit\" name=\"checkout\" class=\"button zoom-out-button-Vector\" value=\"Zoom Out\"> <br>" +
-	        "<input type=\"submit\" name=\"checkout\" class=\"button autoscale-button-Vector\" value=\"Zoom AutoScale\"> <br>" +
-		    "<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
-		    "<input type=\"submit\" name=\"checkout\" class=\"button Inc-Average-button\" value=\"Average +\"> <br>" +
-		    "<input type=\"submit\" name=\"checkout\" class=\"button Dec-Average-button\" value=\"Average -\"> <br>" +
+	        //"<input type=\"submit\" name=\"checkout\" class=\"button zoom-in-button-Vector\" value=\"Zoom In\"> <br>" +
+	        //"<input type=\"submit\" name=\"checkout\" class=\"button zoom-out-button-Vector\" value=\"Zoom Out\"> <br>" +
+	        //"<input type=\"submit\" name=\"checkout\" class=\"button autoscale-button-Vector\" value=\"Zoom AutoScale\"> <br>" +
+		    //"<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
+		    //"<input type=\"submit\" name=\"checkout\" class=\"button Inc-Average-button\" value=\"Average +\"> <br>" +
+		    //"<input type=\"submit\" name=\"checkout\" class=\"button Dec-Average-button\" value=\"Average -\"> <br>" +
+
+		"<div class=\"col\">" +
+		        "<button class=\"button zoom-in-button\"><i class=\"bi bi-zoom-in\"></i></button>" +
+		        "<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
+		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
+		        "<button class=\"button pause-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        "<button class=\"button Inc-Average-button\"><i class=\"bi bi-bookmark-plus\"></i></button>" +
+		        "<button class=\"button Dec-Average-button\"><i class=\"bi bi-bookmark-dash\"></i></button>" +
+
+		"</div>" +
+
+
 	    "</div>"
+	    	    
 	);
 	
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
@@ -75,7 +87,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 		if (self.averageInput<1) self.averageInput = 1;
 	});
 
-	self.$div.find(".zoom-in-button-Vector").click(function() {
+	self.$div.find(".zoom-in-button").click(function() {
 		if(self.maxVectorSinkRe -self.minVectorSinkRe>2){
 	
 			self.zoomfactor -= 1;
@@ -95,7 +107,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 		}
 		else self.zoomfactor=0
 	});
-	self.$div.find(".zoom-out-button-Vector").click(function() {
+	self.$div.find(".zoom-out-button").click(function() {
 		self.zoomfactor += 1;
 		if(self.zoomfactor>0)   // to zoom outs
 		{	self.maximumView=Math.ceil(self.maxVectorSinkRe + (self.maxVectorSinkRe -self.minVectorSinkRe)*Math.pow(2,self.zoomfactor)/8);
@@ -114,7 +126,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	});
 
 
-	self.$div.find(".autoscale-button-Vector").click(function() {
+	self.$div.find(".autoscale-button").click(function() {
 		self.zoomfactor=0
 		self.maximumView=Math.ceil(self.maxVectorSinkRe);
 		self.minimumView=Math.floor(self.minVectorSinkRe);

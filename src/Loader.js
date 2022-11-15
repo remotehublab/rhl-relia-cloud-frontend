@@ -3,7 +3,7 @@ import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import Main from './components/main';
 import { ReliaWidgets } from "./components/blocks/loader.js";
-
+import  { Redirect, useNavigate } from 'react-router-dom';
   
 const Loader = () => {
   window.API_BASE_URL = "http://localhost:3000/api/";
@@ -39,6 +39,7 @@ const Loader = () => {
   return (
     <div className="App">
     Loader environment (Brian)
+    <div>{JSON.stringify(getAuthentication())}</div>
     <div><Main /></div>
     <div id="all-together"></div>
 	
@@ -50,6 +51,22 @@ const Loader = () => {
 
 function loadUI () {
     var widgets = new ReliaWidgets($("#all-together"));
+}
+
+function getAuthentication() {
+   const navigate = useNavigate();
+   return fetch('http://localhost:6003/user/auth')
+   .then((response) => response.json())
+   .then((responseJson) => {
+      if (responseJson.auth == false) {
+         console.log('Time to move');
+         navigate('/login')
+      }
+      return JSON.parse(responseJson);
+   })
+   .catch((error) => {
+     console.error(error);
+   });
 }
 
   

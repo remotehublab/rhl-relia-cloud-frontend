@@ -9,6 +9,7 @@ import ReliaHistogramSink from './HistogramSink.js';
 import ReliaCheckBox from './VariableCheckBox.js';
 import ReliaPushButton from './VariablePushButton.js';
 import ReliaChooser from './VariableChooser.js';
+import ReliaNumberSink from './NumberSink.js';
 
 
 export function ReliaWidgets($divElement) {
@@ -80,6 +81,10 @@ export function ReliaWidgets($divElement) {
 						var chooser = new ReliaChooser($divContents, deviceName, blockName);
 						self.blocks.push(chooser);
 						chooser.redraw();
+					} else if (blockName.startsWith("RELIA Number Sink")) {
+						var numbersink = new ReliaNumberSink($divContents, deviceName, blockName);
+						self.blocks.push(numbersink);
+						numbersink.redraw();
 					};
 				});
 			});

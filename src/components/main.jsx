@@ -33,7 +33,7 @@ class Main extends React.Component {
     return (
       <form onSubmit={this.handleUploadGRC}>
         <div>
-          <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
+          <input ref={(ref) => { this.uploadInput = ref; }} type="file" accept=".grc"/>
         </div>
         <div>
           <input ref={(ref) => { this.fileName = ref; }} type="text" placeholder="Enter the desired name of file" />

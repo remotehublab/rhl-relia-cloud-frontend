@@ -27,6 +27,8 @@ class Main extends React.Component {
         this.setState({ grcURL: `http://localhost:3000/${body.file}` });
       });
     });
+
+    window.location.reload(true);
   }
 
   render() {

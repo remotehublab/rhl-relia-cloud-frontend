@@ -1,4 +1,5 @@
 import './App.css';
+import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import Main from './components/main';
@@ -39,11 +40,11 @@ const Loader = () => {
   return (
     <div className="App">
     Loader environment (Brian)
-    <div>{JSON.stringify(getAuthentication())}</div>
+    <div className="invisible">{JSON.stringify(getAuthentication())}</div>
     <div><Main /></div>
     <div id="all-together"></div>
 	
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
     </div>
   );
 
@@ -62,7 +63,7 @@ function getAuthentication() {
          console.log('Time to move');
          navigate('/login')
       }
-      return JSON.parse(responseJson);
+      return responseJson;
    })
    .catch((error) => {
      console.error(error);

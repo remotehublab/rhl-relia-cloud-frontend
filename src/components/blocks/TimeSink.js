@@ -229,7 +229,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
-			//console.log(params);
+			console.log(params);
 			//console.log(data.data.data);
 
 			var realData = data.data.data.streams['0']['real'];

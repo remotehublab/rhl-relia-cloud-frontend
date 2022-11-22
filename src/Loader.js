@@ -4,6 +4,7 @@ import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import Main from './components/main';
 import { ReliaWidgets } from "./components/blocks/loader.js";
+import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
   
 const Loader = () => {
@@ -41,13 +42,18 @@ const Loader = () => {
     <div className="App">
     Loader environment (Brian)
     <div className="invisible">{JSON.stringify(getAuthentication())}</div>
+    <div className="invisible">{JSON.stringify(getTransactions())}</div>
+    <br />
+    Most Recent Transmitter Files
+    <div id="app2"></div>
+    Most Recent Receiver Files
+    <div id="app3"></div>
     <div><Main /></div>
     <div id="all-together"></div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
     </div>
   );
-
 };
 
 function loadUI () {
@@ -64,6 +70,33 @@ function getAuthentication() {
          navigate('/login')
       }
       return responseJson;
+   })
+   .catch((error) => {
+     console.error(error);
+   });
+}
+
+function getTransactions() {
+   const PrettyPrintJson = ({data}) => (<div><pre>{JSON.stringify(data, null, 2)}</pre></div>);
+   return fetch('http://localhost:6003/user/transactions')
+   .then((response) => response.json())
+   .then((responseJson) => {
+      if (responseJson.success == false) {
+         console.log("Oh oh... are you sure you are logged in?");
+      }
+      const root = ReactDOM.createRoot(document.getElementById("app2"));
+      root.render(
+         <React.StrictMode>
+         <PrettyPrintJson data={ responseJson.transmitter_files } />
+         </React.StrictMode>
+      );
+      const root2 = ReactDOM.createRoot(document.getElementById("app3"));
+      root2.render(
+         <React.StrictMode>
+         <PrettyPrintJson data={ responseJson.receiver_files } />
+         </React.StrictMode>
+      );
+      return responseJson
    })
    .catch((error) => {
      console.error(error);

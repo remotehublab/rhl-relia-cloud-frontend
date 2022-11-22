@@ -19,7 +19,7 @@ class Main extends React.Component {
     data.append('file', this.uploadInput.files[0]);
     data.append('filename', this.fileName.value);
 
-    fetch('http://localhost:3000/upload', {
+    fetch('http://localhost:3000/user/upload', {
       method: 'POST',
       body: data,
     }).then((response) => {

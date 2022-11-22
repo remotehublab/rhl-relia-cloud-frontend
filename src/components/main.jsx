@@ -17,7 +17,6 @@ class Main extends React.Component {
 
     const data = new FormData();
     data.append('file', this.uploadInput.files[0]);
-    data.append('filename', this.fileName.value);
 
     fetch('http://localhost:3000/user/upload', {
       method: 'POST',
@@ -34,9 +33,6 @@ class Main extends React.Component {
       <form onSubmit={this.handleUploadGRC}>
         <div>
           <input ref={(ref) => { this.uploadInput = ref; }} type="file" accept=".grc"/>
-        </div>
-        <div>
-          <input ref={(ref) => { this.fileName = ref; }} type="text" placeholder="Enter the desired name of file" />
         </div>
         <br />
         <div>

@@ -281,104 +281,78 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 			console.log(self.options);
 
-			//const matrix = new Array(5).fill(0).map(() => new Array(4).fill(0));
+			var enableReal=new Array(nconnections).fill(null);
+			var enableImag=new Array(nconnections).fill(null);
+			var realData = Array.from(Array(Number2plot), () => new Array(nconnections));
+			var imagData = Array.from(Array(Number2plot), () => new Array(nconnections));
+			//var realData=new Array(nconnections*Number2plot).fill(null);
 
 			
-			for (var index=1;index<nconnections;++index)
+			for (var index=1;index<=nconnections;++index)
 			{
-				var realData0 = data.data.data.streams[index-1]['real'];
-				var imagData0 = data.data.data.streams[index-1]['imag'];
+				realData[index-1] = data.data.data.streams[index-1]['real'];
+				imagData[index-1] = data.data.data.streams[index-1]['imag'];
 
-				$.each(realData0, function (pos, value) {
-					realData0[pos] = parseFloat(value);
+				$.each(realData[index-1], function (pos, value) {
+					realData[index-1][pos] = parseFloat(value);
 				});
-				$.each(imagData0, function (pos, value) {
-					imagData0[pos] = parseFloat(value);
-				});
-
-				var realData1 = data.data.data.streams[index]['real'];
-				var imagData1 = data.data.data.streams[index]['imag'];
-				
-				$.each(realData1, function (pos, value) {
-					realData1[pos] = parseFloat(value);
-				});
-				
-				$.each(imagData1, function (pos, value) {
-					imagData1[pos] = parseFloat(value);
+				$.each(imagData[index-1], function (pos, value) {
+					imagData[index-1][pos] = parseFloat(value);
 				});
 
-
-				var enableReal;
         		if(self.$div.find(".time-sink-real-checkbox-"+index).is(':checked'))  {
-        			enableReal = true; }
+        			enableReal[index-1] = true; }
         		else { 
-        			enableReal = false; 
+        			enableReal[index-1] = false; 
         			//realData= new Array(realData.length).fill(null);
         		}
         		
-				var enableImag;
         		if(self.$div.find(".time-sink-imag-checkbox-"+index).is(':checked'))  {
-        			enableImag = true; }
+        			enableImag[index-1] = true; }
         		else { 
-        			enableImag = false; 
+        			enableImag[index-1] = false; 
 					//imagData=Array(realData.length).fill(null);
         	 	}
-				if (!enableReal && !enableImag) {
+				if (!enableReal[index-1] && !enableImag[index-1]) {
 					console.log("Error: activate real or imag");
 					return;
 				}
 
 				var counter = 0;
 
-				if (true) {
-					columns.push("Real");
+				if (enableReal[index-1]) {
+					columns.push("Real"+index);
 					self.options.series[counter] = '#3FFF33';
 					counter++;
-					columns.push("Real2");
-					
-					self.options.series[counter] = '#FFA233';
-					counter++;
 				}	
-				if (true) {
-					columns.push("Imag");
+				if (enableImag[index-1]) {
+					columns.push("Imag"+index);
 					self.options.series[counter] = '#1221c0';
-					
-					columns.push("Imag2");
-					self.options.series[counter] = '#1c91c0';
+					counter++;
 				}
 
+			}
 				for (var pos = 0; pos < Number2plot	; ++pos) {
 					var currentRow = [pos * timePerSample];
-					if (enableReal){
-					//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-						currentRow.push(realData0[pos]);
-						currentRow.push(realData1[pos]);
-					
-					}
-					if (enableImag){
-						currentRow.push(imagData0[pos]);
-						currentRow.push(imagData1[pos]);
+					for (var idx = 0; idx < nconnections; ++idx){
+						if (enableReal[idx]){
+							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
+							currentRow.push(realData[idx][pos]);
+						}
+						if (enableImag[idx]){
+							currentRow.push(imagData[idx][pos]);
+						}
 					}
 					formattedData.push(currentRow);
 				}
 
-			}
-		
-
-
-
-			
-
-			
-
-
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			self.chart.draw(dataTable, self.options);
 			
-			self.minTimeSinkRe=Math.min.apply(Math, realData0);
-			self.maxTimeSinkRe=Math.max.apply(Math, realData0);
-			self.$min_TimeSink_Im=Math.min.apply(Math, imagData0);
-			self.$max_TimeSink_Im=Math.max.apply(Math, imagData0);
+			self.minTimeSinkRe=Math.min.apply(Math, realData[0]);
+			self.maxTimeSinkRe=Math.max.apply(Math, realData[0]);
+			self.$min_TimeSink_Im=Math.min.apply(Math, imagData[0]);
+			self.$max_TimeSink_Im=Math.max.apply(Math, imagData[0]);
 
 		});
 	};

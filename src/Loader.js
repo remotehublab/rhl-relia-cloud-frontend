@@ -82,20 +82,22 @@ function getTransactions() {
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {
-         console.log("Oh oh... are you sure you are logged in?");
+         console.log("Uh oh... are you sure you are logged in?");
       }
       const root = ReactDOM.createRoot(document.getElementById("app2"));
-      root.render(
-         <React.StrictMode>
-         <PrettyPrintJson data={ responseJson.transmitter_files } />
-         </React.StrictMode>
-      );
+      let listLinks = [];
+      for (let i = 0; i < responseJson.transmitter_files.length; i++) {
+         const url_link = 'http://127.0.0.1:6003/user/transactions/' + responseJson.username + '/t/' + responseJson.transmitter_files[i];
+         listLinks.push(<div><a href= {url_link} download> {responseJson.transmitter_files[i]} </a><br /></div>);
+      }
+      root.render(listLinks);
       const root2 = ReactDOM.createRoot(document.getElementById("app3"));
-      root2.render(
-         <React.StrictMode>
-         <PrettyPrintJson data={ responseJson.receiver_files } />
-         </React.StrictMode>
-      );
+      let listLinks2 = [];
+      for (let i = 0; i < responseJson.receiver_files.length; i++) {
+         const url_link = 'http://127.0.0.1:6003/user/transactions/'  + responseJson.username + '/r/' + responseJson.receiver_files[i];
+         listLinks2.push(<div><a href= {url_link} download> {responseJson.receiver_files[i]} </a><br /></div>);
+      }
+      root2.render(listLinks2);
       return responseJson
    })
    .catch((error) => {

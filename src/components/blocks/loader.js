@@ -10,6 +10,7 @@ import ReliaCheckBox from './VariableCheckBox.js';
 import ReliaPushButton from './VariablePushButton.js';
 import ReliaChooser from './VariableChooser.js';
 import ReliaNumberSink from './NumberSink.js';
+import ReliaEyePlot from './EyePlot.js';
 
 
 export function ReliaWidgets($divElement) {
@@ -85,6 +86,10 @@ export function ReliaWidgets($divElement) {
 						var numbersink = new ReliaNumberSink($divContents, deviceName, blockName);
 						self.blocks.push(numbersink);
 						numbersink.redraw();
+					} else if (blockName.startsWith("RELIA Eye Plot")) {
+						var eyeplot = new ReliaEyePlot($divContents, deviceName, blockName);
+						self.blocks.push(eyeplot);
+						eyeplot.redraw();
 					};
 				});
 			});

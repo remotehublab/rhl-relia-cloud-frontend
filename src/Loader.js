@@ -44,12 +44,26 @@ const Loader = () => {
     <div className="invisible">{JSON.stringify(getAuthentication())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <br />
-    Most Recent Transmitter Files
-    <div id="app2"></div>
-    Most Recent Receiver Files
-    <div id="app3"></div>
-    <div><Main /></div>
-    <div id="all-together"></div>
+
+    <div class="container">
+
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
+		    Most Recent Transmitter Files
+		    <div id="app2"></div>
+		</div>
+
+		<div class="col-xs-12 col-sm-6 col-lg-4">
+		    Most Recent Receiver Files
+		    <div id="app3"></div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div><Main /></div>
+	</div>
+
+    </div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
     </div>
@@ -57,7 +71,7 @@ const Loader = () => {
 };
 
 function loadUI () {
-    var widgets = new ReliaWidgets($("#all-together"));
+    // var widgets = new ReliaWidgets($("#all-together"));
 }
 
 function getAuthentication() {

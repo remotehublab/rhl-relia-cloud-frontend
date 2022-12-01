@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
   
 const Loader = () => {
-  window.API_BASE_URL = "http://localhost:3000/api/";
+  window.API_BASE_URL = "/api/";
   const [google] = useState(null);
   useEffect(() => {
     if (!google) {
@@ -62,7 +62,7 @@ function loadUI () {
 
 function getAuthentication() {
    const navigate = useNavigate();
-   return fetch('http://localhost:6003/user/auth')
+   return fetch('/user/auth')
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.auth == false) {
@@ -78,7 +78,7 @@ function getAuthentication() {
 
 function getTransactions() {
    const PrettyPrintJson = ({data}) => (<div><pre>{JSON.stringify(data, null, 2)}</pre></div>);
-   return fetch('http://localhost:6003/user/transactions')
+   return fetch('/user/transactions')
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {
@@ -87,14 +87,14 @@ function getTransactions() {
       const root = ReactDOM.createRoot(document.getElementById("app2"));
       let listLinks = [];
       for (let i = 0; i < responseJson.transmitter_files.length; i++) {
-         const url_link = 'http://127.0.0.1:6003/user/transactions/' + responseJson.username + '/t/' + responseJson.transmitter_files[i];
+         const url_link = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[i];
          listLinks.push(<div><a href= {url_link} download> {responseJson.transmitter_files[i]} </a><br /></div>);
       }
       root.render(listLinks);
       const root2 = ReactDOM.createRoot(document.getElementById("app3"));
       let listLinks2 = [];
       for (let i = 0; i < responseJson.receiver_files.length; i++) {
-         const url_link = 'http://127.0.0.1:6003/user/transactions/'  + responseJson.username + '/r/' + responseJson.receiver_files[i];
+         const url_link = '/user/transactions/'  + responseJson.username + '/receiver/' + responseJson.receiver_files[i];
          listLinks2.push(<div><a href= {url_link} download> {responseJson.receiver_files[i]} </a><br /></div>);
       }
       root2.render(listLinks2);

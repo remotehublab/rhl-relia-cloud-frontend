@@ -5,7 +5,7 @@ import { ReliaWidgets } from "./components/blocks/loader.js";
 
   
 const Development = () => {
-  window.API_BASE_URL = "http://localhost:3000/api/";
+  window.API_BASE_URL = "/api/";
   const [google] = useState(null);
   useEffect(() => {
     // TODO: Brian, why does this happen?

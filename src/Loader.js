@@ -63,6 +63,12 @@ const Loader = () => {
 		<div><Main /></div>
 	</div>
 
+	<div class="row">
+		<div class="col-xs-12 col-sm-4 offset-sm-4">
+			<button class="btn btn-lg btn-primary disabled">Run the files</button>
+	  	</div>
+	</div>
+
     </div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>

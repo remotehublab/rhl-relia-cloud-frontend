@@ -2,7 +2,6 @@ import './App.css';
 import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
-import Main from './components/main';
 import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
@@ -40,7 +39,6 @@ const Loader = () => {
 
   return (
     <div className="App">
-    Loader environment (Brian)
     <div className="invisible">{JSON.stringify(getAuthentication())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <br />
@@ -48,24 +46,23 @@ const Loader = () => {
     <div class="container">
 
 	<div class="row">
+
 		<div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
 		    Most Recent Transmitter Files
-		    <div id="app2"></div>
+		    <div id="appTransmitter"></div>
 		</div>
 
 		<div class="col-xs-12 col-sm-6 col-lg-4">
 		    Most Recent Receiver Files
-		    <div id="app3"></div>
+		    <div id="appReceiver"></div>
 		</div>
 	</div>
 	
-	<div class="row">
-		<div><Main /></div>
-	</div>
+	<Main />
 
 	<div class="row">
 		<div class="col-xs-12 col-sm-4 offset-sm-4">
-			<button class="btn btn-lg btn-primary disabled">Run the files</button>
+			<button class="btn btn-lg btn-primary disabled" id="runButton">Run the files</button>
 	  	</div>
 	</div>
 
@@ -75,6 +72,85 @@ const Loader = () => {
     </div>
   );
 };
+
+class Main extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      grcURL: '',
+    };
+
+    this.handleUploadGRC_transmitter = this.handleUploadGRC_transmitter.bind(this);
+    this.handleUploadGRC_receiver = this.handleUploadGRC_receiver.bind(this);
+  }
+
+
+  handleUploadGRC_transmitter(ev) {
+
+    const data = new FormData();
+    data.append('file', this.uploadInput_transmitter.files[0]);
+
+    fetch('/user/upload/transmitter', {
+      method: 'POST',
+      body: data,
+    }).then((response) => {
+      response.json().then((body) => {
+        this.setState({ grcURL: `/${body.file}` });
+      });
+    });
+
+    window.location.reload(true);
+  }
+
+  handleUploadGRC_receiver(ev) {
+
+    const data = new FormData();
+    data.append('file', this.uploadInput_receiver.files[0]);
+
+    fetch('/user/upload/receiver', {
+      method: 'POST',
+      body: data,
+    }).then((response) => {
+      response.json().then((body) => {
+        this.setState({ grcURL: `/${body.file}` });
+      });
+    });
+
+    window.location.reload(true);
+  }
+
+  render() {
+    return (
+      <div class="row">
+      <div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
+      <form onSubmit={this.handleUploadGRC_transmitter}>
+        Transmitter File
+        <div>
+          <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" accept=".grc"/>
+        </div>
+        <div>
+          <button>Upload</button>
+        </div>
+     </form>
+     </div>
+     <div class="col-xs-12 col-sm-6 col-lg-4">
+     <form onSubmit={this.handleUploadGRC_receiver}>
+        Receiver File
+        <div>
+          <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" accept=".grc"/>
+        </div>
+        <div>
+          <button>Upload</button>
+        </div>
+      </form>
+      </div>
+      <br />
+      <br />
+      </div>
+    );
+  }
+}
 
 function loadUI () {
     // var widgets = new ReliaWidgets($("#all-together"));
@@ -97,33 +173,55 @@ function getAuthentication() {
 }
 
 function getTransactions() {
-   const PrettyPrintJson = ({data}) => (<div><pre>{JSON.stringify(data, null, 2)}</pre></div>);
    return fetch('/user/transactions')
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {
          console.log("Uh oh... are you sure you are logged in?");
       }
-      const root = ReactDOM.createRoot(document.getElementById("app2"));
-      let listLinks = [];
+      const rootTransmitters = ReactDOM.createRoot(document.getElementById("appTransmitter"));
+      let listLinksTransmitters = [];
+      let listIds = ['box0', 'box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'box7', 'box8', 'box9'];
       for (let i = 0; i < responseJson.transmitter_files.length; i++) {
          const url_link = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[i];
-         listLinks.push(<div><a href= {url_link} download> {responseJson.transmitter_files[i]} </a><br /></div>);
+         listLinksTransmitters.push(<div><input type="checkbox" id={ listIds[i] } value="0" /><a href= {url_link} download> {responseJson.transmitter_files[i]} </a><br /></div>);
       }
-      root.render(listLinks);
-      const root2 = ReactDOM.createRoot(document.getElementById("app3"));
-      let listLinks2 = [];
-      for (let i = 0; i < responseJson.receiver_files.length; i++) {
-         const url_link = '/user/transactions/'  + responseJson.username + '/receiver/' + responseJson.receiver_files[i];
-         listLinks2.push(<div><a href= {url_link} download> {responseJson.receiver_files[i]} </a><br /></div>);
+      rootTransmitters.render(listLinksTransmitters);
+      const rootReceivers = ReactDOM.createRoot(document.getElementById("appReceiver"));
+      let listLinksReceivers = [];
+      for (let j = 0; j < responseJson.receiver_files.length; j++) {
+         const url_link = '/user/transactions/'  + responseJson.username + '/receiver/' + responseJson.receiver_files[j];
+         listLinksReceivers.push(<div><input type="checkbox" id={ listIds[j + 5] } value="0" /><a href= {url_link} download> {responseJson.receiver_files[j]} </a><br /></div>);
       }
-      root2.render(listLinks2);
+      rootReceivers.render(listLinksReceivers);
+      $(document).on("click change", "input[type='checkbox']", function () {
+         let sumTransmitters = 0;
+         let sumReceivers = 0;
+         for (let k = 0; k < responseJson.transmitter_files.length; k++) {
+            let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[k]) + ']:checked');
+            if (possibleValue && possibleValue != 0) {
+               sumTransmitters = sumTransmitters + 1;
+            }
+         }
+         for (let l = 0; l < responseJson.receiver_files.length; l++) {
+            let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[l + 5]) + ']:checked');
+            if (possibleValue && possibleValue != 0) {
+               sumReceivers = sumReceivers + 1;
+            }
+         }
+         if (sumTransmitters == 1 && sumReceivers == 1) {
+            document.getElementById("runButton").disabled = false;
+            console.log("Enabled");
+         } else {
+            document.getElementById("runButton").disabled = true;
+            console.log("Disabled");
+         }
+      });
       return responseJson
    })
    .catch((error) => {
      console.error(error);
    });
 }
-
   
 export default Loader;

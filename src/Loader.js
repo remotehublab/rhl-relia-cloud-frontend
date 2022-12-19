@@ -6,6 +6,11 @@ import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
   
+var transmitterName = '';
+var transmitterContents = '';
+var receiverName = '';
+var receiverContents = '';
+
 const Loader = () => {
   window.API_BASE_URL = "/api/";
   const [google] = useState(null);
@@ -59,12 +64,6 @@ const Loader = () => {
 	</div>
 	
 	<Main />
-
-	<div class="row">
-		<div class="col-xs-12 col-sm-4 offset-sm-4">
-			<button class="btn btn-lg btn-primary disabled" id="runButton">Run the files</button>
-	  	</div>
-	</div>
 
     </div>
 	
@@ -120,8 +119,25 @@ class Main extends React.Component {
     window.location.reload(true);
   }
 
+  handleUserAPI(ev) {
+    const data = new FormData();
+    data.append('transmitterName', transmitterName);
+    data.append('receiverName', receiverName);
+
+    fetch('/scheduler/user/tasks', {
+       method: 'POST',
+       body: data,
+    }).then((response) => {
+       console.log(transmitterName);
+       console.log(receiverName);
+    });
+
+    window.location.reload(true);
+  }
+
   render() {
     return (
+      <div>
       <div class="row">
       <div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
       <form onSubmit={this.handleUploadGRC_transmitter}>
@@ -147,6 +163,14 @@ class Main extends React.Component {
       </div>
       <br />
       <br />
+      </div>
+      <div class="row">
+	<div class="col-xs-12 col-sm-4 offset-sm-4">
+        <form onSubmit={this.handleUserAPI}><div>
+	   <button class="btn btn-lg btn-primary" id="runButton" disabled>Run the files</button>
+        </div></form>
+	</div>
+      </div>
       </div>
     );
   }
@@ -201,19 +225,21 @@ function getTransactions() {
             let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[k]) + ']:checked');
             if (possibleValue && possibleValue != 0) {
                sumTransmitters = sumTransmitters + 1;
+               transmitterName = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[k];
             }
          }
          for (let l = 0; l < responseJson.receiver_files.length; l++) {
             let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[l + 5]) + ']:checked');
             if (possibleValue && possibleValue != 0) {
                sumReceivers = sumReceivers + 1;
+               receiverName = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.receiver_files[l];
             }
          }
          if (sumTransmitters == 1 && sumReceivers == 1) {
-            document.getElementById("runButton").disabled = false;
+            $('#runButton').prop('disabled', false);
             console.log("Enabled");
          } else {
-            document.getElementById("runButton").disabled = true;
+            $('#runButton').prop('disabled', true);
             console.log("Disabled");
          }
       });

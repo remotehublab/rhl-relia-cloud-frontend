@@ -67,7 +67,14 @@ const Loader = () => {
 	<Main />
 
         <div class="row">
-        Most Recent Tasks
+        Search Task Status
+        <label> Search Status of Task No. </label> <span><input className="textInput" type="text" id="to_search" name="to_search"/></span>
+        <form onSubmit={searchTasks}><div>
+	   <button id="searchButton">Search</button>
+        </div></form>
+        </div>
+        <div class="row">
+        All Tasks
         <div id="currentTasks"></div>
         </div>
 
@@ -126,39 +133,46 @@ class Main extends React.Component {
   }
 
   handleUserAPI(ev) {
-    const data = new FormData();
-    data.append('transmitterName', transmitterName);
-    data.append('receiverName', receiverName);
+    let object = {
+       "grc_files": {
+          "receiver": {
+              "filename": receiverName,
+              "content": receiverContents,
+          },
+          "transmitter": {
+             "filename": transmitterName,
+             "content": transmitterContents,
+          },
+       },
+       "priority": 10,
+       "session_id": "session_id1",
+    };
 
-    fetch('/scheduler/user/add_tasks', {
+    fetch('/scheduler/user/tasks', {
        method: 'POST',
-       body: data,
+       headers: {'relia-secret': 'password'},
+       body: JSON.stringify(object),
     }).then((response) => {
        console.log(transmitterName);
        console.log(receiverName);
     });
-
-    window.location.reload(true);
   }
 
   handleCancellation(ev) {
     let taskToCancel = document.getElementById('to_cancel').value;
+    let object = {
+        "action": "delete",
+    };
 
-    if (taskToCancel.length != 10) {
-       console.log("Incorrect ID specified");
-    } else {
-       const data = new FormData();
-       data.append('taskToCancel', taskToCancel);
+    fetch('/scheduler/user/tasks/' + taskToCancel, {
+       method: 'POST',
+       headers: {'relia-secret': 'password'},
+       body: JSON.stringify(object),
+    }).then((response) => {
+       console.log(taskToCancel);
+    });
 
-       fetch('/scheduler/user/delete_tasks', {
-          method: 'POST',
-          body: data,
-       }).then((response) => {
-          console.log(taskToCancel);
-       });
-
-       window.location.reload(true);
-    }
+    window.location.reload(true);
   }
 
   render() {
@@ -228,8 +242,25 @@ function getAuthentication() {
    });
 }
 
+function searchTasks() {
+    let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value;
+    return fetch(taskToSearch)
+    .then((response) => response.json())
+    .then((responseJson) => {
+       if (responseJson.success == false) {
+          console.log("Uh oh... are you sure you are logged in?");
+       } else {
+          alert(responseJson.status);
+       }
+    })
+    .catch((error) => {
+       console.log(error);
+    });
+
+}
+
 function getCurrentTasks() {
-   return fetch('/scheduler/user/get_tasks')
+   return fetch('/scheduler/user/all-tasks')
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {
@@ -237,9 +268,8 @@ function getCurrentTasks() {
       }
       const rootTasks = ReactDOM.createRoot(document.getElementById("currentTasks"));
       let tasksToRender = [];
-      console.log(responseJson.counter);
       for (let i = 0; i < responseJson.ids.length; i++) {
-         tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with a priority of " + responseJson.priorities[i] + ".\n"}</div>);
+         tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with receiver " + responseJson.receivers[i] + " and transmitter " + responseJson.transmitters[i] + ".\n"}</div>);
       }
       rootTasks.render(tasksToRender);
       return responseJson
@@ -278,7 +308,12 @@ function getTransactions() {
             let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[k]) + ']:checked');
             if (possibleValue && possibleValue != 0) {
                sumTransmitters = sumTransmitters + 1;
-               transmitterName = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[k];
+               transmitterName = responseJson.transmitter_files[k];
+               fetch('/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[k]).then(function(response) {
+                  response.text().then(function(text) {
+                     transmitterContents = text;
+                  });
+               });
                console.log(transmitterName);
             }
          }
@@ -286,7 +321,12 @@ function getTransactions() {
             let possibleValue = document.querySelector('input[id=' + CSS.escape(listIds[l + 5]) + ']:checked');
             if (possibleValue && possibleValue != 0) {
                sumReceivers = sumReceivers + 1;
-               receiverName = '/user/transactions/' + responseJson.username + '/receiver/' + responseJson.receiver_files[l];
+               receiverName = responseJson.receiver_files[l];
+               fetch('/user/transactions/' + responseJson.username + '/receiver/' + responseJson.receiver_files[l]).then(function(response) {
+                  response.text().then(function(text) {
+                     receiverContents = text;
+                  });
+               });
                console.log(receiverName);
             }
          }

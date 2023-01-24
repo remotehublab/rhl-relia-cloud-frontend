@@ -87,6 +87,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	self.minTimeSinkRe=1;
 	self.zoomInTimeSink=1;
     self.zoomOutTimeSink=1;
+    self.titleTimeSink='';
+    self.color1TimeSink=['#0000FF', '#FF0000','#008000','#000000','#00FFFF','#FF00FF'];
     //self.flagPauseRun=true;
 
 //
@@ -205,7 +207,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				
 
 		self.options = {
-			title: 'Time',
+			title: self.titleTimeSink,
 			curveType: 'function',
 			legend: { position: 'bottom' },
 			hAxis: {
@@ -230,7 +232,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			keepInBounds: true,
 			maxZoomIn: 4.0,
 		},
-		colors: ['#0000FF', '#FF0000','#008000','#000000','#00FFFF','#FF00FF'],
+		colors: self.color1TimeSink,
 		};
 	
 	
@@ -252,6 +254,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var params = data.data.params;
 
 			var nconnections=params.nconnections;
+			self.titleTimeSink=params.name;
+			self.color1TimeSink=params.colors;
 			
 			//Remove all the unused channels from 5 to nconnections
 			for (var index = 5; index > nconnections; --index) 
@@ -264,8 +268,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
-			//console.log(params);
-			console.log(data.data.data);
+			console.log(params.colors);
+			//console.log(data.data.data);
 
 			var Number2plot = self.$nop2plot.val();
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);

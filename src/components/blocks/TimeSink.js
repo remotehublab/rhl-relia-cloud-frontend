@@ -235,15 +235,16 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				title: self.verticalnameTimeSink,
 				gridlines: {
 				color: GridColor,
-			}
-	       },
-		explorer: {
-			actions: ['dragToZoom', 'rightClickToReset'],
-			axis: 'horizontal',
-			keepInBounds: true,
-			maxZoomIn: 4.0,
-		},
-		colors: self.colorsTimeSink,
+				}
+	       	},
+	    	lineDashStyle: [4, 2],
+			colors: self.colorsTimeSink,
+			series: [
+        		{ lineWidth: 10 },
+        		{ lineWidth: 1 },
+        		{ lineWidth: 1 },
+        		{ lineWidth: 1 },
+   			]
 		};
 	
 	

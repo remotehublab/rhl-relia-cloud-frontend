@@ -16,7 +16,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked> Real 1 </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>  Real 1 </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked> Imag 1 </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-2\" checked> Real 2 </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-2\" checked> Imag 2 </label>&nbsp;" +
@@ -72,8 +72,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	
 	var $constChartDiv = self.$div.find(".time-chart");
 	self.$gridCheckbox = self.$div.find(".time-sink-grid-checkbox");
-	self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
-	self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
+	//self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
+	//self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
 	self.$nop2plot = self.$div.find(".TimeSink_NumberOfPoints2Plot");
 
 	self.maxValueRealChannels = [0,0,0,0,0]
@@ -81,14 +81,23 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	self.maxValueImagChannels = [0,0,0,0,0]
 	self.minValueImagChannels = [0,0,0,0,0]
 
+	self.value = false;
+	self.choices = {
+		"true": "true",
+		"false": "false",
+	};
 
+	
+	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
+	//self.$checkboxValue.text(self.choices[self.value]);
 	
 	self.maxTimeSinkRe=1;
 	self.minTimeSinkRe=1;
 	self.zoomInTimeSink=1;
     self.zoomOutTimeSink=1;
     self.titleTimeSink='';
-    self.color1TimeSink=['#0000FF', '#FF0000','#008000','#000000','#00FFFF','#FF00FF'];
+    self.colorsTimeSink=[];
+    self.verticalnameTimeSink=" ";
     //self.flagPauseRun=true;
 
 //
@@ -186,7 +195,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	}/**/
 	
 
-
+	//self.$div.find(".time-sink-real-checkbox-1").closest("label").text('ssdss');
+	//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 	self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
 
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
@@ -214,6 +224,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				title: 'Time (milliseconds)',
 				gridlines: {
 				color: GridColor,
+				//title: self.yunit,
 			}
 			},
 			vAxis: {
@@ -221,7 +232,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 					min: self.minTimeSinkRe*(self.zoomOutTimeSink/self.zoomInTimeSink),
 					max: self.maxTimeSinkRe*(self.zoomOutTimeSink/self.zoomInTimeSink)
 				},
-				title: 'Amplitude',
+				title: self.verticalnameTimeSink,
 				gridlines: {
 				color: GridColor,
 			}
@@ -232,7 +243,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			keepInBounds: true,
 			maxZoomIn: 4.0,
 		},
-		colors: self.color1TimeSink,
+		colors: self.colorsTimeSink,
 		};
 	
 	
@@ -255,7 +266,10 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 			var nconnections=params.nconnections;
 			self.titleTimeSink=params.name;
-			self.color1TimeSink=params.colors;
+			//self.colorsTimeSink=params.colors;
+			self.ylabelTimeSink=params.ylabel;
+			
+			
 			
 			//Remove all the unused channels from 5 to nconnections
 			for (var index = 5; index > nconnections; --index) 
@@ -283,7 +297,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			
 		    self.options['series'] = {};
 
-			console.log(self.options);
+			console.log(self.colorsTimeSink);
 
 			var enableReal=new Array(nconnections).fill(null);
 			var enableImag=new Array(nconnections).fill(null);
@@ -291,7 +305,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var imagData = Array.from(Array(Number2plot), () => new Array(nconnections));
 			//var realData=new Array(nconnections*Number2plot).fill(null);
 
-			
+			self.colorsTimeSink=[];
 			for (var index=1;index<=nconnections;++index)
 			{
 				realData[index-1] = data.data.data.streams[index-1]['real'];
@@ -305,22 +319,26 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				});
 
         		if(self.$div.find(".time-sink-real-checkbox-"+index).is(':checked'))  {
-        			enableReal[index-1] = true; }
+        			enableReal[index-1] = true; 
+        			self.colorsTimeSink.push(params.colors[2*index-2]);}
         		else { 
         			enableReal[index-1] = false; 
+        			//self.colorsTimeSink.push('#ffff00');
         			//realData= new Array(realData.length).fill(null);
         		}
         		
         		if(self.$div.find(".time-sink-imag-checkbox-"+index).is(':checked'))  {
-        			enableImag[index-1] = true; }
+        			enableImag[index-1] = true; 
+        			self.colorsTimeSink.push(params.colors[2*index-1]);}
         		else { 
         			enableImag[index-1] = false; 
+        			//self.colorsTimeSink.push('#ffff00');
 					//imagData=Array(realData.length).fill(null);
         	 	}
-				if (!enableReal[index-1] && !enableImag[index-1]) {
+				/*if (!enableReal[index-1] && !enableImag[index-1]) {
 					console.log("Error: activate real or imag");
 					return;
-				}
+				}/**/
 
 				var counter = 0;
 

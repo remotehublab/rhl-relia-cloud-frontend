@@ -112,7 +112,7 @@ class Main extends React.Component {
       });
     });
 
-    window.location.reload(true);
+    setTimeout(window.location.reload(true), 1000);
   }
 
   handleUploadGRC_receiver(ev) {
@@ -129,7 +129,7 @@ class Main extends React.Component {
       });
     });
 
-    window.location.reload(true);
+    setTimeout(window.location.reload(true), 1000);
   }
 
   handleUserAPI(ev) {
@@ -244,7 +244,10 @@ function getAuthentication() {
 
 function searchTasks() {
     let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value;
-    return fetch(taskToSearch)
+    return fetch(taskToSearch, {
+       method: 'GET',
+       headers: {'relia-secret': 'password'}
+    })
     .then((response) => response.json())
     .then((responseJson) => {
        if (responseJson.success == false) {
@@ -260,7 +263,10 @@ function searchTasks() {
 }
 
 function getCurrentTasks() {
-   return fetch('/scheduler/user/all-tasks')
+   return fetch('/scheduler/user/all-tasks', {
+      method: 'GET',
+      headers: {'relia-device': 'uw-s1i1:t', 'relia-password': 'password'}
+   })
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {

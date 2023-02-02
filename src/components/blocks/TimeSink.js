@@ -16,7 +16,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>  Real 1 </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>&nbsp;<span class=\"time-sink-real-checkbox-1-label\" style=\"display: inline\">Real 1 </span></label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked> Imag 1 </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-2\" checked> Real 2 </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-2\" checked> Imag 2 </label>&nbsp;" +
@@ -236,15 +236,26 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				gridlines: {
 				color: GridColor,
 				}
-	       	},
-	    	lineDashStyle: [4, 2],
+	       	        },
+//                        lineDashStyle: [4, 2],
+			// TODO: Marcos: move colors to series[0].color, so everything is in series
 			colors: self.colorsTimeSink,
-			series: [
-        		{ lineWidth: 10 },
-        		{ lineWidth: 1 },
-        		{ lineWidth: 1 },
-        		{ lineWidth: 1 },
-   			]
+			series: {
+        		   0: { 
+				lineWidth: 50,
+				lineDashStyle: [4, 2]
+			   },
+        		   1: { 
+				lineWidth: 1,
+				lineDashStyle: [10, 0]
+			   },
+        		   2: { lineWidth: 1,
+			        lineDashStyle: [4, 2]
+			   },
+        		   3: { lineWidth: 1,
+				lineDashStyle: [4, 2]
+			   },
+			}
 		};
 	
 	
@@ -296,7 +307,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				columns
 			];
 			
-		    self.options['series'] = {};
+		    // self.options['series'] = {};
 
 			console.log(self.colorsTimeSink);
 
@@ -305,6 +316,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var realData = Array.from(Array(Number2plot), () => new Array(nconnections));
 			var imagData = Array.from(Array(Number2plot), () => new Array(nconnections));
 			//var realData=new Array(nconnections*Number2plot).fill(null);
+			
+			self.$div.find(".time-sink-real-checkbox-1-label").text("Lalalalalalaal");
 
 			self.colorsTimeSink=[];
 			for (var index=1;index<=nconnections;++index)
@@ -345,12 +358,12 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 				if (enableReal[index-1]) {
 					columns.push("Real"+index);
-					self.options.series[counter] = '#3FFF33';
+					// self.options.series[counter].color = '#3FFF33';
 					counter++;
 				}	
 				if (enableImag[index-1]) {
 					columns.push("Imag"+index);
-					self.options.series[counter] = '#1221c0';
+					// self.options.series[counter].color = '#1221c0';
 					counter++;
 				}
 

@@ -16,6 +16,9 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>&nbsp;<span class=\"time-sink-real-checkbox-1-label\" style=\"display: inline\">Real 1 </span></label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-1-label\" style=\"display: inline\">Imag 1 </span></label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-2\" checked>&nbsp;<span class=\"time-sink-real-checkbox-2-label\" style=\"display: inline\">Real 2 </span></label>&nbsp;" +
@@ -32,8 +35,10 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 		"<div class=\"col\">" +
 		        "<button class=\"button zoom-in-button\"><i class=\"bi bi-zoom-in\"></i></button>" +
-		        "<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
+		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
+		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        
 		"</div>" +
 
 
@@ -43,7 +48,6 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
 			"<input class=\"noise-slider\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">" +
 			"<p class=\"noise-slider-value\" value=\"1\"></p> <br>" +
-			    "<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
 			"<p>Amplitude</p>" +
 			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
 			"<input class=\"amplitude-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
@@ -73,6 +77,9 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	
 	var $constChartDiv = self.$div.find(".time-chart");
 	self.$gridCheckbox = self.$div.find(".time-sink-grid-checkbox");
+	self.$autoscaleCheckbox = self.$div.find(".time-sink-autoscale-checkbox");
+	self.$axisLabelsCheckbox = self.$div.find(".time-sink-axis-labels-checkbox");
+	
 	//self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
 	//self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
 	self.$nop2plot = self.$div.find(".TimeSink_NumberOfPoints2Plot");
@@ -92,15 +99,18 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
 	//self.$checkboxValue.text(self.choices[self.value]);
 	
-	self.maxTimeSinkRe=1;
-	self.minTimeSinkRe=1;
+	self.maxTimeSink=1;
+	self.minTimeSink=1;
 	self.zoomInTimeSink=1;
     self.zoomOutTimeSink=1;
     self.titleTimeSink='';
     self.colorsTimeSink=[];
     self.verticalnameTimeSink=" ";
-    //self.flagPauseRun=true;
-
+	self.yLabelTimeSink=" ";
+	self.yUnitTimeSink=" ";
+	self.pausePlayTimeSink=true;
+	self.yminTimeSink=-1;
+	self.ymaxTimeSink=1;
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -162,9 +172,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 		self.zoomOutTimeSink += 1;
 	});
-	self.$div.find(".autoscale-button").click(function() {
-		self.zoomInTimeSink = 1;
-		self.zoomOutTimeSink = 1;
+	self.$div.find(".pause-play-button").click(function() {
+		self.pausePlayTimeSink ^= true;
 	});
 
 	//This commented code is to add noise slider
@@ -205,10 +214,20 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	self.redraw = function() {
 
 		var GridColor='#808080';
-			if(self.$gridCheckbox.is(':checked'))  {
+		if(self.$gridCheckbox.is(':checked'))  {
 				GridColor = '#808080'; }
-			else { 
+		else { 
 				GridColor = '#ffffff'; }
+		
+		
+		if(self.$axisLabelsCheckbox.is(':checked')){		
+			self.titleVAxis=self.yLabelTimeSink + " (" + self.yUnitTimeSink + ")";
+			self.titleHAxis='Time (milliseconds)';
+		}
+		else{
+			self.titleVAxis=' ';
+			self.titleHAxis=' ';
+		}
 				
 	/*	var ZoomIn_factor;
 			if($("#time-sink-grid-checkbox").is(':checked'))  {
@@ -222,7 +241,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			curveType: 'function',
 			legend: { position: 'right' },
 			hAxis: {
-				title: 'Time (milliseconds)',
+				title: self.titleHAxis,
 				gridlines: {
 				color: GridColor,
 				//title: self.yunit,
@@ -230,19 +249,33 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			},
 			vAxis: {
 				viewWindow:{
-					min: self.minTimeSinkRe*(self.zoomOutTimeSink/self.zoomInTimeSink),
-					max: self.maxTimeSinkRe*(self.zoomOutTimeSink/self.zoomInTimeSink)
-				},
-				title: self.verticalnameTimeSink,
+					min: self.minTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink),
+					max: self.maxTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink)
+				},/**/
+				/*viewWindow:{
+					
+					
+					min: -3,
+					max: 3
+				},/**/
+				title: self.titleVAxis,
 				gridlines: {
 				color: GridColor,
 				}
-	       	        },
+	       	 },
+			explorer: { 
+        		actions: ['dragToZoom', 'rightClickToReset'],
+        		axis: 'horizontal',
+        		keepInBounds: true,
+        		maxZoomIn: 16.0
+			},	       	 
 //                        lineDashStyle: [4, 2],
 			// TODO: Marcos: move colors to series[0].color, so everything is in series
 			//colors: self.colorsTimeSink,
+          
+			
 			series: {
-        		0: 	{ 
+        		0: 	{
 			    	},
         		1: 	{ 
 
@@ -289,7 +322,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var nconnections=params.nconnections;
 			self.titleTimeSink=params.name;
 			self.colorsTimeSink=params.colors;
-			self.ylabelTimeSink=params.ylabel;
+			self.yLabelTimeSink=params.ylabel;
+			self.yUnitTimeSink=params.yunit
 			
 			
 			
@@ -305,9 +339,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
-			console.log(params.styles);
-			console.log('[3,1]');
-			//console.log(data.data.data);
+			//console.log(params.markers[0]);
+			//console.log('[3,1]');
 
 			var Number2plot = self.$nop2plot.val();
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
@@ -321,98 +354,112 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			
 		    // self.options['series'] = {};
 
-			console.log(self.colorsTimeSink);
 
 			var enableReal=new Array(nconnections).fill(null);
 			var enableImag=new Array(nconnections).fill(null);
-			var realData = Array.from(Array(Number2plot), () => new Array(nconnections));
-			var imagData = Array.from(Array(Number2plot), () => new Array(nconnections));
+			var dataout = Array.from(Array(Number2plot), () => new Array(2*nconnections));
 			//var realData=new Array(nconnections*Number2plot).fill(null);
 			
+			if (self.pausePlayTimeSink==true){
 			
-
 			self.colorsTimeSink=[];
+			var chEnabledCounter=0;
 			for (var index=1;index<=nconnections;++index)
-			{
-				realData[index-1] = data.data.data.streams[index-1]['real'];
-				imagData[index-1] = data.data.data.streams[index-1]['imag'];
-
-				$.each(realData[index-1], function (pos, value) {
-					realData[index-1][pos] = parseFloat(value);
-				});
-				$.each(imagData[index-1], function (pos, value) {
-					imagData[index-1][pos] = parseFloat(value);
-				});
+			{	
+			console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
         		if(self.$div.find(".time-sink-real-checkbox-"+index).is(':checked'))  {
+					dataout[chEnabledCounter] = data.data.data.streams[index-1]['real'];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
         			enableReal[index-1] = true; 
         			self.$div.find(".time-sink-real-checkbox-"+index+"-label").text(params.labels[2*index-2].replace(/'/g, ""));
-        			self.options.series[2*index-2].color=params.colors[2*index-2];
-        			self.options.series[2*index-2].lineWidth=params.widths[2*index-2];
-        			self.options.series[2*index-2].lineDashStyle=params.styles[2*index-2];
+        			self.options.series[chEnabledCounter].color=params.colors[2*index-2];
+        			self.options.series[chEnabledCounter].lineWidth=params.widths[2*index-2];
+        			self.options.series[chEnabledCounter].lineDashStyle=params.styles[2*index-2];
+        			self.options.series[chEnabledCounter].pointShape=params.markers[2*index-2];
+					if (self.options.series[chEnabledCounter].pointShape!="none"){
+	        			self.options.series[chEnabledCounter].pointSize=4*params.widths[2*index-2];
+					}
+        			
         			//self.colorsTimeSink.push(params.colors[2*index-2]);
+        			chEnabledCounter=chEnabledCounter+1;
         			}
         		else { 
         			enableReal[index-1] = false; 
-        			self.options.series[2*index-2].color='#ffffff';
+        			//self.options.series[chEnabledCounter].color='#ffffff';
+        			//chEnabledCounter=chEnabledCounter+1;
         			//self.colorsTimeSink.push('#ffff00');
         			//realData= new Array(realData.length).fill(null);
         		}
         		
         		if(self.$div.find(".time-sink-imag-checkbox-"+index).is(':checked'))  {
+					dataout[chEnabledCounter] = data.data.data.streams[index-1]['imag'];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
         			enableImag[index-1] = true; 
         			self.$div.find(".time-sink-imag-checkbox-"+index+"-label").text(params.labels[2*index-1].replace(/'/g, ""));        			
-        			self.options.series[2*index-1].color=params.colors[2*index-1];
-        			self.options.series[2*index-1].lineWidth=params.widths[2*index-1];
-        			self.options.series[2*index-1].lineDashStyle=params.styles[2*index-1];
-        			//self.colorsTimeSink.push(params.colors[2*index-1]);
+        			self.options.series[chEnabledCounter].color=params.colors[2*index-1];
+        			self.options.series[chEnabledCounter].lineWidth=params.widths[2*index-1];
+        			self.options.series[chEnabledCounter].lineDashStyle=params.styles[2*index-1];
+        			self.options.series[chEnabledCounter].pointShape=params.markers[2*index-1];
+					if (self.options.series[chEnabledCounter].pointShape!="none"){
+	        			self.options.series[chEnabledCounter].pointSize=4*params.widths[2*index-1];
+					}
+
+        			
+        			chEnabledCounter=chEnabledCounter+1;
         			}
         		else { 
         			enableImag[index-1] = false; 
-        			self.options.series[2*index-1].color='#ffffff';
+        			//self.options.series[2*index-1].color='#ffffff';
+        			//chEnabledCounter=chEnabledCounter+1;
 					//imagData=Array(realData.length).fill(null);
         	 	}
 				/*if (!enableReal[index-1] && !enableImag[index-1]) {
 					console.log("Error: activate real or imag");
 					return;
 				}/**/
-
-				var counter = 0;
+				//console.log(enableImag[index-1]);
+				// counter = 0;
 
 				if (enableReal[index-1]) {
 					columns.push(params.labels[2*index-2]);
 					// self.options.series[counter].color = '#3FFF33';
-					counter++;
+					//counter++;
 				}	
+				
 				if (enableImag[index-1]) {
 					columns.push(params.labels[2*index-1]);
 					// self.options.series[counter].color = '#1221c0';
-					counter++;
+					//counter++;
 				}
 
 			}
-				for (var pos = 0; pos < Number2plot	; ++pos) {
-					var currentRow = [pos * timePerSample];
-					for (var idx = 0; idx < nconnections; ++idx){
-						if (enableReal[idx]){
+			if (chEnabledCounter!=0){
+			for (var pos = 0; pos < Number2plot	; ++pos) {
+				var currentRow = [pos * timePerSample];
+				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-							currentRow.push(realData[idx][pos]);
-						}
-						if (enableImag[idx]){
-							currentRow.push(imagData[idx][pos]);
-						}
-					}
-					formattedData.push(currentRow);
+					currentRow.push(dataout[idx][pos]);
 				}
-
+				formattedData.push(currentRow);
+			}
+			console.log(formattedData);
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			self.chart.draw(dataTable, self.options);
 			
-			self.minTimeSinkRe=Math.min.apply(Math, realData[0]);
-			self.maxTimeSinkRe=Math.max.apply(Math, realData[0]);
-			self.$min_TimeSink_Im=Math.min.apply(Math, imagData[0]);
-			self.$max_TimeSink_Im=Math.max.apply(Math, imagData[0]);
+			if(self.$autoscaleCheckbox.is(':checked'))  {
+				self.minTimeSink=Math.min.apply(Math, dataout[0]);
+				self.maxTimeSink=Math.max.apply(Math, dataout[0]);
+			}
 
+			
+			}
+			}
+			
 		});
 	};
 

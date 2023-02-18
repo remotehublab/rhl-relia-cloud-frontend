@@ -11,6 +11,7 @@ import ReliaPushButton from './VariablePushButton.js';
 import ReliaChooser from './VariableChooser.js';
 import ReliaNumberSink from './NumberSink.js';
 import ReliaEyePlot from './EyePlot.js';
+import ReliaFrequencySink from './FrequencySink.js';
 
 
 export function ReliaWidgets($divElement) {
@@ -90,6 +91,10 @@ export function ReliaWidgets($divElement) {
 						var eyeplot = new ReliaEyePlot($divContents, deviceName, blockName);
 						self.blocks.push(eyeplot);
 						eyeplot.redraw();
+					} else if (blockName.startsWith("RELIA Frequency Sink")) {
+						var frequencysink = new ReliaFrequencySink($divContents, deviceName, blockName);
+						self.blocks.push(frequencysink);
+						frequencysink.redraw();
 					};
 				});
 			});

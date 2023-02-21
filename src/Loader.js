@@ -140,21 +140,21 @@ class Main extends React.Component {
        "grc_files": {
           "receiver": {
               "filename": receiverName,
-              "content": receiverContents,
+              "content": receiverContents
           },
           "transmitter": {
              "filename": transmitterName,
-             "content": transmitterContents,
+             "content": transmitterContents
           },
        },
        "priority": 10,
-       "session_id": "session_id1",
+       "session_id": "session_id1"
     };
 
-    fetch('/scheduler/user/tasks/' + userid, {
+    fetch('/user/route/' + userid, {
        method: 'POST',
        headers: {'relia-secret': 'password'},
-       body: JSON.stringify(object),
+       json: object,
     }).then((response) => {
        console.log(transmitterName);
        console.log(receiverName);

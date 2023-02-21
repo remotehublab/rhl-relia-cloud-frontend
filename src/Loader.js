@@ -10,6 +10,7 @@ var transmitterName = '';
 var transmitterContents = '';
 var receiverName = '';
 var receiverContents = '';
+var userid = '';
 
 const Loader = () => {
   window.API_BASE_URL = "/api/";
@@ -47,6 +48,7 @@ const Loader = () => {
     <div className="invisible">{JSON.stringify(getAuthentication())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
+    <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
     <br />
 
     <div class="container">
@@ -76,6 +78,7 @@ const Loader = () => {
         <div class="row">
         All Tasks
         <div id="currentTasks"></div>
+        <div id="errorMessages"></div>
         </div>
 
     </div>
@@ -148,7 +151,7 @@ class Main extends React.Component {
        "session_id": "session_id1",
     };
 
-    fetch('/scheduler/user/tasks', {
+    fetch('/scheduler/user/tasks/' + userid, {
        method: 'POST',
        headers: {'relia-secret': 'password'},
        body: JSON.stringify(object),
@@ -226,7 +229,7 @@ function loadUI () {
     // var widgets = new ReliaWidgets($("#all-together"));
 }
 
-function getAuthentication() {
+async function getAuthentication() {
    const navigate = useNavigate();
    return fetch('/user/auth')
    .then((response) => response.json())
@@ -235,6 +238,7 @@ function getAuthentication() {
          console.log('Time to move');
          navigate('/login')
       }
+      userid = responseJson.user_id;
       return responseJson;
    })
    .catch((error) => {
@@ -262,10 +266,11 @@ function searchTasks() {
 
 }
 
-function getCurrentTasks() {
-   return fetch('/scheduler/user/all-tasks', {
+async function getCurrentTasks() {
+   await getAuthentication();
+   return fetch('/scheduler/user/all-tasks/' + userid, {
       method: 'GET',
-      headers: {'relia-device': 'uw-s1i1:t', 'relia-password': 'password'}
+      headers: {'relia-secret': 'password'}
    })
    .then((response) => response.json())
    .then((responseJson) => {
@@ -279,6 +284,33 @@ function getCurrentTasks() {
       }
       rootTasks.render(tasksToRender);
       return responseJson
+   })
+   .catch((error) => {
+     console.error(error);
+   });
+}
+
+async function getErrorMessages() {
+   await getAuthentication();
+   return fetch('/scheduler/user/error-messages/' + userid, {
+       method: 'GET',
+       headers: {'relia-secret': 'password'}
+   })
+   .then((response) => response.json())
+   .then((responseJson) => {
+     if (responseJson.success == false) {
+         console.log("Uh oh... are you sure you are logged in?");
+     }
+     const rootTasks = ReactDOM.createRoot(document.getElementById("errorMessages"));
+     let errorsToRender = [];
+     if (responseJson.ids.length > 0) {
+         errorsToRender.push(<div>{"Most Recent Error Messages\n"}</div>);
+     }
+     for (let i = 0; i < responseJson.ids.length; i++) {
+         errorsToRender.push(<div>{"Task " + responseJson.ids[i] + " encountered the following error: " + responseJson.errors[i] + "\n"}</div>);
+     }
+     rootTasks.render(errorsToRender);
+     return responseJson
    })
    .catch((error) => {
      console.error(error);

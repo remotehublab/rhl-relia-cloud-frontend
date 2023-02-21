@@ -154,7 +154,7 @@ class Main extends React.Component {
     fetch('/user/route/' + userid, {
        method: 'POST',
        headers: {'relia-secret': 'password'},
-       json: JSON.stringify(object),
+       body: JSON.stringify(object),
     }).then((response) => {
        console.log(transmitterName);
        console.log(receiverName);

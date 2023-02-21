@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
+export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -12,25 +12,23 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	});*/
 
 	self.$div.html(
-	    "<div class=\"time-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
-	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
+	    "<div class=\"freq-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
+	    "<div class=\"Checkbox_FreqSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-autoscale-checkbox\" unchecked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
 
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>&nbsp;<span class=\"time-sink-real-checkbox-1-label\" style=\"display: inline\">Real 1 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-1-label\" style=\"display: inline\">Imag 1 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-2\" checked>&nbsp;<span class=\"time-sink-real-checkbox-2-label\" style=\"display: inline\">Real 2 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-2\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-2-label\" style=\"display: inline\">Imag 2 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-3\" checked>&nbsp;<span class=\"time-sink-real-checkbox-3-label\" style=\"display: inline\">Real 3 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-3\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-3-label\" style=\"display: inline\">Imag 3 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-4\" checked>&nbsp;<span class=\"time-sink-real-checkbox-4-label\" style=\"display: inline\">Real 4 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-4\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-4-label\" style=\"display: inline\">Imag 4 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-5\" checked>&nbsp;<span class=\"time-sink-real-checkbox-5-label\" style=\"display: inline\">Real 5 </span></label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-5\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-5-label\" style=\"display: inline\">Imag 5 </span></label>&nbsp;" +
-
-
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-1\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-1-label\" style=\"display: inline\">Ch 1 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-2\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-2-1-label\" style=\"display: inline\">Ch 2 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-3\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-3-label\" style=\"display: inline\">Ch 3 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-4\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-4-label\" style=\"display: inline\">Ch 4 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-5\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-5-label\" style=\"display: inline\">Ch 5 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-6\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-6-label\" style=\"display: inline\">Ch 6 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-7\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-7-label\" style=\"display: inline\">Ch 7 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-8\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-8-label\" style=\"display: inline\">Ch 8 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-9\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-9-label\" style=\"display: inline\">Ch 9 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-10\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-10-label\" style=\"display: inline\">Ch 10 </span></label>&nbsp;" +
 		"</div>" +
 
 		"<div class=\"col\">" +
@@ -38,7 +36,6 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
 		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
-		        
 		"</div>" +
 
 
@@ -61,7 +58,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 
 			"<form>" +
-			"  <select class=\"TimeSink_NumberOfPoints2Plot\">" + 
+			"  <select class=\"FreqSink_NumberOfPoints2Plot\">" + 
 			"    <option value=\"1024\"selected=\"selected\">1024 points</option>" + 
 			"    <option value=\"64\" >64 points</option>" + 
 			"    <option value=\"128\">128 points</option>" + 
@@ -75,14 +72,14 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	    "</div>"
 	);
 	
-	var $constChartDiv = self.$div.find(".time-chart");
-	self.$gridCheckbox = self.$div.find(".time-sink-grid-checkbox");
-	self.$autoscaleCheckbox = self.$div.find(".time-sink-autoscale-checkbox");
-	self.$axisLabelsCheckbox = self.$div.find(".time-sink-axis-labels-checkbox");
+	var $constChartDiv = self.$div.find(".freq-chart");
+	self.$gridCheckbox = self.$div.find(".freq-sink-grid-checkbox");
+	self.$autoscaleCheckbox = self.$div.find(".freq-sink-autoscale-checkbox");
+	self.$axisLabelsCheckbox = self.$div.find(".freq-sink-axis-labels-checkbox");
 	
 	//self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
 	//self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
-	self.$nop2plot = self.$div.find(".TimeSink_NumberOfPoints2Plot");
+	self.$nop2plot = self.$div.find(".FreqSink_NumberOfPoints2Plot");
 
 	self.maxValueRealChannels = [0,0,0,0,0]
 	self.minValueRealChannels = [0,0,0,0,0]
@@ -99,18 +96,19 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
 	//self.$checkboxValue.text(self.choices[self.value]);
 	
-	self.maxTimeSink=1;
-	self.minTimeSink=1;
-	self.zoomInTimeSink=1;
-    self.zoomOutTimeSink=1;
-    self.titleTimeSink='';
-    self.colorsTimeSink=[];
-    self.verticalnameTimeSink=" ";
-	self.yLabelTimeSink=" ";
-	self.yUnitTimeSink=" ";
-	self.pausePlayTimeSink=true;
-	self.yminTimeSink=-1;
-	self.ymaxTimeSink=1;
+	self.maxFreqSink=1;
+	self.minFreqSink=1;
+	self.zoomInFreqSink=1;
+    self.zoomOutFreqSink=1;
+    self.titleFreqSink='';
+    self.colorsFreqSink=[];
+    self.verticalnameFreqSink=" ";
+	self.yLabelFreqSink=" ";
+	self.yUnitFreqSink=" ";
+	self.pausePlayFreqSink=true;
+	self.minVerticalAxis=-1;
+	self.maxVerticalAxis=1;
+	self.firstFreqRun=true;
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -166,14 +164,14 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 //
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInTimeSink += 1;
+		self.zoomInFreqSink += 1;
 	});
 	self.$div.find(".zoom-out-button").click(function() {
 
-		self.zoomOutTimeSink += 1;
+		self.zoomOutFreqSink += 1;
 	});
 	self.$div.find(".pause-play-button").click(function() {
-		self.pausePlayTimeSink ^= true;
+		self.pausePlayFreqSink ^= true;
 	});
 
 	//This commented code is to add noise slider
@@ -221,8 +219,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 		
 		
 		if(self.$axisLabelsCheckbox.is(':checked')){		
-			self.titleVAxis=self.yLabelTimeSink + " (" + self.yUnitTimeSink + ")";
-			self.titleHAxis='Time (milliseconds)';
+			self.titleVAxis=self.yLabelFreqSink + " (" + self.yUnitFreqSink + ")";
+			self.titleHAxis='Freq (Hz)';
 		}
 		else{
 			self.titleVAxis=' ';
@@ -237,7 +235,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 				
 
 		self.options = {
-			title: self.titleTimeSink,
+			title: self.titleFreqSink,
 			curveType: 'function',
 			legend: { position: 'right' },
 			hAxis: {
@@ -249,14 +247,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			},
 			vAxis: {
 				viewWindow:{
-					min: self.minTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink),
-					max: self.maxTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink)
-				},/**/
-				/*viewWindow:{
-					
-					
-					min: -3,
-					max: 3
+					min: self.minVerticalAxis,
+					max: self.maxVerticalAxis,
 				},/**/
 				title: self.titleVAxis,
 				gridlines: {
@@ -320,19 +312,23 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var params = data.data.params;
 
 			var nconnections=params.nconnections;
-			self.titleTimeSink=params.name;
-			self.colorsTimeSink=params.colors;
-			self.yLabelTimeSink=params.ylabel;
-			self.yUnitTimeSink=params.yunit
+			self.fftsize=params.fftsize;
 			
+			self.titleFreqSink=params.name;
+			self.centerFrequency=params.fc;
+			self.bandwidth=params.bw;
+			self.ymin=params.ymin;
+			self.ymax=params.ymax;
+			
+			self.colorsFreqSink=params.colors;
+			self.yLabelFreqSink=params.label;
+			self.yUnitFreqSink=params.units
 			
 			
 			//Remove all the unused channels from 5 to nconnections
-			for (var index = 5; index > nconnections; --index) 
+			for (var index = 10; index > nconnections; --index) 
 			{
-				self.$temp = self.$div.find(".time-sink-real-checkbox-"+index);
-				self.$temp.parent().remove();
-				self.$temp = self.$div.find(".time-sink-imag-checkbox-"+index);
+				self.$temp = self.$div.find(".freq-sink-real-checkbox-"+index);
 				self.$temp.parent().remove();
 			}
 
@@ -340,12 +336,11 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
 			//console.log(params.markers[0]);
-			//console.log('[3,1]');
 
-			var Number2plot = self.$nop2plot.val();
+
+			var Number2plot = self.fftsize;
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
 
-			var timePerSample = 1000.0 / params.srate; // in milliseconds
 
 			var columns = ["Point"];
 			var formattedData = [
@@ -357,31 +352,30 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 			var enableReal=new Array(nconnections).fill(null);
 			var enableImag=new Array(nconnections).fill(null);
-			var dataout = Array.from(Array(Number2plot), () => new Array(2*nconnections));
+			var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
 			//var realData=new Array(nconnections*Number2plot).fill(null);
 			
-			if (self.pausePlayTimeSink==true){
+			if (self.pausePlayFreqSink==true){
 			
-			self.colorsTimeSink=[];
+			self.colorsFreqSink=[];
 			var chEnabledCounter=0;
 			for (var index=1;index<=nconnections;++index)
 			{	
-			console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
+			//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
-        		if(self.$div.find(".time-sink-real-checkbox-"+index).is(':checked'))  {
+        		if(self.$div.find(".freq-sink-real-checkbox-"+index).is(':checked'))  {
 					dataout[chEnabledCounter] = data.data.data.streams[index-1]['real'];
 					$.each(dataout[chEnabledCounter], function (pos, value) {
 						dataout[chEnabledCounter][pos] = parseFloat(value);
 					});
+					//console.log(dataout[0]);					
         			enableReal[index-1] = true; 
-        			self.$div.find(".time-sink-real-checkbox-"+index+"-label").text(params.labels[2*index-2].replace(/'/g, ""));
-        			self.options.series[chEnabledCounter].color=params.colors[2*index-2];
-        			self.options.series[chEnabledCounter].lineWidth=params.widths[2*index-2];
-        			self.options.series[chEnabledCounter].lineDashStyle=params.styles[2*index-2];
-        			self.options.series[chEnabledCounter].pointShape=params.markers[2*index-2];
-					if (self.options.series[chEnabledCounter].pointShape!="none"){
-	        			self.options.series[chEnabledCounter].pointSize=4*params.widths[2*index-2];
-					}
+        			self.$div.find(".freq-sink-real-checkbox-"+index+"-label").text(params.labels[index-1].replace(/'/g, ""));
+        			self.options.series[chEnabledCounter].color=params.colors[index-1];
+        			self.options.series[chEnabledCounter].lineWidth=params.widths[index-1];
+					columns.push(params.labels[index-1]);
+					console.log(params);
+					
         			
         			//self.colorsTimeSink.push(params.colors[2*index-2]);
         			chEnabledCounter=chEnabledCounter+1;
@@ -394,66 +388,32 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
         			//realData= new Array(realData.length).fill(null);
         		}
         		
-        		if(self.$div.find(".time-sink-imag-checkbox-"+index).is(':checked'))  {
-					dataout[chEnabledCounter] = data.data.data.streams[index-1]['imag'];
-					$.each(dataout[chEnabledCounter], function (pos, value) {
-						dataout[chEnabledCounter][pos] = parseFloat(value);
-					});
-        			enableImag[index-1] = true; 
-        			self.$div.find(".time-sink-imag-checkbox-"+index+"-label").text(params.labels[2*index-1].replace(/'/g, ""));        			
-        			self.options.series[chEnabledCounter].color=params.colors[2*index-1];
-        			self.options.series[chEnabledCounter].lineWidth=params.widths[2*index-1];
-        			self.options.series[chEnabledCounter].lineDashStyle=params.styles[2*index-1];
-        			self.options.series[chEnabledCounter].pointShape=params.markers[2*index-1];
-					if (self.options.series[chEnabledCounter].pointShape!="none"){
-	        			self.options.series[chEnabledCounter].pointSize=4*params.widths[2*index-1];
-					}
-
-        			
-        			chEnabledCounter=chEnabledCounter+1;
-        			}
-        		else { 
-        			enableImag[index-1] = false; 
-        			//self.options.series[2*index-1].color='#ffffff';
-        			//chEnabledCounter=chEnabledCounter+1;
-					//imagData=Array(realData.length).fill(null);
-        	 	}
-				/*if (!enableReal[index-1] && !enableImag[index-1]) {
-					console.log("Error: activate real or imag");
-					return;
-				}/**/
-				//console.log(enableImag[index-1]);
-				// counter = 0;
-
-				if (enableReal[index-1]) {
-					columns.push(params.labels[2*index-2]);
-					// self.options.series[counter].color = '#3FFF33';
-					//counter++;
-				}	
-				
-				if (enableImag[index-1]) {
-					columns.push(params.labels[2*index-1]);
-					// self.options.series[counter].color = '#1221c0';
-					//counter++;
-				}
-
 			}
 			if (chEnabledCounter!=0){
-			for (var pos = 0; pos < Number2plot	; ++pos) {
-				var currentRow = [pos * timePerSample];
+			var freqRes=self.bandwidth/self.fftsize
+			for (var pos = 0; pos < self.fftsize	; ++pos) {
+				var currentRow = [self.centerFrequency-0.5*self.bandwidth+pos*freqRes];
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
 					currentRow.push(dataout[idx][pos]);
 				}
 				formattedData.push(currentRow);
 			}
-			console.log(formattedData);
+			//console.log(formattedData);
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			self.chart.draw(dataTable, self.options);
 			
+
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				self.minTimeSink=Math.min.apply(Math, dataout[0]);
-				self.maxTimeSink=Math.max.apply(Math, dataout[0]);
+				self.firstFreqRun=false;
+				self.minFreqSink=Math.min.apply(Math, dataout[0]);
+				self.maxFreqSink=Math.max.apply(Math, dataout[0]);
+				self.minVerticalAxis=self.minFreqSink*1.5*(self.zoomOutFreqSink/self.zoomInFreqSink);
+				self.maxVerticalAxis=self.maxFreqSink*1.5*(self.zoomOutFreqSink/self.zoomInFreqSink);
+			}
+			if(!self.$autoscaleCheckbox.is(':checked') &&  self.firstFreqRun==true)  {
+				self.minVerticalAxis=params.ymin;
+				self.maxVerticalAxis=params.ymax;
 			}
 
 			
@@ -465,4 +425,4 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 
 }
 
-export default ReliaTimeSink;
+export default FrequencySink;

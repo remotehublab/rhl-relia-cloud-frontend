@@ -6,66 +6,126 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	var self = this;
 
 	self.$div = $divElement;
+	
+	
+	/*$.get(self.url).done(function (data) {
+		var nconnections = data.data.params.nconnections;	
+	});*/
 
 	self.$div.html(
 	    "<div class=\"vector-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
-	    "<div class=\"Checkbox_VectorSink_OnOffSignal\">" +
-	        "<input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid<br>" +
-		"<br>" + 
-		//"<p>Center Frequency</p>" +
-	        //"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
-	        //"<input class=\"frequency-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
-		"<p class=\"frequnecy-slider-value\" value=\"1\"></p> <br>" +
-	        //"<input type=\"submit\" name=\"checkout\" class=\"button zoom-in-button-Vector\" value=\"Zoom In\"> <br>" +
-	        //"<input type=\"submit\" name=\"checkout\" class=\"button zoom-out-button-Vector\" value=\"Zoom Out\"> <br>" +
-	        //"<input type=\"submit\" name=\"checkout\" class=\"button autoscale-button-Vector\" value=\"Zoom AutoScale\"> <br>" +
-		    //"<input type=\"submit\" name=\"checkout\" class=\"button pause-button\" value=\"Pause/Run\"> <br>" +
-		    //"<input type=\"submit\" name=\"checkout\" class=\"button Inc-Average-button\" value=\"Average +\"> <br>" +
-		    //"<input type=\"submit\" name=\"checkout\" class=\"button Dec-Average-button\" value=\"Average -\"> <br>" +
+	    "<div class=\"Checkbox_VectorSink_OnOffSignal row\">" +
+		"<div class=\"col\">" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-autoscale-checkbox\" unchecked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-1\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-1-label\" style=\"display: inline\">Ch 1 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-2\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-2-1-label\" style=\"display: inline\">Ch 2 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-3\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-3-label\" style=\"display: inline\">Ch 3 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-4\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-4-label\" style=\"display: inline\">Ch 4 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-5\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-5-label\" style=\"display: inline\">Ch 5 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-6\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-6-label\" style=\"display: inline\">Ch 6 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-7\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-7-label\" style=\"display: inline\">Ch 7 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-8\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-8-label\" style=\"display: inline\">Ch 8 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-9\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-9-label\" style=\"display: inline\">Ch 9 </span></label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-10\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-10-label\" style=\"display: inline\">Ch 10 </span></label>&nbsp;" +
+		"</div>" +
 
 		"<div class=\"col\">" +
 		        "<button class=\"button zoom-in-button\"><i class=\"bi bi-zoom-in\"></i></button>" +
-		        "<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
+		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
-		        "<button class=\"button pause-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
-		        "<button class=\"button Inc-Average-button\"><i class=\"bi bi-bookmark-plus\"></i></button>" +
-		        "<button class=\"button Dec-Average-button\"><i class=\"bi bi-bookmark-dash\"></i></button>" +
-
+		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
 		"</div>" +
 
 
+		"<div style='display: none'>" +
+			"<br>" + 
+			"<p>Add Noise</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"noise-slider\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">" +
+			"<p class=\"noise-slider-value\" value=\"1\"></p> <br>" +
+			"<p>Amplitude</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"amplitude-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
+			"<p class=\"amplitude-slider-value\" value=\"1\"></p> " +
+			"<p>Offset</p>" +
+			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
+			"<input class=\"offset-slider\" type=\"range\" min=\"0\" max=\"100\" >" +
+			"<p class=\"offset-slider-value\" value=\"1\"></p> " +
+			"<br>" + 
+
+
+
+			"<form>" +
+			"  <select class=\"VectorSink_NumberOfPoints2Plot\">" + 
+			"    <option value=\"1024\"selected=\"selected\">1024 points</option>" + 
+			"    <option value=\"64\" >64 points</option>" + 
+			"    <option value=\"128\">128 points</option>" + 
+			"    <option value=\"256\">256 points</option>" + 
+			"    <option value=\"512\">512 points</option>" + 
+			"    <option value=\"2048\">2048 points</option>" + 
+			"    <option value=\"4096\">4096 points</option>" + 
+			"  </select>" + 
+			"</form>" +
+		"</div>" +
 	    "</div>"
-	    	    
 	);
 	
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
-
 	var $constChartDiv = self.$div.find(".vector-chart");
 	self.$gridCheckbox = self.$div.find(".vector-sink-grid-checkbox");
+	self.$autoscaleCheckbox = self.$div.find(".vector-sink-autoscale-checkbox");
+	self.$axisLabelsCheckbox = self.$div.find(".vector-sink-axis-labels-checkbox");
 	
-	self.minVectorSink=1;
-	self.minVectorSink=1;
-	self.zoomfactor=0;    
-	self.flagPauseRun=true;
-    self.averageCounter=1;
-    self.averageInput=1;
-    self.averageBuffer=Array(1024).fill(0);
+	//self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
+	//self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
+	self.$nop2plot = self.$div.find(".VectorSink_NumberOfPoints2Plot");
 
+	self.maxValueRealChannels = [0,0,0,0,0]
+	self.minValueRealChannels = [0,0,0,0,0]
+	self.maxValueImagChannels = [0,0,0,0,0]
+	self.minValueImagChannels = [0,0,0,0,0]
+
+	self.value = false;
+	self.choices = {
+		"true": "true",
+		"false": "false",
+	};
+
+	
+	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
+	//self.$checkboxValue.text(self.choices[self.value]);
+	
+	self.maxVectorSink=1;
+	self.minVectorSink=1;
+	self.zoomInVectorSink=1;
+    self.zoomOutVectorSink=1;
+    self.titleVectorSink='';
+    self.colorsVectorSink=[];
+    self.verticalnameVectorSink=" ";
+	self.yLabelVectorSink=" ";
+	self.yUnitVectorSink=" ";
+	self.pausePlayVectorSink=true;
+	self.minVerticalAxis=-1;
+	self.maxVerticalAxis=1;
+	self.firstVectorRun=true;
+//
 	//self.redraw = function() {
-	self.frequencyFactor = 0;
-	self.$vectorSinkFrequencySlider = self.$div.find(".frequency-slider"); // <input>
+	self.dynamicAmplitudeTimeVal = 0;
+	self.$timeSinkAmplitudeSlider = self.$div.find(".amplitude-slider"); // <input>
 	//self.$div.find(".frequency-slider").slider("option","max",10);	
-	self.$vectorSinkFrequencySliderValue = self.$div.find(".frequnecy-slider-value"); // <p>
+	self.$timeSinkAmplitudeSliderValue = self.$div.find(".amplitude-slider-value"); // <p>
 
-	self.changeVectorSinkFrequencySlider = function () {
-		self.$vectorSinkFrequencySliderValue.text(self.$vectorSinkFrequencySlider.val());
-  		self.frequencyFactor = self.$vectorSinkFrequencySlider.val();
+	self.changeTimeSinkAmplitudeSlider = function () {
+		self.$timeSinkAmplitudeSliderValue.text(self.$timeSinkAmplitudeSlider.val());
+  		self.dynamicAmplitudeTimeVal = self.$timeSinkAmplitudeSlider.val();
 
 		$.ajax({
 			type: "POST",
 			url: self.url, 
 			data: JSON.stringify({
-				"frequencyFactor": self.frequencyFactor
+				"dynamicAmplitudeTimeVal": self.dynamicAmplitudeTimeVal
 			}),
 			contentType: "application/json",
 			dataType: "json"
@@ -73,111 +133,165 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 			// TBD
 		});
 	};
-	self.changeVectorSinkFrequencySlider();
+	self.changeTimeSinkAmplitudeSlider();
 
-	self.$vectorSinkFrequencySlider.change(self.changeVectorSinkFrequencySlider);
+	self.$timeSinkAmplitudeSlider.change(self.changeTimeSinkAmplitudeSlider);
+//
+	//self.redraw = function() {
+	self.dynamicOffsetTimeVal = 0;
+	self.$timeSinkOffsetSlider = self.$div.find(".offset-slider"); // <input>
+	//self.$div.find(".frequency-slider").slider("option","max",10);	
+	self.$timeSinkOffsetSliderValue = self.$div.find(".offset-slider-value"); // <p>
 
+	self.changeTimeSinkOffsetSlider = function () {
+		self.$timeSinkOffsetSliderValue.text(self.$timeSinkOffsetSlider.val());
+  		self.dynamicOffsetTimeVal = self.$timeSinkOffsetSlider.val();
 
-	self.$div.find(".Inc-Average-button").click(function() {
-		self.averageInput += 1;
-	});
+		$.ajax({
+			type: "POST",
+			url: self.url, 
+			data: JSON.stringify({
+				"dynamicOffsetTimeVal": self.dynamicOffsetTimeVal
+			}),
+			contentType: "application/json",
+			dataType: "json"
+		}).done(function () {
+			// TBD
+		});
+	};
+	self.changeTimeSinkOffsetSlider();
 
-	self.$div.find(".Dec-Average-button").click(function() {
-		self.averageInput -= 1;
-		if (self.averageInput<1) self.averageInput = 1;
-	});
+	self.$timeSinkOffsetSlider.change(self.changeTimeSinkOffsetSlider);
+//
 
 	self.$div.find(".zoom-in-button").click(function() {
-		if(self.maxVectorSinkRe -self.minVectorSinkRe>2){
-	
-			self.zoomfactor -= 1;
-			if(self.zoomfactor>0) // to zoom outs
-			{	self.maximumView=Math.ceil(self.maxVectorSinkRe + (self.maxVectorSinkRe -self.minVectorSinkRe)*Math.pow(2,self.zoomfactor)/8);
-				self.minimumView=Math.floor(self.minVectorSinkRe - (self.maxVectorSinkRe -self.minVectorSinkRe)*Math.pow(2,self.zoomfactor)/8);
-			}
-			if(self.zoomfactor==0) 
-			{	self.maximumView=Math.ceil(self.maxVectorSinkRe);
-				self.minimumView=Math.floor(self.minVectorSinkRe);
-			}
-			if(self.zoomfactor<0) // to zoom in
-				var temp=(self.maxVectorSinkRe -self.minVectorSinkRe)/(2*Math.pow(2,Math.abs(self.zoomfactor)));
-			{	self.maximumView=Math.ceil(self.maxVectorSinkRe - temp);
-				self.minimumView=Math.floor(self.minVectorSinkRe + temp);
-			}
-		}
-		else self.zoomfactor=0
+		self.zoomInVectorSink += 1;
 	});
 	self.$div.find(".zoom-out-button").click(function() {
-		self.zoomfactor += 1;
-		if(self.zoomfactor>0)   // to zoom outs
-		{	self.maximumView=Math.ceil(self.maxVectorSinkRe + (self.maxVectorSinkRe -self.minVectorSinkRe)*Math.pow(2,self.zoomfactor)/8);
-			self.minimumView=Math.floor(self.minVectorSinkRe - (self.maxVectorSinkRe -self.minVectorSinkRe)*Math.pow(2,self.zoomfactor)/8);
-		}
-		if(self.zoomfactor==0) 
-		{	self.maximumView=Math.ceil(self.maxVectorSinkRe);
-			self.minimumView=Math.floor(self.minVectorSinkRe);
-		}
-		if(self.zoomfactor<0)  // to zoom in
-		{	var temp=(self.maxVectorSinkRe -self.minVectorSinkRe)/(2*Math.pow(2,Math.abs(self.zoomfactor)));
-			self.maximumView=Math.ceil(self.maxVectorSinkRe - temp);
-			self.minimumView=Math.floor(self.minVectorSinkRe + temp);
-		}
-		
+
+		self.zoomOutVectorSink += 1;
+	});
+	self.$div.find(".pause-play-button").click(function() {
+		self.pausePlayVectorSink ^= true;
 	});
 
+	//This commented code is to add noise slider
+	/*
+	self.noiseFactor = 0;
+	self.$timeSinkNoiseSlider = self.$div.find(".noise-slider"); // <input>
+	self.$timeSinkNoiseSliderValue = self.$div.find(".noise-slider-value"); // <p>
 
-	self.$div.find(".autoscale-button").click(function() {
-		self.zoomfactor=0
-		self.maximumView=Math.ceil(self.maxVectorSinkRe);
-		self.minimumView=Math.floor(self.minVectorSinkRe);
-	});
+	self.changeTimeSinkNoiseSlider = function () {
+		self.$timeSinkNoiseSliderValue.text(self.$timeSinkNoiseSlider.val());
+  		self.noiseFactor = self.$timeSinkNoiseSlider.val()*(self.maxTimeSinkRe-self.minTimeSinkRe)/100;
+	};
+	self.changeTimeSinkNoiseSlider();
 
-	self.$div.find(".pause-button").click(function() {
+	self.$timeSinkNoiseSlider.change(self.changeTimeSinkNoiseSlider);*/
+
+	//This commented code is to add pause button
+	/*self.$div.find(".pause-button").click(function() {
 		if (self.flagPauseRun==true) self.flagPauseRun=false;
 		else self.flagPauseRun=true;
-	});/**/
+	});*/
+	//self.$flagPauseRun="Run";
 
+	//self.$TimeSinkPauseButton = document.getElementById("myButton1");	
 
+	/*function RunPausePressed(el){
+		if (el.value=='Pause') self.$flagPauseRun='Run';
+		if (el.value=='Run') self.$flagPauseRun='Pause';
+	}/**/
+	
+
+	//self.$div.find(".time-sink-real-checkbox-1").closest("label").text('ssdss');
+	//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 	self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
+
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.redraw = function() {
 
 		var GridColor='#808080';
-			if(self.$gridCheckbox.is(':checked'))  {
+		if(self.$gridCheckbox.is(':checked'))  {
+				GridColor = '#808080'; }
+		else { 
+				GridColor = '#ffffff'; }
+		
+		
+		if(self.$axisLabelsCheckbox.is(':checked')){		
+			self.titleVAxis=self.yLabelVectorSink + " (" + self.yUnitVectorSink + ")";
+			self.titleHAxis=' ';
+		}
+		else{
+			self.titleVAxis=' ';
+			self.titleHAxis=' ';
+		}
+				
+	/*	var ZoomIn_factor;
+			if($("#time-sink-grid-checkbox").is(':checked'))  {
 				GridColor = '#808080'; }
 			else { 
-				GridColor = '#ffffff'; }
+				GridColor = '#ffffff'; }/**/
 				
 
 		self.options = {
-			title: 'Power Spectra',
+			title: self.titleVectorSink,
 			curveType: 'function',
-			legend: { position: 'bottom' },
+			legend: { position: 'right' },
 			hAxis: {
-				title: 'freq (Hz)',
+				title: self.titleHAxis,
 				gridlines: {
 				color: GridColor,
+				//title: self.yunit,
 			}
 			},
 			vAxis: {
 				viewWindow:{
-					/*min: self.minVectorSinkRe*(self.zoomOutVectorSink/self.zoomInVectorSink),
-					max: self.maxVectorSinkRe*(self.zoomOutVectorSink/self.zoomInVectorSink)/**/
-					min: self.minimumView,
-					max: self.maximumView
-				},
-				title: 'decibels (dB)',
+					min: self.minVerticalAxis,
+					max: self.maxVerticalAxis,
+				},/**/
+				title: self.titleVAxis,
 				gridlines: {
 				color: GridColor,
+				}
+	       	 },
+			explorer: { 
+        		actions: ['dragToZoom', 'rightClickToReset'],
+        		axis: 'horizontal',
+        		keepInBounds: true,
+        		maxZoomIn: 16.0
+			},	       	 
+//                        lineDashStyle: [4, 2],
+			// TODO: Marcos: move colors to series[0].color, so everything is in series
+			//colors: self.colorsTimeSink,
+          
+			
+			series: {
+        		0: 	{
+			    	},
+        		1: 	{ 
+
+
+			   		},
+        		2: 	{ 
+			   		},
+        		3: 	{ 
+			   		},
+        		4: 	{ 
+			    	},
+        		5: 	{ 
+			   		},
+        		6: 	{ 
+			   		},
+        		7: 	{ 
+			   		},
+        		8: 	{ 
+			   		},
+        		9: 	{ 
+			   		},
+			   
 			}
-	       },
-		explorer: {
-			actions: ['dragToZoom', 'rightClickToReset'],
-			axis: 'horizontal',
-			keepInBounds: true,
-			maxZoomIn: 4.0,
-		},
-		//colors: ['#e2431e', '#000000'],
 		};
 	
 	
@@ -195,53 +309,120 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 				console.log("No data");
 				return;
 			}
-
+			
 			var params = data.data.params;
-			var max_freqqq=params.x_start+params.x_step*(params.vlen-1)
-			self.$vectorSinkFrequencySlider.attr("min",params.x_start);
-			self.$vectorSinkFrequencySlider.attr("max",max_freqqq);
+			console.log(params);
+			console.log(data.data.data.streams[0][0]);
+					
+			var nconnections=params.nconnections;
+			self.fftsize=params.fftsize;
+			
+			self.titleVectorSink=params.name;
+			self.ymin=params.ymin;
+			self.ymax=params.ymax;
+			
+			self.colorsVectorSink=params.colors;
+			self.yLabelVectorSink=params.label;
+			self.yUnitVectorSink=params.units
+			
+			
+			//Remove all the unused channels from 5 to nconnections
+			for (var index = 10; index > nconnections; --index) 
+			{
+				self.$temp = self.$div.find(".vector-sink-real-checkbox-"+index);
+				self.$temp.parent().remove();
+			}
 
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
-			//console.log(self.frequencyFactor);
-			//console.log(data.data.data);/**/
+			//console.log(params.labels[0].replace(/'/g, ""));
+			//console.log(params.markers[0]);
 
-			var realData = data.data.data.streams[0];
 
+			var Number2plot = self.fftsize;
+			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
+
+
+			var columns = ["Point"];
+			var formattedData = [
+				columns
+			];
 			
-			if (self.averageCounter<self.averageInput){
+		    // self.options['series'] = {};
+
+
+			var enableReal=new Array(nconnections).fill(null);
+			var enableImag=new Array(nconnections).fill(null);
+			var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
+			//var realData=new Array(nconnections*Number2plot).fill(null);
 			
-				self.averageCounter=self.averageCounter+1;
-				for (var k=0; k<realData.length;++k){
-					self.averageBuffer[k]+=parseFloat(realData[k]);
-				}
+			if (self.pausePlayVectorSink==true){
+			
+			self.colorsVectorSink=[];
+			var chEnabledCounter=0;
+			for (var index=1;index<=nconnections;++index)
+			{	
+			//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
-			}
-			else{
-				//console.log(self.averageInput);	
-				self.minVectorSinkRe=self.averageBuffer[0];
-				self.maxVectorSinkRe=self.averageBuffer[0];/**/
-				self.averageCounter=0;
-				var formattedData = [
-					["Point", "Frequency"]
-					];
-
-				for (var pos = 0; pos < realData.length; ++pos) {
-					formattedData.push([ params.x_start+params.x_step*pos, self.averageBuffer[pos]]);
-					if(self.averageBuffer[pos] <self.minVectorSinkRe)
-						self.minVectorSinkRe=self.averageBuffer[pos]; 
-					if(self.averageBuffer[pos] >self.maxVectorSinkRe)
-						self.maxVectorSinkRe=self.averageBuffer[pos] ;
+        		if(self.$div.find(".vector-sink-real-checkbox-"+index).is(':checked'))  {
+					dataout[chEnabledCounter] = data.data.data.streams[0];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
+					//console.log(dataout[0]);					
+        			enableReal[index-1] = true; 
+        			self.$div.find(".vector-sink-real-checkbox-"+index+"-label").text(params.labels[index-1].replace(/'/g, ""));
+        			self.options.series[chEnabledCounter].color=params.colors[index-1];
+        			self.options.series[chEnabledCounter].lineWidth=params.widths[index-1];
+					columns.push(params.labels[index-1]);
 					
+        			
+        			//self.colorsTimeSink.push(params.colors[2*index-2]);
+        			chEnabledCounter=chEnabledCounter+1;
+        			}
+        		else { 
+        			enableReal[index-1] = false; 
+        			//self.options.series[chEnabledCounter].color='#ffffff';
+        			//chEnabledCounter=chEnabledCounter+1;
+        			//self.colorsTimeSink.push('#ffff00');
+        			//realData= new Array(realData.length).fill(null);
+        		}
+        		
+			}
+			if (chEnabledCounter!=0){
+			//var freqRes=self.bandwidth/self.fftsize
+			for (var pos = 0; pos < self.fftsize	; ++pos) {
+				var currentRow = [pos];
+				for (var idx = 0; idx < chEnabledCounter; ++idx){
+							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
+					currentRow.push(dataout[idx][pos]);
 				}
-				self.averageBuffer=Array(params.vlen).fill(0);
+				formattedData.push(currentRow);
+			}
+			//console.log(formattedData);
+			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+			self.chart.draw(dataTable, self.options);
+			
 
-				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-				if( self.flagPauseRun==true)
-					self.chart.draw(dataTable, self.options);
-				}
+			if(self.$autoscaleCheckbox.is(':checked'))  {
+				self.firstVectorRun=false;
+				self.minVectorSink=Math.min.apply(Math, dataout[0]);
+				self.maxVectorSink=Math.max.apply(Math, dataout[0]);
+				self.minVerticalAxis=self.minVectorSink*1.5*(self.zoomOutVectorSink/self.zoomInVectorSink);
+				self.maxVerticalAxis=self.maxVectorSink*1.5*(self.zoomOutVectorSink/self.zoomInVectorSink);
+			}
+			if(!self.$autoscaleCheckbox.is(':checked') &&  self.firstVectorRun==true)  {
+				self.minVerticalAxis=params.ymin;
+				self.maxVerticalAxis=params.ymax;
+			}
+
+			
+			}
+			}
+			
 		});
 	};
+
 }
 
 export default ReliaVectorSink;

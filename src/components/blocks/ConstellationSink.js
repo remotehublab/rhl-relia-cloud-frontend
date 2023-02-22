@@ -183,7 +183,7 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
 
-			var columns = ["s"];
+			var columns = ["real"];
 			var formattedData = [
 				columns
 			];
@@ -217,8 +217,8 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
         			enableReal[index-1] = true; 
         			self.$div.find(".const-sink-real-checkbox-"+index+"-label").text(params.labels[index-1].replace(/'/g, ""));
         			self.options.series[chEnabledCounter].color=params.colors[index-1];
-        			self.options.series[chEnabledCounter].lineWidth=params.widths[index-1];
-        			self.options.series[chEnabledCounter].lineDashStyle=params.styles[index-1];
+        			// self.options.series[chEnabledCounter].lineWidth=params.widths[index-1];
+        			// self.options.series[chEnabledCounter].lineDashStyle=params.styles[index-1];
         			self.options.series[chEnabledCounter].pointShape=params.markers[index-1];
 					if (self.options.series[chEnabledCounter].pointShape!="none"){
 	        			self.options.series[chEnabledCounter].pointSize=4*params.widths[index-1];
@@ -241,11 +241,20 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 			
 			if (chEnabledCounter!=0){
 			for (var pos = 0; pos < self.Number2plot; ++pos) {
-				var currentRow=[pos];
+
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
-					currentRow.push([dataout_real[idx][pos],dataout_imag[idx][pos]]);
+				    var currentRow=[ dataout_real[idx][pos] ];
+                    for (var i = 0; i < idx; ++i)
+                        currentRow.push(null);
+
+					currentRow.push(dataout_imag[idx][pos]);
+
+                    for (var i = idx+1; i < chEnabledCounter; ++i)
+                        currentRow.push(null);
+
+				    formattedData.push(currentRow);
 				}
-				formattedData.push(currentRow);				
+
 			}
 			console.log(formattedData);
 			

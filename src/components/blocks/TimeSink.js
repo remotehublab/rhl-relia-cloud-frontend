@@ -341,6 +341,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			//console.log(params.labels[0].replace(/'/g, ""));
 			//console.log(params.markers[0]);
 			//console.log('[3,1]');
+			console.log(data.data.data.streams[0][0]);
 
 			var Number2plot = self.$nop2plot.val();
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
@@ -366,7 +367,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 			var chEnabledCounter=0;
 			for (var index=1;index<=nconnections;++index)
 			{	
-			console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
+			//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
         		if(self.$div.find(".time-sink-real-checkbox-"+index).is(':checked'))  {
 					dataout[chEnabledCounter] = data.data.data.streams[index-1]['real'];

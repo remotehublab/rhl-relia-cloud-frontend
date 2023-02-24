@@ -12,9 +12,13 @@ var receiverName = '';
 var receiverContents = '';
 var userid = '';
 
+const TIMEFRAME_MS = 30000;
+
 const Loader = () => {
   window.API_BASE_URL = "/api/";
   const [google] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!google) {
       const head = document.head;
@@ -35,17 +39,23 @@ const Loader = () => {
       }
     }
 
+    const interval = setInterval(() => {
+      poll_call(navigate);
+      console.log('Polling');
+    }, TIMEFRAME_MS);
+
     return () => {
       let script = document.getElementById('googleChartsScript');
       if (script) {
         script.remove();
       }
+      clearInterval(interval);
     }
   }, [google]);
 
   return (
     <div className="App">
-    <div className="invisible">{JSON.stringify(getAuthentication())}</div>
+    <div className="invisible">{JSON.stringify(poll_call(navigate))}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
     <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
@@ -76,8 +86,9 @@ const Loader = () => {
         </div></form>
         </div>
         <div class="row">
-        All Tasks
         <div id="currentTasks"></div>
+        </div>
+        <div class="row">
         <div id="errorMessages"></div>
         </div>
 
@@ -155,14 +166,14 @@ class Main extends React.Component {
        method: 'POST',
        headers: {'relia-secret': 'password'},
        body: JSON.stringify(object),
-    }).then((response) => {
-       console.log(transmitterName);
-       console.log(receiverName);
+    }).then((response) => response.json())
+    .then((responseJson) => {
+       console.log(responseJson.taskIdentifier);
     });
   }
 
   handleCancellation(ev) {
-    let taskToCancel = document.getElementById('to_cancel').value;
+    let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
     let object = {
         "action": "delete",
     };
@@ -225,16 +236,15 @@ class Main extends React.Component {
   }
 }
 
-function loadUI () {
+function loadUI() {
     // var widgets = new ReliaWidgets($("#all-together"));
 }
 
-async function getAuthentication() {
-   const navigate = useNavigate();
-   return fetch('/user/auth')
+async function poll_call(navigate) {
+   return fetch('/user/poll')
    .then((response) => response.json())
    .then((responseJson) => {
-      if (responseJson.auth == false) {
+      if (responseJson.success == false) {
          console.log('Time to move');
          navigate('/login')
       }
@@ -246,8 +256,10 @@ async function getAuthentication() {
    });
 }
 
-function searchTasks() {
-    let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value;
+async function searchTasks() {
+    const navigate = useNavigate();
+    await poll_call(navigate);
+    let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value + '/' + userid;
     return fetch(taskToSearch, {
        method: 'GET',
        headers: {'relia-secret': 'password'}
@@ -267,7 +279,8 @@ function searchTasks() {
 }
 
 async function getCurrentTasks() {
-   await getAuthentication();
+   const navigate = useNavigate();
+   await poll_call(navigate);
    return fetch('/scheduler/user/all-tasks/' + userid, {
       method: 'GET',
       headers: {'relia-secret': 'password'}
@@ -279,6 +292,9 @@ async function getCurrentTasks() {
       }
       const rootTasks = ReactDOM.createRoot(document.getElementById("currentTasks"));
       let tasksToRender = [];
+      if (responseJson.ids.length > 0) {
+         tasksToRender.push(<div><b>All Tasks</b>{"\n"}</div>);
+      }
       for (let i = 0; i < responseJson.ids.length; i++) {
          tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with receiver " + responseJson.receivers[i] + " and transmitter " + responseJson.transmitters[i] + ".\n"}</div>);
       }
@@ -291,7 +307,8 @@ async function getCurrentTasks() {
 }
 
 async function getErrorMessages() {
-   await getAuthentication();
+   const navigate = useNavigate();
+   await poll_call(navigate);
    return fetch('/scheduler/user/error-messages/' + userid, {
        method: 'GET',
        headers: {'relia-secret': 'password'}
@@ -304,7 +321,7 @@ async function getErrorMessages() {
      const rootTasks = ReactDOM.createRoot(document.getElementById("errorMessages"));
      let errorsToRender = [];
      if (responseJson.ids.length > 0) {
-         errorsToRender.push(<div>{"Most Recent Error Messages\n"}</div>);
+         errorsToRender.push(<div><b>Most Recent Error Messages</b>{"\n"}</div>);
      }
      for (let i = 0; i < responseJson.ids.length; i++) {
          errorsToRender.push(<div>{"Task " + responseJson.ids[i] + " encountered the following error: " + responseJson.errors[i] + "\n"}</div>);

@@ -148,16 +148,8 @@ class Main extends React.Component {
 
   handleUserAPI(ev) {
     let object = {
-       "grc_files": {
-          "receiver": {
-              "filename": receiverName,
-              "content": receiverContents
-          },
-          "transmitter": {
-             "filename": transmitterName,
-             "content": transmitterContents
-          },
-       },
+       "r_filename": receiverName,
+       "t_filename": transmitterName,
        "priority": 10,
        "session_id": "session_id1"
     };

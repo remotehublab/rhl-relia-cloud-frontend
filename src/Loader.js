@@ -113,6 +113,7 @@ class Main extends React.Component {
 
 
   handleUploadGRC_transmitter(ev) {
+    ev.preventDefault();
 
     const data = new FormData();
     data.append('file', this.uploadInput_transmitter.files[0]);
@@ -130,6 +131,7 @@ class Main extends React.Component {
   }
 
   handleUploadGRC_receiver(ev) {
+    ev.preventDefault();
 
     const data = new FormData();
     data.append('file', this.uploadInput_receiver.files[0]);
@@ -147,6 +149,8 @@ class Main extends React.Component {
   }
 
   handleUserAPI(ev) {
+    ev.preventDefault();
+
     let object = {
        "r_filename": receiverName,
        "t_filename": transmitterName,
@@ -160,11 +164,15 @@ class Main extends React.Component {
        body: JSON.stringify(object),
     }).then((response) => response.json())
     .then((responseJson) => {
-       console.log(responseJson.taskIdentifier);
+       if (responseJson.success) {
+          window.location.href = 'http://localhost:3000/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
+       }
     });
   }
 
   handleCancellation(ev) {
+    ev.preventDefault();
+
     let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
     let object = {
         "action": "delete",
@@ -177,8 +185,6 @@ class Main extends React.Component {
     }).then((response) => {
        console.log(taskToCancel);
     });
-
-    window.location.reload(true);
   }
 
   render() {

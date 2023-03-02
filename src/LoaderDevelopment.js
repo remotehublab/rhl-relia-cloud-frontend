@@ -57,6 +57,11 @@ const LoaderDevelopment = () => {
           console.log("Uh oh... are you sure you are logged in?");
         } else {
           status = responseJson.status;
+          const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+          let status_to_render = [];
+          status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
+          status_to_render.push(<div>Time Remaining: {TIME_REMAINING} seconds</div>);
+          status_bar.render(status_to_render);
           if (RECEIVER_FLAG == 0) {
             if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
               RECEIVER_FLAG = 1;
@@ -110,9 +115,7 @@ const LoaderDevelopment = () => {
 
   return (
     <div className="App">
-    Task {taskId} is {status}
-    <br />
-    Time Remaining: {TIME_REMAINING} seconds
+    <div id="statusBar"></div>
   
     <div id="all-together-transmitter" class="row"></div>
     <div id="all-together-receiver" class="row"></div>

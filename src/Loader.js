@@ -13,11 +13,11 @@ var receiverContents = '';
 var userid = '';
 
 const TIMEFRAME_MS = 30000;
+const URL = 'http://localhost:3000'
 
 const Loader = () => {
   window.API_BASE_URL = "/api/";
   const [google] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!google) {
@@ -40,7 +40,7 @@ const Loader = () => {
     }
 
     const interval = setInterval(() => {
-      poll_call(navigate);
+      poll_call();
       console.log('Polling');
     }, TIMEFRAME_MS);
 
@@ -55,7 +55,7 @@ const Loader = () => {
 
   return (
     <div className="App">
-    <div className="invisible">{JSON.stringify(poll_call(navigate))}</div>
+    <div className="invisible">{JSON.stringify(poll_call())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
     <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
@@ -84,6 +84,7 @@ const Loader = () => {
         <form onSubmit={searchTasks}><div>
 	   <button id="searchButton">Search</button>
         </div></form>
+        <div id="searchStatus"></div>
         </div>
         <div class="row">
         <div id="currentTasks"></div>
@@ -165,7 +166,7 @@ class Main extends React.Component {
     }).then((response) => response.json())
     .then((responseJson) => {
        if (responseJson.success) {
-          window.location.href = 'http://localhost:3000/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
+          window.location.href = URL + '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
        }
     });
   }
@@ -185,6 +186,8 @@ class Main extends React.Component {
     }).then((response) => {
        console.log(taskToCancel);
     });
+
+    window.location.reload(true);
   }
 
   render() {
@@ -238,13 +241,13 @@ function loadUI() {
     // var widgets = new ReliaWidgets($("#all-together"));
 }
 
-async function poll_call(navigate) {
+async function poll_call() {
    return fetch('/user/poll')
    .then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success == false) {
          console.log('Time to move');
-         navigate('/login')
+         window.location.href = URL + '/login';
       }
       userid = responseJson.user_id;
       return responseJson;
@@ -254,9 +257,10 @@ async function poll_call(navigate) {
    });
 }
 
-async function searchTasks() {
-    const navigate = useNavigate();
-    await poll_call(navigate);
+async function searchTasks(ev) {
+    ev.preventDefault();
+
+    await poll_call();
     let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value + '/' + userid;
     return fetch(taskToSearch, {
        method: 'GET',
@@ -267,7 +271,10 @@ async function searchTasks() {
        if (responseJson.success == false) {
           console.log("Uh oh... are you sure you are logged in?");
        } else {
-          alert(responseJson.status);
+          const status_result = ReactDOM.createRoot(document.getElementById("searchStatus"));
+          let value = [];
+          value.push(<div><b>Status</b><br />{ responseJson.status }</div>);
+          status_result.render(value);
        }
     })
     .catch((error) => {
@@ -277,8 +284,7 @@ async function searchTasks() {
 }
 
 async function getCurrentTasks() {
-   const navigate = useNavigate();
-   await poll_call(navigate);
+   await poll_call();
    return fetch('/scheduler/user/all-tasks/' + userid, {
       method: 'GET',
       headers: {'relia-secret': 'password'}
@@ -305,8 +311,7 @@ async function getCurrentTasks() {
 }
 
 async function getErrorMessages() {
-   const navigate = useNavigate();
-   await poll_call(navigate);
+   await poll_call();
    return fetch('/scheduler/user/error-messages/' + userid, {
        method: 'GET',
        headers: {'relia-secret': 'password'}

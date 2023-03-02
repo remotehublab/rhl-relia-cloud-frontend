@@ -10,7 +10,7 @@ const TIMEFRAME2_MS = 1000;
 var STEPPER = 0;
 var RECEIVER_FLAG = 0;
 var TRANSMITTER_FLAG = 0;
-var TIME_REMAINING = 30;
+var TIME_REMAINING = 60;
   
 const LoaderDevelopment = () => {
   window.API_BASE_URL = "/api/";

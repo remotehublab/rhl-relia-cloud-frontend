@@ -1,7 +1,7 @@
 import './App.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
-import { ReliaWidgets } from "./components/blocks/loader.js";
+import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate, useParams } from 'react-router-dom';
 
@@ -11,9 +11,13 @@ var STEPPER = 0;
 var RECEIVER_FLAG = 0;
 var TRANSMITTER_FLAG = 0;
 var TIME_REMAINING = 60;
+var SESSION_ID = '';
   
 const LoaderDevelopment = () => {
   window.API_BASE_URL = "/api/";
+  window.SCHEDULER_URL = 'http://localhost:6002/';
+  window.RECEIVER_DISPLAYED = 0;
+  window.TRANSMITTER_DISPLAYED = 0;
   const [google] = useState(null);
   const navigate = useNavigate();
   const { userId, taskId } = useParams();
@@ -39,7 +43,7 @@ const LoaderDevelopment = () => {
 
     const interval = setInterval(() => {
       if (STEPPER == 1) {
-        navigate('/loader')
+        leavePage(navigate, taskId);
       }
       STEPPER = STEPPER + 1;
     }, TIMEFRAME_MS);
@@ -56,6 +60,7 @@ const LoaderDevelopment = () => {
         if (responseJson.success == false) {
           console.log("Uh oh... are you sure you are logged in?");
         } else {
+          SESSION_ID = responseJson.session_id;
           status = responseJson.status;
           const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
           let status_to_render = [];
@@ -90,7 +95,7 @@ const LoaderDevelopment = () => {
           if (TRANSMITTER_FLAG == 0) {
             if (status == "transmitter still processing" || status == "fully assigned") {
               TRANSMITTER_FLAG = 1;
-              loadUIReceiver(responseJson.transmitter);    
+              loadUITransmitter(responseJson.transmitter);    
             }
           }
         }
@@ -110,7 +115,7 @@ const LoaderDevelopment = () => {
 
   const handleNavigate = ev => {
     ev.preventDefault();
-    navigate('/loader');
+    leavePage(navigate, taskId);
   };
 
   return (
@@ -131,11 +136,29 @@ const LoaderDevelopment = () => {
 };
 
 function loadUITransmitter(device_id) {
-    var widgets = new ReliaWidgets($("#all-together-transmitter"), device_id);
+    const interval5 = setInterval(() => {
+      if (window.RECEIVER_DISPLAYED == 0) {
+        var widgets = new ReliaWidgets($("#all-together-transmitter"), device_id, SESSION_ID, "transmitter");
+      }
+    }, TIMEFRAME2_MS);
 }
 
 function loadUIReceiver(device_id) {
-    var widgets2 = new ReliaWidgets($("#all-together-receiver"), device_id);
+    const interval5 = setInterval(() => {
+      if (window.RECEIVER_DISPLAYED == 0) {
+        var widgets2 = new ReliaWidgets($("#all-together-receiver"), device_id, SESSION_ID, "receiver");
+      }
+    }, TIMEFRAME2_MS);
+}
+
+async function leavePage(navigate, taskId) {
+    await fetch("{window.SCHEDULER_URL}scheduler/devices/tasks/receiver_timeout/{taskId}?max_seconds=5", {
+      method: 'POST'
+    });
+    await fetch("{window.SCHEDULER_URL}scheduler/devices/tasks/transmitter_timeout/{taskId}?max_seconds=5", {
+      method: 'POST'
+    });
+    navigate('/loader')
 }
 
 export default LoaderDevelopment;

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIdentifier) {
+export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIdentifier, session_id) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -64,7 +64,7 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 
     self.chart = new window.google.visualization.ScatterChart($constChartDiv[0]);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
 	
 	self.redraw = function() {
 	

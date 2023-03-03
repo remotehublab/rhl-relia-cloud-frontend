@@ -2,7 +2,7 @@ import $ from 'jquery';
 import useScript from '../../useScript';
 
 
-export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifier) {
+export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifier, session_id) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -17,7 +17,7 @@ export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifie
 	
 	self.chart = new window.google.visualization.Histogram($constChartDiv[0]);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
 
 	self.redraw = function() {
 

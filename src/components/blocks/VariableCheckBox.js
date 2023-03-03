@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function ReliaVariableCheckBox($divElement, deviceIdentifier, blockIdentifier) {
+export function ReliaVariableCheckBox($divElement, deviceIdentifier, blockIdentifier, session_id) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -13,7 +13,7 @@ export function ReliaVariableCheckBox($divElement, deviceIdentifier, blockIdenti
 	    "</div>"
 	);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
 
 	self.stateInitialized = false;
 	self.value = false;

@@ -4,7 +4,7 @@ import slugify from 'react-slugify';
 
 window.reliaVariableChooserIdentifierNumber = 0;
 
-export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentifier) {
+export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentifier, session_id) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -14,7 +14,7 @@ export function ReliaVariableChooser($divElement, deviceIdentifier, blockIdentif
 	    "</div>"
 	);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
 
 	window.reliaVariableChooserIdentifierNumber = window.reliaVariableChooserIdentifierNumber + 1;
 

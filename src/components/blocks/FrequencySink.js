@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
+export function FrequencySink($divElement, deviceIdentifier, blockIdentifier, session_id) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -207,7 +207,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 	self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
 
 	self.redraw = function() {
 

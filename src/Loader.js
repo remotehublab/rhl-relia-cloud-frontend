@@ -13,7 +13,6 @@ var receiverContents = '';
 var userid = '';
 
 const TIMEFRAME_MS = 30000;
-const URL = 'http://localhost:3000'
 
 const Loader = () => {
   window.API_BASE_URL = "/api/";
@@ -166,7 +165,7 @@ class Main extends React.Component {
     }).then((response) => response.json())
     .then((responseJson) => {
        if (responseJson.success) {
-          window.location.href = URL + '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
+          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
        }
     });
   }
@@ -247,7 +246,7 @@ async function poll_call() {
    .then((responseJson) => {
       if (responseJson.success == false) {
          console.log('Time to move');
-         window.location.href = URL + '/login';
+         window.location.href = '/login';
       }
       userid = responseJson.user_id;
       return responseJson;

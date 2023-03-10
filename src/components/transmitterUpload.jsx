@@ -17,12 +17,12 @@ class TransmitterUpload extends React.Component {
     const data = new FormData();
     data.append('file', this.uploadInput.files[0]);
 
-    fetch('http://localhost:3000/user/upload_t', {
+    fetch('/user/upload_t', {
       method: 'POST',
       body: data,
     }).then((response) => {
       response.json().then((body) => {
-        this.setState({ grcURL: `http://localhost:3000/${body.file}` });
+        this.setState({ grcURL: `/${body.file}` });
       });
     });
 

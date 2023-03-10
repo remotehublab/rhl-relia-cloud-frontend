@@ -374,7 +374,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier, se
         			self.options.series[chEnabledCounter].color=params.colors[index-1];
         			self.options.series[chEnabledCounter].lineWidth=params.widths[index-1];
 					columns.push(params.labels[index-1]);
-					console.log(params);
+					//console.log(params);
 					
         			
         			//self.colorsTimeSink.push(params.colors[2*index-2]);

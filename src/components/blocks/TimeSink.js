@@ -101,8 +101,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 	
 	self.maxTimeSink=1;
 	self.minTimeSink=1;
-	self.zoomInTimeSink=1;
-    self.zoomOutTimeSink=1;
+    //self.zoomOutTimeSink=1;
     self.titleTimeSink='';
     self.colorsTimeSink=[];
     self.verticalnameTimeSink=" ";
@@ -111,6 +110,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 	self.pausePlayTimeSink=true;
 	self.yminTimeSink=-1;
 	self.ymaxTimeSink=1;
+	self.zoomStep=0;
+	self.zoomFactor=0;
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -166,11 +167,12 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 //
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInTimeSink += 1;
+		self.zoomFactor += 1;
+		self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
 	});
 	self.$div.find(".zoom-out-button").click(function() {
-
-		self.zoomOutTimeSink += 1;
+		self.zoomFactor -= 1;
+		self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);		
 	});
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayTimeSink ^= true;
@@ -249,8 +251,10 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 			},
 			vAxis: {
 				viewWindow:{
-					min: self.minTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink),
-					max: self.maxTimeSink*1.5*(self.zoomOutTimeSink/self.zoomInTimeSink)
+					//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
+					//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
+					min: self.minTimeSink*1.0 + self.zoomFactor*self.zoomStep,
+					max: self.maxTimeSink*1.0 - self.zoomFactor*self.zoomStep
 				},/**/
 				/*viewWindow:{
 					
@@ -340,8 +344,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
 			//console.log(params.markers[0]);
-			//console.log('[3,1]');
-			console.log(data.data.data.streams[0][0]);
+			//console.log(self.zoomStep,self.zoomFactor,self.minTimeSink,self.maxTimeSink,self.zoomStep);
+			//console.log(data.data.data.streams[0]['real']);
 
 			var Number2plot = self.$nop2plot.val();
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
@@ -448,18 +452,27 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier, se
 				}
 				formattedData.push(currentRow);
 			}
-			console.log(formattedData);
+			//console.log(formattedData);
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			self.chart.draw(dataTable, self.options);
 			
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				self.minTimeSink=Math.min.apply(Math, dataout[0]);
-				self.maxTimeSink=Math.max.apply(Math, dataout[0]);
+				var tempmax=new Array(chEnabledCounter).fill(null);
+				var tempmin=new Array(chEnabledCounter).fill(null);
+				for (var v=0; v<chEnabledCounter;++v){
+					tempmax[v]=Math.max.apply(Math, dataout[v]);
+					tempmin[v]=Math.min.apply(Math, dataout[v]);
+				}
+				self.maxTimeSink=Math.max.apply(Math, tempmax);
+				self.minTimeSink=Math.min.apply(Math, tempmin);
+				self.zoomStep=0;
+				self.zoomFactor=0;
 			}
+			else self.zoomStep=0.07*Math.abs(self.minTimeSink-self.maxTimeSink);
 
 			
 			}
-			}
+		}
 			
 		});
 	};

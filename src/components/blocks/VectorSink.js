@@ -17,7 +17,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 	    "<div class=\"Checkbox_VectorSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-autoscale-checkbox\" unchecked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
 
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-1\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-1-label\" style=\"display: inline\">Ch 1 </span></label>&nbsp;" +
@@ -99,8 +99,8 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 	
 	self.maxVectorSink=1;
 	self.minVectorSink=1;
-	self.zoomInVectorSink=1;
-    self.zoomOutVectorSink=1;
+	//self.zoomInVectorSink=1;
+    //self.zoomOutVectorSink=1;
     self.titleVectorSink='';
     self.colorsVectorSink=[];
     self.verticalnameVectorSink=" ";
@@ -110,6 +110,8 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 	self.minVerticalAxis=-1;
 	self.maxVerticalAxis=1;
 	self.firstVectorRun=true;
+	self.zoomStep=0;
+	self.zoomFactor=0;
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -165,11 +167,13 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 //
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInVectorSink += 1;
+		self.zoomFactor += 1;
+		self.$div.find(".vector-sink-autoscale-checkbox").prop('checked', false);				
 	});
 	self.$div.find(".zoom-out-button").click(function() {
 
-		self.zoomOutVectorSink += 1;
+		self.zoomFactor -= 1;
+		self.$div.find(".vector-sink-autoscale-checkbox").prop('checked', false);		
 	});
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayVectorSink ^= true;
@@ -248,8 +252,10 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			},
 			vAxis: {
 				viewWindow:{
-					min: self.minVerticalAxis,
-					max: self.maxVerticalAxis,
+					//min: self.minVerticalAxis,
+					//max: self.maxVerticalAxis,
+					min: self.minVectorSink*1.0 + self.zoomFactor*self.zoomStep,
+					max: self.maxVectorSink*1.0 - self.zoomFactor*self.zoomStep					
 				},/**/
 				title: self.titleVAxis,
 				gridlines: {
@@ -312,10 +318,10 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			
 			var params = data.data.params;
 			console.log(params);
-			console.log(data.data.data.streams[0][0]);
+			//console.log(data.data.data.streams[1]['x']);
 					
 			var nconnections=params.nconnections;
-			self.fftsize=params.fftsize;
+			self.vlen=params.vlen;
 			
 			self.titleVectorSink=params.name;
 			self.ymin=params.ymin;
@@ -336,7 +342,8 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
-			//console.log(params.markers[0]);
+			//console.log(self.fftsize);
+			console.log(self.zoomStep,self.zoomFactor,self.minVectorSink,self.maxVectorSink);
 
 
 			var Number2plot = self.fftsize;
@@ -353,7 +360,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 
 			var enableReal=new Array(nconnections).fill(null);
 			var enableImag=new Array(nconnections).fill(null);
-			var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
+			var dataout = Array.from(Array(self.vlen), () => new Array(nconnections));
 			//var realData=new Array(nconnections*Number2plot).fill(null);
 			
 			if (self.pausePlayVectorSink==true){
@@ -365,7 +372,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
         		if(self.$div.find(".vector-sink-real-checkbox-"+index).is(':checked'))  {
-					dataout[chEnabledCounter] = data.data.data.streams[0];
+					dataout[chEnabledCounter] = data.data.data.streams[index-1]['x'];
 					$.each(dataout[chEnabledCounter], function (pos, value) {
 						dataout[chEnabledCounter][pos] = parseFloat(value);
 					});
@@ -391,7 +398,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			}
 			if (chEnabledCounter!=0){
 			//var freqRes=self.bandwidth/self.fftsize
-			for (var pos = 0; pos < self.fftsize	; ++pos) {
+			for (var pos = 0; pos < self.vlen	; ++pos) {
 				var currentRow = [pos];
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
@@ -405,24 +412,27 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier, 
 			
 
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				self.firstVectorRun=false;
-				self.minVectorSink=Math.min.apply(Math, dataout[0]);
-				self.maxVectorSink=Math.max.apply(Math, dataout[0]);
-				self.minVerticalAxis=self.minVectorSink*1.5*(self.zoomOutVectorSink/self.zoomInVectorSink);
-				self.maxVerticalAxis=self.maxVectorSink*1.5*(self.zoomOutVectorSink/self.zoomInVectorSink);
+				var tempmax=new Array(chEnabledCounter).fill(null);
+				var tempmin=new Array(chEnabledCounter).fill(null);
+				for (var v=0; v<chEnabledCounter;++v){
+					tempmax[v]=Math.max.apply(Math, dataout[v]);
+					tempmin[v]=Math.min.apply(Math, dataout[v]);
+				}
+				self.maxVectorSink=Math.max.apply(Math, tempmax);
+				self.minVectorSink=Math.min.apply(Math, tempmin);
+				self.zoomStep=0;
+				self.zoomFactor=0;
 			}
-			if(!self.$autoscaleCheckbox.is(':checked') &&  self.firstVectorRun==true)  {
-				self.minVerticalAxis=params.ymin;
-				self.maxVerticalAxis=params.ymax;
-			}
+			else self.zoomStep=0.07*Math.abs(self.minVectorSink-self.maxVectorSink);
 
 			
 			}
-			}
+		}
 			
 		});
 	};
 
 }
+
 
 export default ReliaVectorSink;

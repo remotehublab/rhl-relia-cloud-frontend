@@ -98,11 +98,12 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 					min: self.minConstSink*1.5*(self.zoomOutConstSink/self.zoomInConstSink),
 					max: self.maxConstSink*1.5*(self.zoomOutConstSink/self.zoomInConstSink)
 				},/**/
+
 				viewWindow:{
 					
 					
-					min: -3,
-					max: 3
+					min: -18,
+					max: 18	
 				},/**/
 				title: 'Quadrature',
 			gridlines: {
@@ -256,15 +257,18 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 				}
 
 			}
-			console.log(formattedData);
+			//console.log(formattedData);
 			
 			
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			self.chart.draw(dataTable, self.options);
 			
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				self.minTimeSink=Math.min.apply(Math, dataout_real[0]);
-				self.maxTimeSink=Math.max.apply(Math, dataout_imag[0]);
+				//self.minTimeSink=Math.min.apply(Math, dataout_real[0]);
+				//self.maxTimeSink=Math.max.apply(Math, dataout_imag[0]);
+				self.minTimeSink=-18;
+				self.maxTimeSink=18;
+				
 			}
 
 			

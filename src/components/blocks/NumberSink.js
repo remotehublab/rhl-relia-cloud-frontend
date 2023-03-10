@@ -2,7 +2,7 @@ import $ from 'jquery';
 import useScript from '../../useScript';
 
 
-export function ReliaNumberSink($divElement, deviceIdentifier, blockIdentifier, session_id) {
+export function ReliaNumberSink($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -17,7 +17,7 @@ export function ReliaNumberSink($divElement, deviceIdentifier, blockIdentifier, 
 	//window.google.charts.setOnLoadCallback(drawChart);
 	self.chart = new window.google.visualization.BarChart($constChartDiv[0]);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.redraw = function() {
 

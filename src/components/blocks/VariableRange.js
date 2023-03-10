@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifier, session_id) {
+export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -13,7 +13,7 @@ export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifie
 	    "</div>"
 	);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.value = 0;
 

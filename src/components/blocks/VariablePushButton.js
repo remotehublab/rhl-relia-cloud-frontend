@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
 
-export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIdentifier, session_id) {
+export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 
 	self.$div = $divElement;
@@ -12,7 +12,7 @@ export function ReliaVariablePushButton($divElement, deviceIdentifier, blockIden
 		"</div>"
 	);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier + "/" + session_id;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.stateInitialized = false;
 

@@ -1,7 +1,7 @@
 import './App.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
-import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
+import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate, useParams } from 'react-router-dom';
 

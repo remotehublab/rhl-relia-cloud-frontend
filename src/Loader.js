@@ -154,8 +154,7 @@ class Main extends React.Component {
     let object = {
        "r_filename": receiverName,
        "t_filename": transmitterName,
-       "priority": 10,
-       "session_id": "session_id1"
+       "priority": 10
     };
 
     fetch('/user/route/' + userid, {

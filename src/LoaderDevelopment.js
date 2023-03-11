@@ -15,7 +15,7 @@ var SESSION_ID = '';
   
 const LoaderDevelopment = () => {
   window.API_BASE_URL = "/api/";
-  window.SCHEDULER_URL = 'http://localhost:6002/';
+  window.SCHEDULER_BASE_URL = "/scheduler/";
   window.RECEIVER_DISPLAYED = 0;
   window.TRANSMITTER_DISPLAYED = 0;
   const [google] = useState(null);
@@ -41,15 +41,48 @@ const LoaderDevelopment = () => {
       }
     }
 
+    let timeToGet = '/scheduler/user/get-task-time/' + taskId + '/' + userId;
+    fetch(timeToGet, {
+      method: 'GET',
+      headers: {'relia-secret': 'password'}
+    }).then((response) => response.json())
+    .then((responseJson) => {
+      TIME_REMAINING = parseInt(responseJson.timeRemaining);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
     const interval = setInterval(() => {
-      if (STEPPER == 1) {
-        leavePage(navigate, taskId);
+      if (TIME_REMAINING <= 0) {
+        fetch('/scheduler/user/complete-tasks/' + taskId + '/' + userId, {
+          method: 'GET',
+          headers: {'relia-secret': 'password'}
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson.status);
+          navigate('/loader')
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       }
-      STEPPER = STEPPER + 1;
-    }, TIMEFRAME_MS);
+      TIME_REMAINING = TIME_REMAINING - 1;
+      fetch('/scheduler/user/set-task-time/' + taskId + '/' + userId + '/' + TIME_REMAINING.toString(), {
+        method: 'GET',
+        headers: {'relia-secret': 'password'}
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("Time updated");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }, TIMEFRAME2_MS);
 
     const interval2 = setInterval(() => {
-      TIME_REMAINING = TIME_REMAINING - 1;
       let taskToSearch = '/scheduler/user/tasks/' + taskId + '/' + userId;
       return fetch(taskToSearch, {
         method: 'GET',
@@ -115,7 +148,17 @@ const LoaderDevelopment = () => {
 
   const handleNavigate = ev => {
     ev.preventDefault();
-    leavePage(navigate, taskId);
+    fetch(window.SCHEDULER_BASE_URL + 'user/complete-tasks/' + taskId + '/' + userId, {
+      method: 'GET',
+      headers: {'relia-secret': 'password'}
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson.status);
+      navigate('/loader')
+    }).catch((error) => {
+      console.log(error);
+    });
   };
 
   return (
@@ -125,7 +168,7 @@ const LoaderDevelopment = () => {
     <div id="all-together-transmitter" class="row"></div>
     <div id="all-together-receiver" class="row"></div>
 
-    <form onSubmit={handleNavigate}><div>
+    <form onClick={handleNavigate}><div>
     <button class="btn btn-lg btn-primary" id="runButton">Return to File Upload</button>
     </div></form>
 	
@@ -137,8 +180,8 @@ const LoaderDevelopment = () => {
 
 function loadUITransmitter(device_id) {
     const interval5 = setInterval(() => {
-      if (window.RECEIVER_DISPLAYED == 0) {
-        var widgets = new ReliaWidgets($("#all-together-transmitter"), device_id, SESSION_ID, "transmitter");
+      if (window.TRANSMITTER_DISPLAYED == 0) {
+        var widgets = new ReliaWidgets($("#all-together-transmitter"), device_id, "transmitter");
       }
     }, TIMEFRAME2_MS);
 }
@@ -146,19 +189,9 @@ function loadUITransmitter(device_id) {
 function loadUIReceiver(device_id) {
     const interval5 = setInterval(() => {
       if (window.RECEIVER_DISPLAYED == 0) {
-        var widgets2 = new ReliaWidgets($("#all-together-receiver"), device_id, SESSION_ID, "receiver");
+        var widgets2 = new ReliaWidgets($("#all-together-receiver"), device_id, "receiver");
       }
     }, TIMEFRAME2_MS);
-}
-
-async function leavePage(navigate, taskId) {
-    await fetch("{window.SCHEDULER_URL}scheduler/devices/tasks/receiver_timeout/{taskId}?max_seconds=5", {
-      method: 'POST'
-    });
-    await fetch("{window.SCHEDULER_URL}scheduler/devices/tasks/transmitter_timeout/{taskId}?max_seconds=5", {
-      method: 'POST'
-    });
-    navigate('/loader')
 }
 
 export default LoaderDevelopment;

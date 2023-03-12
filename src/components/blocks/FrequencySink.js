@@ -95,13 +95,17 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	
 	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
 	//self.$checkboxValue.text(self.choices[self.value]);
+	self.ttemp = new Array(4);
+	for (var i = 0; i < self.ttemp.length; i++) {
+		self.ttemp[i] = new Array(2048).fill(0);
+	}
 	
 	self.maxFreqSink=1;
 	self.minFreqSink=1;
 	self.zoomInFreqSink=1;
     self.zoomOutFreqSink=1;
     self.titleFreqSink='';
-    self.colorsFreqSink=[];
+    //self.colorsFreqSink=[];
     self.verticalnameFreqSink=" ";
 	self.yLabelFreqSink=" ";
 	self.yUnitFreqSink=" ";
@@ -109,6 +113,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	self.minVerticalAxis=-1;
 	self.maxVerticalAxis=1;
 	self.firstFreqRun=true;
+	self.avgCounter=0;
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -319,8 +324,9 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			self.bandwidth=params.bw;
 			self.ymin=params.ymin;
 			self.ymax=params.ymax;
+			self.average=params.average
 			
-			self.colorsFreqSink=params.colors;
+			//self.colorsFreqSink=params.colors;
 			self.yLabelFreqSink=params.label;
 			self.yUnitFreqSink=params.units
 			
@@ -335,7 +341,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
-			//console.log(params.markers[0]);
+			console.log(params);
 
 
 			var Number2plot = self.fftsize;
@@ -353,11 +359,14 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			var enableReal=new Array(nconnections).fill(null);
 			var enableImag=new Array(nconnections).fill(null);
 			var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
+			//var ttemp = Array.from(Array(self.fftsize), () => new Array(nconnections));
+
+			//int[][] matrixxx = new dataType[5][1024];
 			//var realData=new Array(nconnections*Number2plot).fill(null);
 			
 			if (self.pausePlayFreqSink==true){
 			
-			self.colorsFreqSink=[];
+			//self.colorsFreqSink=[];
 			var chEnabledCounter=0;
 			for (var index=1;index<=nconnections;++index)
 			{	
@@ -389,13 +398,31 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
         		}
         		
 			}
+			//console.log(ttemp[0][0])	
+			if (self.avgCounter<4){
+			$.each(self.ttemp, function(rowIndex, row) {
+  				$.each(row, function(colIndex, value) {
+    				self.ttemp[rowIndex][colIndex] += dataout[rowIndex][colIndex];
+  				});
+			});
+
+			self.avgCounter+=1;
+			//for (var avgCounter=0;avgCounter<1;++avgCounter){	
+				
+			}
+			else{
+
+			self.avgCounter=0;	
+			//console.log(typeof data.data.data.streams[0]['real'])
 			if (chEnabledCounter!=0){
 			var freqRes=self.bandwidth/self.fftsize
 			for (var pos = 0; pos < self.fftsize	; ++pos) {
 				var currentRow = [self.centerFrequency-0.5*self.bandwidth+pos*freqRes];
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-					currentRow.push(dataout[idx][pos]);
+					currentRow.push(self.ttemp[idx][pos]/self.average);
+					self.ttemp[idx][pos]=0;
+					//console.log(ttemp)	
 				}
 				formattedData.push(currentRow);
 			}
@@ -416,7 +443,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 				self.maxVerticalAxis=params.ymax;
 			}
 
-			
+			}
 			}
 			}
 			

@@ -317,7 +317,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 			}
 			
 			var params = data.data.params;
-			console.log(params);
+			//console.log(params);
 			//console.log(data.data.data.streams[1]['x']);
 					
 			var nconnections=params.nconnections;
@@ -343,7 +343,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
 			//console.log(self.fftsize);
-			console.log(self.zoomStep,self.zoomFactor,self.minVectorSink,self.maxVectorSink);
+			//console.log(self.zoomStep,self.zoomFactor,self.minVectorSink,self.maxVectorSink);
 
 
 			var Number2plot = self.fftsize;

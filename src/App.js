@@ -18,7 +18,7 @@ function App() {
         <Route exact path='/login' exact element={<Login />} />
         <Route exact path='/' exact element={<MainIndex />} />
         <Route exact path='/loader' exact element={<Loader />} />
-        <Route path='/loaderDevelopment/:userId/:taskId' exact element={<LoaderDevelopment />} />
+        <Route path='/loaderDevelopment/:userId/:taskId/:receiverName/:transmitterName' exact element={<LoaderDevelopment />} />
         <Route path='/dev' element={<Development/>} />
     </Routes>
     </Router>

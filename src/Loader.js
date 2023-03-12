@@ -164,7 +164,7 @@ class Main extends React.Component {
     }).then((response) => response.json())
     .then((responseJson) => {
        if (responseJson.success) {
-          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
+          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
        }
     });
   }

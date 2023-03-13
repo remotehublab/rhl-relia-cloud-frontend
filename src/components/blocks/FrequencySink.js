@@ -29,6 +29,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-8\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-8-label\" style=\"display: inline\">Ch 8 </span></label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-9\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-9-label\" style=\"display: inline\">Ch 9 </span></label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-10\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-10-label\" style=\"display: inline\">Ch 10 </span></label>&nbsp;" +
+
 		"</div>" +
 
 		"<div class=\"col\">" +
@@ -36,6 +37,8 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
 		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        "<input class=\"textbox freq-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
+		        "<input class=\"textbox freq-ymin-textbox\" type=\"text\" size=\"4\" value=\"ymin\">" +
 		"</div>" +
 
 
@@ -114,6 +117,10 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	self.maxVerticalAxis=1;
 	self.firstFreqRun=true;
 	self.avgCounter=0;
+	self.zoomStep=0;
+	self.zoomFactor=0;
+	//self.ymin
+
 //
 	//self.redraw = function() {
 	self.dynamicAmplitudeTimeVal = 0;
@@ -169,15 +176,34 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 //
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInFreqSink += 1;
+		self.zoomFactor += 1;
+		self.$div.find(".freq-sink-autoscale-checkbox").prop('checked', false);
 	});
 	self.$div.find(".zoom-out-button").click(function() {
-
-		self.zoomOutFreqSink += 1;
+		self.zoomFactor -= 1;
+		self.$div.find(".freq-sink-autoscale-checkbox").prop('checked', false);		
 	});
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayFreqSink ^= true;
 	});
+
+	self.$freqYvalMaximumText = self.$div.find(".freq-ymax-textbox");
+	$(".freq-ymax-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.maxFreqSink = self.$freqYvalMaximumText.val();
+      self.$div.find(".freq-sink-autoscale-checkbox").prop('checked', false);
+      //console.log(textboxValue);
+    }
+  });
+
+	self.$freqYvalMinimumText = self.$div.find(".freq-ymin-textbox");
+	$(".freq-ymin-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.minFreqSink = self.$freqYvalMinimumText.val();
+      self.$div.find(".freq-sink-autoscale-checkbox").prop('checked', false);
+    }
+  });
+
 
 	//This commented code is to add noise slider
 	/*
@@ -252,8 +278,8 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			},
 			vAxis: {
 				viewWindow:{
-					min: self.minVerticalAxis,
-					max: self.maxVerticalAxis,
+					min: self.minFreqSink*1.0 + self.zoomFactor*self.zoomStep,
+					max: self.maxFreqSink*1.0 - self.zoomFactor*self.zoomStep
 				},/**/
 				title: self.titleVAxis,
 				gridlines: {
@@ -399,7 +425,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
         		
 			}
 			//console.log(ttemp[0][0])	
-			if (self.avgCounter<4){
+			if (self.avgCounter<params.average){
 			$.each(self.ttemp, function(rowIndex, row) {
   				$.each(row, function(colIndex, value) {
     				self.ttemp[rowIndex][colIndex] += dataout[rowIndex][colIndex];
@@ -432,16 +458,20 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			
 
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				self.firstFreqRun=false;
-				self.minFreqSink=Math.min.apply(Math, dataout[0]);
-				self.maxFreqSink=Math.max.apply(Math, dataout[0]);
-				self.minVerticalAxis=self.minFreqSink*1.5*(self.zoomOutFreqSink/self.zoomInFreqSink);
-				self.maxVerticalAxis=self.maxFreqSink*1.5*(self.zoomOutFreqSink/self.zoomInFreqSink);
+				var tempmax=new Array(chEnabledCounter).fill(null);
+				var tempmin=new Array(chEnabledCounter).fill(null);
+				for (var v=0; v<chEnabledCounter;++v){
+					tempmax[v]=Math.max.apply(Math, dataout[v]);
+					tempmin[v]=Math.min.apply(Math, dataout[v]);
+				}
+				self.maxFreqSink=Math.max.apply(Math, tempmax);
+				self.minFreqSink=Math.min.apply(Math, tempmin);
+				self.zoomStep=0;
+				self.zoomFactor=0;
+				console.log(self.minFreqSink);
 			}
-			if(!self.$autoscaleCheckbox.is(':checked') &&  self.firstFreqRun==true)  {
-				self.minVerticalAxis=params.ymin;
-				self.maxVerticalAxis=params.ymax;
-			}
+			else self.zoomStep=0.07*Math.abs(self.minFreqSink-self.maxFreqSink);
+
 
 			}
 			}

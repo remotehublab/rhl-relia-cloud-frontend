@@ -112,13 +112,13 @@ class Main extends React.Component {
   }
 
 
-  handleUploadGRC_transmitter(ev) {
+  async handleUploadGRC_transmitter(ev) {
     ev.preventDefault();
 
     const data = new FormData();
     data.append('file', this.uploadInput_transmitter.files[0]);
 
-    fetch('/user/upload/transmitter', {
+    await fetch('/user/upload/transmitter', {
       method: 'POST',
       body: data,
     }).then((response) => {
@@ -127,16 +127,16 @@ class Main extends React.Component {
       });
     });
 
-    setTimeout(window.location.reload(true), 1000);
+    window.location.reload(true);
   }
 
-  handleUploadGRC_receiver(ev) {
+  async handleUploadGRC_receiver(ev) {
     ev.preventDefault();
 
     const data = new FormData();
     data.append('file', this.uploadInput_receiver.files[0]);
 
-    fetch('/user/upload/receiver', {
+    await fetch('/user/upload/receiver', {
       method: 'POST',
       body: data,
     }).then((response) => {
@@ -145,7 +145,7 @@ class Main extends React.Component {
       });
     });
 
-    setTimeout(window.location.reload(true), 1000);
+    window.location.reload(true);
   }
 
   handleUserAPI(ev) {
@@ -169,7 +169,7 @@ class Main extends React.Component {
     });
   }
 
-  handleCancellation(ev) {
+ async handleCancellation(ev) {
     ev.preventDefault();
 
     let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
@@ -177,7 +177,7 @@ class Main extends React.Component {
         "action": "delete",
     };
 
-    fetch('/scheduler/user/tasks/' + taskToCancel, {
+    await fetch('/scheduler/user/tasks/' + taskToCancel, {
        method: 'POST',
        headers: {'relia-secret': 'password'},
        body: JSON.stringify(object),

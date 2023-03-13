@@ -77,7 +77,11 @@ const LoaderDevelopment = () => {
       })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("Set user as active");
+        if (responseJson.success) {
+          console.log("Set user as active");
+        } else {
+          console.log("Did not set user as active");
+        }
       })
       .catch((error) => {
         console.log(error);

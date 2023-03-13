@@ -37,6 +37,8 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
 		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        "<input class=\"textbox vector-ymin-textbox\" type=\"text\" size=\"4\" value=\"ymin\">" +
+		        "<input class=\"textbox vector-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
 		"</div>" +
 
 
@@ -96,6 +98,11 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	
 	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
 	//self.$checkboxValue.text(self.choices[self.value]);
+
+	self.dataAvgOut = new Array(2).fill(0);
+	for (var i = 0; i < self.dataAvgOut.length; i++) {
+		self.dataAvgOut[i] = new Array(1024).fill(0);
+	}	
 	
 	self.maxVectorSink=1;
 	self.minVectorSink=1;
@@ -178,6 +185,22 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayVectorSink ^= true;
 	});
+
+	self.$vectorYvalMinimumText = self.$div.find(".vector-ymin-textbox");
+	$(".vector-ymin-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.minVectorSink = self.$vectorYvalMinimumText.val();
+      self.$div.find(".vector-sink-autoscale-checkbox").prop('checked', false);
+    }
+  });
+
+	self.$vectorYvalMaximumText = self.$div.find(".vector-ymax-textbox");
+	$(".vector-ymax-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.maxVectorSink = self.$vectorYvalMaximumText.val();
+      self.$div.find(".vector-sink-autoscale-checkbox").prop('checked', false);
+    }
+  });
 
 	//This commented code is to add noise slider
 	/*
@@ -330,6 +353,7 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 			self.colorsVectorSink=params.colors;
 			self.yLabelVectorSink=params.label;
 			self.yUnitVectorSink=params.units
+			self.average=params.average
 			
 			
 			//Remove all the unused channels from 5 to nconnections
@@ -339,14 +363,14 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 				self.$temp.parent().remove();
 			}
 
-			//console.log(data.data.block_type);
+			console.log(params);
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
 			//console.log(self.fftsize);
 			//console.log(self.zoomStep,self.zoomFactor,self.minVectorSink,self.maxVectorSink);
 
 
-			var Number2plot = self.fftsize;
+			//var Number2plot = self.vlen;
 			//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
 
 
@@ -396,13 +420,46 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
         		}
         		
 			}
+
+			if (self.avgCounter<params.average){
+			$.each(self.dataAvgOut, function(rowIndex, row) {
+  				$.each(row, function(colIndex, value) {
+    				self.dataAvgOut[rowIndex][colIndex] += dataout[rowIndex][colIndex];
+  				});
+			});
+
+			self.avgCounter+=1;
+			//for (var avgCounter=0;avgCounter<1;++avgCounter){	
+				
+			}
+			else{
+
+			if(self.$autoscaleCheckbox.is(':checked'))  {
+				var tempmax=new Array(chEnabledCounter).fill(0);
+				var tempmin=new Array(chEnabledCounter).fill(0);
+				for (var v=0; v<chEnabledCounter;++v){
+					tempmax[v]=Math.max.apply(Math, self.dataAvgOut[v]);
+					tempmin[v]=Math.min.apply(Math, self.dataAvgOut[v]);
+				}
+				self.maxVectorSink=Math.max.apply(Math, tempmax)/params.average;
+				self.minVectorSink=Math.min.apply(Math, tempmin)/params.average;
+				self.zoomStep=0;
+				self.zoomFactor=0;
+				//console.log(tempmax);
+			}
+			else self.zoomStep=0.07*Math.abs(self.minVectorSink-self.maxVectorSink);
+
+			self.avgCounter=0;	
+
+
 			if (chEnabledCounter!=0){
 			//var freqRes=self.bandwidth/self.fftsize
 			for (var pos = 0; pos < self.vlen	; ++pos) {
 				var currentRow = [pos];
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-					currentRow.push(dataout[idx][pos]);
+					currentRow.push(self.dataAvgOut[idx][pos]/self.average);
+					self.dataAvgOut[idx][pos]=0;
 				}
 				formattedData.push(currentRow);
 			}
@@ -411,22 +468,9 @@ export function ReliaVectorSink($divElement, deviceIdentifier, blockIdentifier) 
 			self.chart.draw(dataTable, self.options);
 			
 
-			if(self.$autoscaleCheckbox.is(':checked'))  {
-				var tempmax=new Array(chEnabledCounter).fill(null);
-				var tempmin=new Array(chEnabledCounter).fill(null);
-				for (var v=0; v<chEnabledCounter;++v){
-					tempmax[v]=Math.max.apply(Math, dataout[v]);
-					tempmin[v]=Math.min.apply(Math, dataout[v]);
-				}
-				self.maxVectorSink=Math.max.apply(Math, tempmax);
-				self.minVectorSink=Math.min.apply(Math, tempmin);
-				self.zoomStep=0;
-				self.zoomFactor=0;
-			}
-			else self.zoomStep=0.07*Math.abs(self.minVectorSink-self.maxVectorSink);
 
-			
-			}
+		}	
+		}
 		}
 			
 		});

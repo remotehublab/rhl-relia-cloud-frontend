@@ -38,6 +38,8 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
 		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        "<input class=\"textbox time-ymin-textbox\" type=\"text\" size=\"4\" value=\"ymin\">" +
+		        "<input class=\"textbox time-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
 		        
 		"</div>" +
 
@@ -177,6 +179,23 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayTimeSink ^= true;
 	});
+
+	self.$timeYvalMaximumText = self.$div.find(".time-ymax-textbox");
+	$(".time-ymax-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.maxTimeSink = self.$timeYvalMaximumText.val();
+      self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
+      //console.log(textboxValue);
+    }
+  });
+
+	self.$timeYvalMinimumText = self.$div.find(".time-ymin-textbox");
+	$(".time-ymin-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.minTimeSink = self.$timeYvalMinimumText.val();
+      self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
+    }
+  });
 
 	//This commented code is to add noise slider
 	/*

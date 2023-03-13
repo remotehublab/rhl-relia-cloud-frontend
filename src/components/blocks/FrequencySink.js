@@ -16,7 +16,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	    "<div class=\"Checkbox_FreqSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-autoscale-checkbox\" unchecked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
 
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox freq-sink-real-checkbox-1\" checked>&nbsp;<span class=\"freq-sink-real-checkbox-1-label\" style=\"display: inline\">Ch 1 </span></label>&nbsp;" +
@@ -37,8 +37,8 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 		        //"<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
 		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
-		        "<input class=\"textbox freq-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
 		        "<input class=\"textbox freq-ymin-textbox\" type=\"text\" size=\"4\" value=\"ymin\">" +
+		        "<input class=\"textbox freq-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
 		"</div>" +
 
 
@@ -98,9 +98,9 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 	
 	//self.$checkboxValue = self.$div.find(".checkbox time-sink-real-checkbox-1");
 	//self.$checkboxValue.text(self.choices[self.value]);
-	self.ttemp = new Array(4);
-	for (var i = 0; i < self.ttemp.length; i++) {
-		self.ttemp[i] = new Array(2048).fill(0);
+	self.dataAvgOut = new Array(2).fill(0);
+	for (var i = 0; i < self.dataAvgOut.length; i++) {
+		self.dataAvgOut[i] = new Array(1024).fill(0);
 	}
 	
 	self.maxFreqSink=1;
@@ -367,7 +367,7 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			//console.log(data.data.block_type);
 			//console.log(data.data.type);
 			//console.log(params.labels[0].replace(/'/g, ""));
-			console.log(params);
+			//console.log(params);
 
 
 			var Number2plot = self.fftsize;
@@ -426,9 +426,9 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			}
 			//console.log(ttemp[0][0])	
 			if (self.avgCounter<params.average){
-			$.each(self.ttemp, function(rowIndex, row) {
+			$.each(self.dataAvgOut, function(rowIndex, row) {
   				$.each(row, function(colIndex, value) {
-    				self.ttemp[rowIndex][colIndex] += dataout[rowIndex][colIndex];
+    				self.dataAvgOut[rowIndex][colIndex] += dataout[rowIndex][colIndex];
   				});
 			});
 
@@ -438,6 +438,21 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			}
 			else{
 
+			if(self.$autoscaleCheckbox.is(':checked'))  {
+				var tempmax=new Array(chEnabledCounter).fill(0);
+				var tempmin=new Array(chEnabledCounter).fill(0);
+				for (var v=0; v<chEnabledCounter;++v){
+					tempmax[v]=Math.max.apply(Math, self.dataAvgOut[v]);
+					tempmin[v]=Math.min.apply(Math, self.dataAvgOut[v]);
+				}
+				self.maxFreqSink=Math.max.apply(Math, tempmax)/params.average;
+				self.minFreqSink=Math.min.apply(Math, tempmin)/params.average;
+				self.zoomStep=0;
+				self.zoomFactor=0;
+				//console.log(tempmax);
+			}
+			else self.zoomStep=0.07*Math.abs(self.minFreqSink-self.maxFreqSink);
+
 			self.avgCounter=0;	
 			//console.log(typeof data.data.data.streams[0]['real'])
 			if (chEnabledCounter!=0){
@@ -446,8 +461,8 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 				var currentRow = [self.centerFrequency-0.5*self.bandwidth+pos*freqRes];
 				for (var idx = 0; idx < chEnabledCounter; ++idx){
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-					currentRow.push(self.ttemp[idx][pos]/self.average);
-					self.ttemp[idx][pos]=0;
+					currentRow.push(self.dataAvgOut[idx][pos]/self.average);
+					self.dataAvgOut[idx][pos]=0;
 					//console.log(ttemp)	
 				}
 				formattedData.push(currentRow);
@@ -457,20 +472,6 @@ export function FrequencySink($divElement, deviceIdentifier, blockIdentifier) {
 			self.chart.draw(dataTable, self.options);
 			
 
-			if(self.$autoscaleCheckbox.is(':checked'))  {
-				var tempmax=new Array(chEnabledCounter).fill(null);
-				var tempmin=new Array(chEnabledCounter).fill(null);
-				for (var v=0; v<chEnabledCounter;++v){
-					tempmax[v]=Math.max.apply(Math, dataout[v]);
-					tempmin[v]=Math.min.apply(Math, dataout[v]);
-				}
-				self.maxFreqSink=Math.max.apply(Math, tempmax);
-				self.minFreqSink=Math.min.apply(Math, tempmin);
-				self.zoomStep=0;
-				self.zoomFactor=0;
-				console.log(self.minFreqSink);
-			}
-			else self.zoomStep=0.07*Math.abs(self.minFreqSink-self.maxFreqSink);
 
 
 			}

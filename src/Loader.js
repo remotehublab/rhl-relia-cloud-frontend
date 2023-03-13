@@ -154,8 +154,7 @@ class Main extends React.Component {
     let object = {
        "r_filename": receiverName,
        "t_filename": transmitterName,
-       "priority": 10,
-       "session_id": "session_id1"
+       "priority": 10
     };
 
     fetch('/user/route/' + userid, {
@@ -165,7 +164,7 @@ class Main extends React.Component {
     }).then((response) => response.json())
     .then((responseJson) => {
        if (responseJson.success) {
-          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier;
+          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
        }
     });
   }

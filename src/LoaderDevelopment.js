@@ -1,4 +1,5 @@
 import './App.css';
+import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
@@ -187,6 +188,9 @@ const LoaderDevelopment = () => {
 
   return (
     <div className="App">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
     <div id="statusBar"></div>
   
     <div id="all-together" class="row"></div>

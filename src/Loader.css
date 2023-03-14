@@ -1,5 +1,6 @@
 div {
    white-space: pre-wrap;
+   font-family: 'Manrope', sans-serif;
 }
 
 div.invisible {
@@ -18,4 +19,21 @@ span {
 
 input.textInput {
    width: 25%;
+}
+
+.heading {
+   left: 0;
+   width: 100%;
+   background-color: #9ed1fa;
+   color: #FFFFFF;
+   font-size: 30px;
+   padding: 4px 4px 4px 8px;
+}
+
+.column {
+   flex: 50%;
+}
+
+[id^=space] {
+   justify-content: space-between;
 }

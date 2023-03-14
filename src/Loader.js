@@ -2,6 +2,8 @@ import './App.css';
 import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
+import Collapsible from 'react-collapsible';
+import { BsChevronDown } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
@@ -54,42 +56,79 @@ const Loader = () => {
 
   return (
     <div className="App">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
     <div className="invisible">{JSON.stringify(poll_call())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
     <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
+
+    <div class="heading">
+        RELIA
+    </div>
+
+    <br />
+    <br />
     <br />
 
     <div class="container">
 
+        <div class="row">
+          <Collapsible trigger={<div id="space"><div>Upload Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#9ed1fa' }}>
+            <Main />
+          </Collapsible>
+        </div>
+
 	<div class="row">
+          <Collapsible trigger={<div id="space2"><div>Submit Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }}>
+            <div class="row">
+              <div class="column">
+                Most Recent Transmitter Files
+                <div id="appTransmitter"></div>
+	      </div>
 
-		<div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
-		    Most Recent Transmitter Files
-		    <div id="appTransmitter"></div>
-		</div>
+              <div class="column">
+                Most Recent Receiver Files
+                <div id="appReceiver"></div>
+              </div>
+            </div>
 
-		<div class="col-xs-12 col-sm-6 col-lg-4">
-		    Most Recent Receiver Files
-		    <div id="appReceiver"></div>
-		</div>
+            <div class="col-xs-12 col-sm-4 offset-sm-4">
+              <form onSubmit={handleUserAPI}><div>
+	        <button class="btn btn-lg btn-primary" id="runButton" disabled>Run the files</button>
+              </div></form>
+	    </div>
+          </Collapsible>
 	</div>
-	
-	<Main />
 
         <div class="row">
-        Search Task Status
-        <label> Search Status of Task No. </label> <span><input className="textInput" type="text" id="to_search" name="to_search"/></span>
-        <form onSubmit={searchTasks}><div>
-	   <button id="searchButton">Search</button>
-        </div></form>
-        <div id="searchStatus"></div>
+          <Collapsible trigger={<div id="space3"><div>Delete Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }}>
+            <form onSubmit={handleCancellation}><div>
+	      <input className="textInput" type="text" placeholder="Task ID" id="to_cancel" name="to_cancel"/><button id="cancelButton">Cancel</button>
+            </div></form>
+          </Collapsible>
         </div>
+
         <div class="row">
-        <div id="currentTasks"></div>
+          <Collapsible trigger={<div id="space4"><div>Search Task Status</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
+             <form onSubmit={searchTasks}><div>
+	        <input className="textInput" type="text" id="to_search" placeholder="Task ID" name="to_search"/><button id="searchButton">Search</button>
+             </div></form>
+             <div id="searchStatus"></div>
+          </Collapsible>
         </div>
+
         <div class="row">
-        <div id="errorMessages"></div>
+          <Collapsible trigger={<div id="space5"><div>All Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
+            <div id="currentTasks"></div>
+          </Collapsible>
+        </div>
+        
+        <div class="row">
+          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
+            <div id="errorMessages"></div>
+          </Collapsible>
         </div>
 
     </div>
@@ -148,88 +187,31 @@ class Main extends React.Component {
     window.location.reload(true);
   }
 
-  handleUserAPI(ev) {
-    ev.preventDefault();
-
-    let object = {
-       "r_filename": receiverName,
-       "t_filename": transmitterName,
-       "priority": 10
-    };
-
-    fetch('/user/route/' + userid, {
-       method: 'POST',
-       headers: {'relia-secret': 'password'},
-       body: JSON.stringify(object),
-    }).then((response) => response.json())
-    .then((responseJson) => {
-       if (responseJson.success) {
-          window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
-       }
-    });
-  }
-
- async handleCancellation(ev) {
-    ev.preventDefault();
-
-    let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
-    let object = {
-        "action": "delete",
-    };
-
-    await fetch('/scheduler/user/tasks/' + taskToCancel, {
-       method: 'POST',
-       headers: {'relia-secret': 'password'},
-       body: JSON.stringify(object),
-    }).then((response) => {
-       console.log(taskToCancel);
-    });
-
-    window.location.reload(true);
-  }
-
   render() {
     return (
-      <div>
       <div class="row">
-      <div class="col-xs-12 col-sm-6 col-lg-4 offset-lg-2">
-      <form onSubmit={this.handleUploadGRC_transmitter}>
-        Transmitter File
-        <div>
-          <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" accept=".grc"/>
+        <div class="column">
+          <form onSubmit={this.handleUploadGRC_transmitter}>
+            Transmitter File
+            <div>
+              <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" accept=".grc"/>
+            </div>
+            <div>
+              <button>Upload</button>
+            </div>
+          </form>
         </div>
-        <div>
-          <button>Upload</button>
+        <div class="column">
+          <form onSubmit={this.handleUploadGRC_receiver}>
+            Receiver File
+            <div>
+              <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" accept=".grc"/>
+            </div>
+            <div>
+              <button>Upload</button>
+            </div>
+          </form>
         </div>
-     </form>
-     </div>
-     <div class="col-xs-12 col-sm-6 col-lg-4">
-     <form onSubmit={this.handleUploadGRC_receiver}>
-        Receiver File
-        <div>
-          <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" accept=".grc"/>
-        </div>
-        <div>
-          <button>Upload</button>
-        </div>
-      </form>
-      </div>
-      <br />
-      <br />
-      </div>
-      <div class="row">
-	<div class="col-xs-12 col-sm-4 offset-sm-4">
-        <form onSubmit={this.handleUserAPI}><div>
-	   <button class="btn btn-lg btn-primary" id="runButton" disabled>Run the files</button>
-        </div></form>
-	</div>
-      </div>
-      <div class="row">
-        <label> Cancel Task No. </label> <span><input className="textInput" type="text" id="to_cancel" name="to_cancel"/></span>
-        <form onSubmit={this.handleCancellation}><div>
-	   <button id="cancelButton">Cancel</button>
-        </div></form>
-      </div>
       </div>
     );
   }
@@ -253,6 +235,46 @@ async function poll_call() {
    .catch((error) => {
      console.error(error);
    });
+}
+
+function handleUserAPI(ev) {
+   ev.preventDefault();
+
+   let object = {
+      "r_filename": receiverName,
+      "t_filename": transmitterName,
+      "priority": 10
+   };
+
+   fetch('/user/route/' + userid, {
+      method: 'POST',
+      headers: {'relia-secret': 'password'},
+      body: JSON.stringify(object),
+   }).then((response) => response.json())
+   .then((responseJson) => {
+      if (responseJson.success) {
+         window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
+      }
+   });
+}
+
+async function handleCancellation(ev) {
+   ev.preventDefault();
+
+   let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
+   let object = {
+      "action": "delete",
+   };
+
+   await fetch('/scheduler/user/tasks/' + taskToCancel, {
+      method: 'POST',
+      headers: {'relia-secret': 'password'},
+      body: JSON.stringify(object),
+   }).then((response) => {
+      console.log(taskToCancel);
+   });
+
+   window.location.reload(true);
 }
 
 async function searchTasks(ev) {
@@ -294,9 +316,9 @@ async function getCurrentTasks() {
       }
       const rootTasks = ReactDOM.createRoot(document.getElementById("currentTasks"));
       let tasksToRender = [];
-      if (responseJson.ids.length > 0) {
-         tasksToRender.push(<div><b>All Tasks</b>{"\n"}</div>);
-      }
+      // if (responseJson.ids.length > 0) {
+      // tasksToRender.push(<div><b>All Tasks</b>{"\n"}</div>);
+      // }
       for (let i = 0; i < responseJson.ids.length; i++) {
          tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with receiver " + responseJson.receivers[i] + " and transmitter " + responseJson.transmitters[i] + ".\n"}</div>);
       }
@@ -321,9 +343,9 @@ async function getErrorMessages() {
      }
      const rootTasks = ReactDOM.createRoot(document.getElementById("errorMessages"));
      let errorsToRender = [];
-     if (responseJson.ids.length > 0) {
-         errorsToRender.push(<div><b>Most Recent Error Messages</b>{"\n"}</div>);
-     }
+     // if (responseJson.ids.length > 0) {
+     // errorsToRender.push(<div><b>Most Recent Error Messages</b>{"\n"}</div>);
+     // }
      for (let i = 0; i < responseJson.ids.length; i++) {
          errorsToRender.push(<div>{"Task " + responseJson.ids[i] + " encountered the following error: " + responseJson.errors[i] + "\n"}</div>);
      }

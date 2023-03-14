@@ -2,11 +2,15 @@ import './App.css';
 import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
+import { Dimensions } from 'react-native';
 import Collapsible from 'react-collapsible';
 import { BsChevronDown } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
+import RHL_logo from './components/images/RHL_logo.png';
+import LabsLand_logo from './components/images/LabsLand_logo.png';
+import Background_logo from './components/images/Background.png';
   
 var transmitterName = '';
 var transmitterContents = '';
@@ -15,6 +19,7 @@ var receiverContents = '';
 var userid = '';
 
 const TIMEFRAME_MS = 30000;
+const width = Dimensions.get('window').width;
 
 const Loader = () => {
   window.API_BASE_URL = "/api/";
@@ -40,6 +45,9 @@ const Loader = () => {
       }
     }
 
+    $(".container").css("padding-bottom", $(".footer").height());
+    $(".container").css("padding-bottom", "+=20");
+
     const interval = setInterval(() => {
       poll_call();
       console.log('Polling');
@@ -55,7 +63,7 @@ const Loader = () => {
   }, [google]);
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: '#e7f3fe', height: '100%', minHeight: '100vh' }}>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
@@ -68,11 +76,11 @@ const Loader = () => {
         RELIA
     </div>
 
-    <br />
-    <br />
-    <br />
-
     <div class="container">
+
+        <br />
+        <br />
+        <br />
 
         <div class="row">
           <Collapsible trigger={<div id="space"><div>Upload Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#9ed1fa' }}>
@@ -82,6 +90,8 @@ const Loader = () => {
 
 	<div class="row">
           <Collapsible trigger={<div id="space2"><div>Submit Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }}>
+            <div id="body2">
+            <br />
             <div class="row">
               <div class="column">
                 Most Recent Transmitter Files
@@ -98,29 +108,39 @@ const Loader = () => {
               <form onSubmit={handleUserAPI}><div>
 	        <button class="btn btn-lg btn-primary" id="runButton" disabled>Run the files</button>
               </div></form>
+              <br />
 	    </div>
+            </div>
           </Collapsible>
 	</div>
 
         <div class="row">
           <Collapsible trigger={<div id="space3"><div>Delete Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }}>
-            <form onSubmit={handleCancellation}><div>
-	      <input className="textInput" type="text" placeholder="Task ID" id="to_cancel" name="to_cancel"/><button id="cancelButton">Cancel</button>
-            </div></form>
+            <div id="body3">
+              <br />
+              <form onSubmit={handleCancellation}><div>
+	        <input className="textInput" type="text" placeholder="Task ID" id="to_cancel" name="to_cancel"/><button id="cancelButton">Delete</button>
+              </div></form>
+              <br />
+            </div>
           </Collapsible>
         </div>
 
         <div class="row">
           <Collapsible trigger={<div id="space4"><div>Search Task Status</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
-             <form onSubmit={searchTasks}><div>
-	        <input className="textInput" type="text" id="to_search" placeholder="Task ID" name="to_search"/><button id="searchButton">Search</button>
-             </div></form>
-             <div id="searchStatus"></div>
+             <div id="body4">
+                <br />
+                <form onSubmit={searchTasks}><div>
+	           <input className="textInput" type="text" id="to_search" placeholder="Task ID" name="to_search"/><button id="searchButton">Search</button>
+                </div></form>
+                <div id="searchStatus"></div>
+                <br />
+             </div>
           </Collapsible>
         </div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space5"><div>All Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
+          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
             <div id="currentTasks"></div>
           </Collapsible>
         </div>
@@ -131,6 +151,11 @@ const Loader = () => {
           </Collapsible>
         </div>
 
+    </div>
+
+    <div class="footer">
+         <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.1 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
+         <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.1 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
     </div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
@@ -189,6 +214,8 @@ class Main extends React.Component {
 
   render() {
     return (
+      <div id="body1">
+      <br />
       <div class="row">
         <div class="column">
           <form onSubmit={this.handleUploadGRC_transmitter}>
@@ -212,6 +239,8 @@ class Main extends React.Component {
             </div>
           </form>
         </div>
+      </div>
+      <br />
       </div>
     );
   }
@@ -320,7 +349,15 @@ async function getCurrentTasks() {
       // tasksToRender.push(<div><b>All Tasks</b>{"\n"}</div>);
       // }
       for (let i = 0; i < responseJson.ids.length; i++) {
-         tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with receiver " + responseJson.receivers[i] + " and transmitter " + responseJson.transmitters[i] + ".\n"}</div>);
+         let receiver_string = " receiver " + responseJson.receivers[i] + " ";
+         let transmitter_string = " transmitter " + responseJson.transmitters[i];
+         if (responseJson.receivers[i] == "null") {
+            receiver_string = " no receiver ";
+         }
+         if (responseJson.transmitters[i] == "null") {
+            transmitter_string = " no transmitter";
+         }
+         tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with" + receiver_string + "and" + transmitter_string + ".\n"}</div>);
       }
       rootTasks.render(tasksToRender);
       return responseJson

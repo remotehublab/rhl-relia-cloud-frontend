@@ -1,3 +1,8 @@
+html {
+   position: relative;
+   min-height: 100%;
+}
+
 div {
    white-space: pre-wrap;
    font-family: 'Manrope', sans-serif;
@@ -30,10 +35,27 @@ input.textInput {
    padding: 4px 4px 4px 8px;
 }
 
+.footer {
+   position: absolute;
+   overflow-y: auto;
+   left: 0;
+   bottom: 0px;
+   width: 100%;
+   background-color: #9ed1fa;
+   color: #FFFFFF;
+   font-size: 30px;
+   padding: 4px 4px 4px 8px;
+}
+
 .column {
    flex: 50%;
 }
 
 [id^=space] {
    justify-content: space-between;
+}
+
+[id^=body], #errorMessages, #currentTasks {
+   padding: 4px 4px 4px 8px;
+   background-color: #cee6fd;
 }

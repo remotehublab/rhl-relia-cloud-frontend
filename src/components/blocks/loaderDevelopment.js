@@ -50,7 +50,7 @@ export function ReliaWidgets($divElement) {
 				$.each(data.blocks, function (post, blockName) {
 					if (!window.BLOCKS.get(deviceName).includes(blockName)) {
 						window.BLOCKS.get(deviceName).push(blockName);
-						window.TIMES.get(deviceName).push(5);
+						window.TIMES.get(deviceName).push(10);
 						var $newDiv = $(
 							'<div class="" style="padding: 10px">' +
 								'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +

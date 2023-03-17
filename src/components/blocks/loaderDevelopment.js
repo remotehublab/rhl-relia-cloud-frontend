@@ -29,7 +29,7 @@ export function ReliaWidgets($divElement) {
 		$.each(devices, function (pos, deviceName) {
             var $deviceContents;
 			if (!window.BLOCKS.has(deviceName)) {
-    			$deviceContents = $("<div id='device-" + deviceName + "' class='col-6'>Device:" + deviceName + "<br>" + "</div>");
+    			$deviceContents = $("<div id='device-" + deviceName + "' class='col-6'><center><h2>Device:" + deviceName + "</h2></center><br>" + "</div>");
 			    $divElement.append($deviceContents);
 
 				window.BLOCKS.set(deviceName, []);

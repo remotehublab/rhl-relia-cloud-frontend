@@ -52,7 +52,7 @@ export function ReliaWidgets($divElement) {
 						window.BLOCKS.get(deviceName).push(blockName);
 						window.TIMES.get(deviceName).push(5);
 						var $newDiv = $(
-							'<div class="col-xs-12 col-sm-6 col-lg-4" style="padding: 10px">' +
+							'<div class="" style="padding: 10px">' +
 								'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +
 									"<h5>" + blockName + "</h5>" +
 									"<div class=\"block-contents\" style=\"width: 100%\"></div>" +

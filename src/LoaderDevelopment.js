@@ -12,6 +12,11 @@ var TRANSMITTER_FLAG = "";
 var COMBINED_FLAG = 0;
 var FIVE_SECOND_FLAG = 0;
 var TIME_REMAINING = 60;
+
+var userId = "";
+var taskId = "";
+var receiverName = "";
+var transmitterName = "";
   
 const LoaderDevelopment = () => {
   window.API_BASE_URL = "/api/";
@@ -19,7 +24,7 @@ const LoaderDevelopment = () => {
   window.TIMES = new Map();
   const [google] = useState(null);
   const navigate = useNavigate();
-  const { userId, taskId, receiverName, transmitterName } = useParams();
+  const { altIdentifier } = useParams();
   let status = 'queued';
 
   useEffect(() => {
@@ -40,114 +45,150 @@ const LoaderDevelopment = () => {
       }
     }
 
-    let timeToGet = '/scheduler/user/get-task-time/' + taskId + '/' + userId;
-    fetch(timeToGet, {
-      method: 'GET',
-      headers: {'relia-secret': 'password'}
-    }).then((response) => response.json())
-    .then((responseJson) => {
-      TIME_REMAINING = parseInt(responseJson.timeRemaining);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    (async () => {
+      let object0 = {
+        "altIdentifier": altIdentifier
+      };
 
-    const interval1 = setInterval(() => {
-      if (TIME_REMAINING <= 0) {
-        leavePage(navigate, taskId, userId);
-      }
-      TIME_REMAINING = TIME_REMAINING - 1;
-      fetch('/scheduler/user/set-task-time/' + taskId + '/' + userId + '/' + TIME_REMAINING.toString(), {
-        method: 'GET',
-        headers: {'relia-secret': 'password'}
-      })
-      .then((response) => response.json())
+      await fetch('/user/decode-alt-identifier', {
+        method: 'POST',
+        body: JSON.stringify(object0),
+      }).then((response) => response.json())
       .then((responseJson) => {
-        console.log("Time updated");
+        console.log("Task ID is: " + responseJson.taskId);
+        userId = responseJson.userId;
+        taskId = responseJson.taskId;
+        receiverName = responseJson.receiver;
+        transmitterName = responseJson.transmitter;
       })
       .catch((error) => {
         console.log(error);
       });
-      if (RECEIVER_FLAG != "" && TRANSMITTER_FLAG != "" && COMBINED_FLAG == 0) {
-        loadUI(RECEIVER_FLAG, TRANSMITTER_FLAG, taskId, userId);
-        COMBINED_FLAG = 1;
-      }
-      fetch('/scheduler/user/tasks/poll/' + taskId, {
-        method: 'GET',
-        headers: {'relia-secret': 'password'}
-      })
-      .then((response) => response.json())
+
+      let object = {
+        "task": taskId
+      };
+
+      await fetch('/user/get-task-time', {
+        method: 'POST',
+        body: JSON.stringify(object),
+      }).then((response) => response.json())
       .then((responseJson) => {
-        if (responseJson.success) {
-          console.log("Set user as active");
-        } else {
-          console.log("Did not set user as active");
+        TIME_REMAINING = parseInt(responseJson.timeRemaining);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+      const interval1 = setInterval(() => {
+        // if (TIME_REMAINING <= 0) {
+        //  leavePage(navigate, taskId, userId);
+        // }
+        TIME_REMAINING = TIME_REMAINING + 1;
+        let object = {
+          "task": taskId,
+          "time": TIME_REMAINING.toString()
+        };
+        fetch('/user/set-task-time', {
+          method: 'POST',
+          body: JSON.stringify(object),
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log("Time updated");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        if (RECEIVER_FLAG != "" && TRANSMITTER_FLAG != "" && COMBINED_FLAG == 0) {
+          loadUI(RECEIVER_FLAG, TRANSMITTER_FLAG, taskId, userId);
+          COMBINED_FLAG = 1;
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }, TIMEFRAME_MS);
+        let object2 = {
+          "task": taskId
+        };
+        fetch('/user/scheduler-poll', {
+          method: 'POST',
+          body: JSON.stringify(object2),
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.success) {
+            console.log("Set user as active");
+          } else {
+            console.log("Did not set user as active");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }, TIMEFRAME_MS);
 
-    const interval2 = setInterval(() => {
-      let taskToSearch = '/scheduler/user/tasks/' + taskId + '/' + userId;
-      return fetch(taskToSearch, {
-        method: 'GET',
-        headers: {'relia-secret': 'password'}
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.success == false) {
-          console.log("Uh oh... are you sure you are logged in?");
-        } else {
-          status = responseJson.status;
-          const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
-          let status_to_render = [];
-          status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
-          status_to_render.push(<div>Time Remaining: {TIME_REMAINING} seconds</div>);
-          status_bar.render(status_to_render);
-          if (RECEIVER_FLAG == "") {
-            if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
-              RECEIVER_FLAG = responseJson.receiver;
+      const interval2 = setInterval(() => {
+        let object = {
+          "task": taskId,
+          "user": userId
+        };
+        return fetch('/user/search-tasks', {
+          method: 'POST',
+          body: JSON.stringify(object),
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.success == false) {
+            console.log("Uh oh... are you sure you are logged in?");
+          } else {
+            status = responseJson.status;
+            const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+            let status_to_render = [];
+            status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
+
+            let timeString = "";
+            let time_baseline = TIME_REMAINING;
+            let days = parseInt(TIME_REMAINING / (24 * 3600));
+            if (days > 0) {
+              timeString = days.toString() + " days, ";
+            }
+            TIME_REMAINING = TIME_REMAINING % (24 * 3600);
+            let hours = parseInt(TIME_REMAINING / 3600);
+            if (hours > 0) {
+              timeString = timeString + hours.toString() + " hours, ";
+            }
+            TIME_REMAINING = TIME_REMAINING % 3600;
+            let minutes = parseInt(TIME_REMAINING / 60);
+            if (minutes > 0) {
+              timeString = timeString + minutes.toString() + " minutes, ";
+            }
+            TIME_REMAINING = TIME_REMAINING % 60;
+            timeString = timeString + TIME_REMAINING.toString() + " seconds";
+            status_to_render.push(<div>Time Elapsed: {timeString}</div>);
+            TIME_REMAINING = time_baseline;
+            status_bar.render(status_to_render);
+            if (RECEIVER_FLAG == "") {
+              if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
+                RECEIVER_FLAG = responseJson.receiver;
+              }
+            }
+            if (TRANSMITTER_FLAG == "") {
+              if (status == "transmitter still processing" || status == "fully assigned") {
+                TRANSMITTER_FLAG = responseJson.transmitter;   
+              }
             }
           }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }, TIMEFRAME_MS);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }, TIMEFRAME_MS);
 
-    const interval3 = setInterval(() => {
-      let taskToSearch = '/scheduler/user/tasks/' + taskId + '/' + userId;
-      return fetch(taskToSearch, {
-        method: 'GET',
-        headers: {'relia-secret': 'password'}
-      })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.success == false) {
-          console.log("Uh oh... are you sure you are logged in?");
-        } else {
-          status = responseJson.status;
-          if (TRANSMITTER_FLAG == "") {
-            if (status == "transmitter still processing" || status == "fully assigned") {
-              TRANSMITTER_FLAG = responseJson.transmitter;   
-            }
-          }
+      return () => {
+        let script = document.getElementById('googleChartsScript');
+        if (script) {
+          script.remove();
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }, TIMEFRAME_MS);
-
-    return () => {
-      let script = document.getElementById('googleChartsScript');
-      if (script) {
-        script.remove();
       }
-    }
+
+    })();
   }, [google]);
 
   const handleNavigate = ev => {
@@ -155,11 +196,16 @@ const LoaderDevelopment = () => {
     leavePage(navigate, taskId, userId);
   };
 
-  const reschedule = ev => {
+  const reschedule = async (ev) => {
     ev.preventDefault();
-    fetch('/scheduler/user/complete-tasks/' + taskId + '/' + userId, {
-      method: 'GET',
-      headers: {'relia-secret': 'password'}
+    let object0 = {
+      "task": taskId,
+      "user": userId
+    };
+
+    await fetch('/user/deletion', {
+      method: 'POST',
+      body: JSON.stringify(object0),
     })
     .then((response) => response.json())
     .then((responseJson) => {
@@ -171,18 +217,33 @@ const LoaderDevelopment = () => {
     let object = {
        "r_filename": receiverName,
        "t_filename": transmitterName,
-       "priority": 10
+       "priority": 10,
+       "taskId": taskId,
+       "altId": altIdentifier,
     };
+
+    FIVE_SECOND_FLAG = 0;
+    if (TRANSMITTER_FLAG != "") {
+      let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
+      for (let i = 0; i < t_length; i++) {
+        window.TIMES.get(TRANSMITTER_FLAG)[i] = 10;
+      }
+    }
+    if (RECEIVER_FLAG != "") {
+      let r_length = window.TIMES.get(RECEIVER_FLAG).length;
+      for (let j = 0; j < r_length; j++) {
+        window.TIMES.get(RECEIVER_FLAG)[j] = 10;
+      }
+    }
 
     fetch('/user/route/' + userId, {
        method: 'POST',
-       headers: {'relia-secret': 'password'},
        body: JSON.stringify(object),
     }).then((response) => response.json())
     .then((responseJson) => {
-       if (responseJson.success) {
-          window.location.href = '/loaderDevelopment/' + userId + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
-       }
+       // if (responseJson.success) {
+       //   window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
+       // }
     });
   };
 
@@ -210,9 +271,12 @@ const LoaderDevelopment = () => {
 };
 
 function leavePage(navigate, taskId, userId) {
-    fetch('/scheduler/user/complete-tasks/' + taskId + '/' + userId, {
-      method: 'GET',
-      headers: {'relia-secret': 'password'}
+    let object = {
+      "task": taskId
+    };
+    fetch('/user/complete-tasks', {
+      method: 'POST',
+      body: JSON.stringify(object),
     })
     .then((response) => response.json())
     .then((responseJson) => {
@@ -241,9 +305,12 @@ function loadUI(deviceId_r, deviceId_t, taskId, userId) {
           }
         }
         if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
-          fetch('/scheduler/user/complete-tasks/' + taskId + '/' + userId, {
-            method: 'GET',
-            headers: {'relia-secret': 'password'}
+          let object = {
+            "task": taskId
+          };
+          fetch('/user/complete-tasks', {
+            method: 'POST',
+            body: JSON.stringify(object),
           })
           .then((response) => response.json())
           .then((responseJson) => {

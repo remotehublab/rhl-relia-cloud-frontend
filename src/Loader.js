@@ -83,13 +83,13 @@ const Loader = () => {
         <br />
 
         <div class="row">
-          <Collapsible trigger={<div id="space"><div>Upload Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#9ed1fa' }}>
+          <Collapsible trigger={<div id="space"><div>Upload Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }}>
             <Main />
           </Collapsible>
         </div>
 
 	<div class="row">
-          <Collapsible trigger={<div id="space2"><div>Submit Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }}>
+          <Collapsible trigger={<div id="space2"><div>Submit Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }}>
             <div id="body2">
             <br />
             <div class="row">
@@ -115,7 +115,7 @@ const Loader = () => {
 	</div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space3"><div>Delete Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }}>
+          <Collapsible trigger={<div id="space3"><div>Delete Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
             <div id="body3">
               <br />
               <form onSubmit={handleCancellation}><div>
@@ -127,7 +127,7 @@ const Loader = () => {
         </div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space4"><div>Search Task Status</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
+          <Collapsible trigger={<div id="space4"><div>Search Task Status</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
              <div id="body4">
                 <br />
                 <form onSubmit={searchTasks}><div>
@@ -140,13 +140,13 @@ const Loader = () => {
         </div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
+          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
             <div id="currentTasks"></div>
           </Collapsible>
         </div>
         
         <div class="row">
-          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
+          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
             <div id="errorMessages"></div>
           </Collapsible>
         </div>
@@ -272,17 +272,18 @@ function handleUserAPI(ev) {
    let object = {
       "r_filename": receiverName,
       "t_filename": transmitterName,
-      "priority": 10
+      "priority": 10,
+      "taskId": "None",
+      "altId": "None",
    };
 
    fetch('/user/route/' + userid, {
       method: 'POST',
-      headers: {'relia-secret': 'password'},
       body: JSON.stringify(object),
    }).then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success) {
-         window.location.href = '/loaderDevelopment/' + userid + '/' + responseJson.taskIdentifier + '/' + receiverName + '/' + transmitterName;
+         window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
       }
    });
 }
@@ -290,14 +291,14 @@ function handleUserAPI(ev) {
 async function handleCancellation(ev) {
    ev.preventDefault();
 
-   let taskToCancel = document.getElementById('to_cancel').value + "/" + userid;
+   let taskToCancel = document.getElementById('to_cancel').value;
    let object = {
-      "action": "delete",
+      "task": taskToCancel,
+      "user": userid
    };
 
-   await fetch('/scheduler/user/tasks/' + taskToCancel, {
+   await fetch('/user/deletion', {
       method: 'POST',
-      headers: {'relia-secret': 'password'},
       body: JSON.stringify(object),
    }).then((response) => {
       console.log(taskToCancel);
@@ -310,10 +311,15 @@ async function searchTasks(ev) {
     ev.preventDefault();
 
     await poll_call();
-    let taskToSearch = '/scheduler/user/tasks/' + document.getElementById('to_search').value + '/' + userid;
-    return fetch(taskToSearch, {
-       method: 'GET',
-       headers: {'relia-secret': 'password'}
+    let taskToSearch = document.getElementById('to_search').value;
+    let object = {
+      "task": taskToSearch,
+      "user": userid
+    };
+
+    return fetch('/user/search-tasks', {
+       method: 'POST',
+       body: JSON.stringify(object),
     })
     .then((response) => response.json())
     .then((responseJson) => {
@@ -334,9 +340,13 @@ async function searchTasks(ev) {
 
 async function getCurrentTasks() {
    await poll_call();
-   return fetch('/scheduler/user/all-tasks/' + userid, {
-      method: 'GET',
-      headers: {'relia-secret': 'password'}
+   let object = {
+      "user": userid
+   };
+
+   return fetch('/user/get-tasks', {
+      method: 'POST',
+      body: JSON.stringify(object),
    })
    .then((response) => response.json())
    .then((responseJson) => {
@@ -369,9 +379,13 @@ async function getCurrentTasks() {
 
 async function getErrorMessages() {
    await poll_call();
-   return fetch('/scheduler/user/error-messages/' + userid, {
-       method: 'GET',
-       headers: {'relia-secret': 'password'}
+   let object = {
+      "user": userid
+   };
+
+   return fetch('/user/error-msgs', {
+       method: 'POST',
+       body: JSON.stringify(object),
    })
    .then((response) => response.json())
    .then((responseJson) => {

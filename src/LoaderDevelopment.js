@@ -115,59 +115,65 @@ const LoaderDevelopment = () => {
         .catch((error) => {
           console.log(error);
         });
+
+        const time_bar = ReactDOM.createRoot(document.getElementById("timeBar"));
+        let time_to_render = [];
+
+        let timeString = "";
+        let time_baseline = TIME_REMAINING;
+        let days = parseInt(TIME_REMAINING / (24 * 3600));
+        if (days > 0) {
+          timeString = days.toString() + " days, ";
+        }
+        TIME_REMAINING = TIME_REMAINING % (24 * 3600);
+        let hours = parseInt(TIME_REMAINING / 3600);
+        if (hours > 0) {
+          timeString = timeString + hours.toString() + " hours, ";
+        }
+        TIME_REMAINING = TIME_REMAINING % 3600;
+        let minutes = parseInt(TIME_REMAINING / 60);
+        if (minutes > 0) {
+          timeString = timeString + minutes.toString() + " minutes, ";
+        }
+        TIME_REMAINING = TIME_REMAINING % 60;
+        timeString = timeString + TIME_REMAINING.toString() + " seconds";
+        time_to_render.push(<div>Time Elapsed: {timeString}</div>);
+        TIME_REMAINING = time_baseline;
+        time_bar.render(time_to_render);
       }, TIMEFRAME_MS);
 
       const interval2 = setInterval(() => {
-        return fetch('/scheduler/user/tasks/' + taskId + '/' + userId, {
-          method: 'GET',
-          headers: {'relia-secret': altIdentifier},
-        })
-        .then((response) => response.json())
-        .then((responseJson) => {
-          if (responseJson.success == false) {
-            console.log("Uh oh... are you sure you are logged in?");
-          } else {
-            status = responseJson.status;
-            const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
-            let status_to_render = [];
-            status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
-
-            let timeString = "";
-            let time_baseline = TIME_REMAINING;
-            let days = parseInt(TIME_REMAINING / (24 * 3600));
-            if (days > 0) {
-              timeString = days.toString() + " days, ";
-            }
-            TIME_REMAINING = TIME_REMAINING % (24 * 3600);
-            let hours = parseInt(TIME_REMAINING / 3600);
-            if (hours > 0) {
-              timeString = timeString + hours.toString() + " hours, ";
-            }
-            TIME_REMAINING = TIME_REMAINING % 3600;
-            let minutes = parseInt(TIME_REMAINING / 60);
-            if (minutes > 0) {
-              timeString = timeString + minutes.toString() + " minutes, ";
-            }
-            TIME_REMAINING = TIME_REMAINING % 60;
-            timeString = timeString + TIME_REMAINING.toString() + " seconds";
-            status_to_render.push(<div>Time Elapsed: {timeString}</div>);
-            TIME_REMAINING = time_baseline;
-            status_bar.render(status_to_render);
-            if (RECEIVER_FLAG == "") {
-              if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
-                RECEIVER_FLAG = responseJson.receiver;
+        if (FIVE_SECOND_FLAG == 0) {
+          return fetch('/scheduler/user/tasks/' + taskId + '/' + userId, {
+            method: 'GET',
+            headers: {'relia-secret': altIdentifier},
+          })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            if (responseJson.success == false) {
+              console.log("Uh oh... are you sure you are logged in?");
+            } else {
+              status = responseJson.status;
+              const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+              let status_to_render = [];
+              status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
+              status_bar.render(status_to_render);
+              if (RECEIVER_FLAG == "") {
+                if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
+                  RECEIVER_FLAG = responseJson.receiver;
+                }
+              }
+              if (TRANSMITTER_FLAG == "") {
+                if (status == "transmitter still processing" || status == "fully assigned") {
+                  TRANSMITTER_FLAG = responseJson.transmitter;   
+                }
               }
             }
-            if (TRANSMITTER_FLAG == "") {
-              if (status == "transmitter still processing" || status == "fully assigned") {
-                TRANSMITTER_FLAG = responseJson.transmitter;   
-              }
-            }
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
       }, TIMEFRAME_MS);
 
       return () => {
@@ -242,6 +248,7 @@ const LoaderDevelopment = () => {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
     <div id="statusBar"></div>
+    <div id="timeBar"></div>
   
     <div id="all-together" class="row"></div>
 

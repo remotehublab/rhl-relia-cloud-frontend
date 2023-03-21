@@ -17,6 +17,7 @@ var userId = "";
 var taskId = "";
 var receiverName = "";
 var transmitterName = "";
+var altIdentifier_outer = "";
   
 const LoaderDevelopment = () => {
   window.API_BASE_URL = "/api/";
@@ -25,6 +26,7 @@ const LoaderDevelopment = () => {
   const [google] = useState(null);
   const navigate = useNavigate();
   const { altIdentifier } = useParams();
+  altIdentifier_outer = altIdentifier;
   let status = 'queued';
 
   useEffect(() => {
@@ -46,13 +48,8 @@ const LoaderDevelopment = () => {
     }
 
     (async () => {
-      let object0 = {
-        "altIdentifier": altIdentifier
-      };
-
-      await fetch('/user/decode-alt-identifier', {
+      await fetch('/scheduler/user/decode-alt/' + altIdentifier, {
         method: 'POST',
-        body: JSON.stringify(object0),
       }).then((response) => response.json())
       .then((responseJson) => {
         console.log("Task ID is: " + responseJson.taskId);
@@ -66,10 +63,10 @@ const LoaderDevelopment = () => {
       });
 
       let object = {
-        "task": taskId
+        "relia-secret": altIdentifier
       };
 
-      await fetch('/user/get-task-time', {
+      await fetch('/scheduler/user/get-task-time/' + taskId, {
         method: 'POST',
         body: JSON.stringify(object),
       }).then((response) => response.json())
@@ -86,10 +83,9 @@ const LoaderDevelopment = () => {
         // }
         TIME_REMAINING = TIME_REMAINING + 1;
         let object = {
-          "task": taskId,
-          "time": TIME_REMAINING.toString()
+          "relia-secret": altIdentifier
         };
-        fetch('/user/set-task-time', {
+        fetch('/scheduler/user/set-task-time/' + taskId + '/' + TIME_REMAINING.toString(), {
           method: 'POST',
           body: JSON.stringify(object),
         })
@@ -104,12 +100,9 @@ const LoaderDevelopment = () => {
           loadUI(RECEIVER_FLAG, TRANSMITTER_FLAG, taskId, userId);
           COMBINED_FLAG = 1;
         }
-        let object2 = {
-          "task": taskId
-        };
-        fetch('/user/scheduler-poll', {
+        fetch('/scheduler/user/tasks/poll/' + taskId, {
           method: 'POST',
-          body: JSON.stringify(object2),
+          body: JSON.stringify(object),
         })
         .then((response) => response.json())
         .then((responseJson) => {
@@ -125,13 +118,9 @@ const LoaderDevelopment = () => {
       }, TIMEFRAME_MS);
 
       const interval2 = setInterval(() => {
-        let object = {
-          "task": taskId,
-          "user": userId
-        };
-        return fetch('/user/search-tasks', {
-          method: 'POST',
-          body: JSON.stringify(object),
+        return fetch('/scheduler/user/tasks/' + taskId + '/' + userId, {
+          method: 'GET',
+          headers: {'relia-secret': altIdentifier},
         })
         .then((response) => response.json())
         .then((responseJson) => {
@@ -199,11 +188,11 @@ const LoaderDevelopment = () => {
   const reschedule = async (ev) => {
     ev.preventDefault();
     let object0 = {
-      "task": taskId,
-      "user": userId
+      "action": "delete",
+      "relia-secret": altIdentifier
     };
 
-    await fetch('/user/deletion', {
+    await fetch('/scheduler/user/tasks/' + taskId + '/' + userId, {
       method: 'POST',
       body: JSON.stringify(object0),
     })
@@ -272,9 +261,9 @@ const LoaderDevelopment = () => {
 
 function leavePage(navigate, taskId, userId) {
     let object = {
-      "task": taskId
+      "relia-secret": altIdentifier_outer
     };
-    fetch('/user/complete-tasks', {
+    fetch('/scheduler/user/complete-tasks/' + taskId, {
       method: 'POST',
       body: JSON.stringify(object),
     })
@@ -306,9 +295,9 @@ function loadUI(deviceId_r, deviceId_t, taskId, userId) {
         }
         if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
           let object = {
-            "task": taskId
+            "relia-secret": altIdentifier_outer
           };
-          fetch('/user/complete-tasks', {
+          fetch('/scheduler/user/complete-tasks/' + taskId, {
             method: 'POST',
             body: JSON.stringify(object),
           })

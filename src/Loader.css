@@ -51,11 +51,33 @@ input.textInput {
    flex: 50%;
 }
 
+.centered {
+   margin: 0 25%;
+}
+
+.true-centered {
+   margin: 0 auto;
+   text-align: center;
+}
+
+.align-left {
+   text-align: left;
+   display: inline-block;
+}
+
+button {
+   border-radius: 8px;
+}
+
 [id^=space] {
-   justify-content: space-between;
+   white-space: nowrap;
 }
 
 [id^=body], #errorMessages, #currentTasks {
    padding: 4px 4px 4px 8px;
    background-color: #cee6fd;
+}
+
+[id^=inner] {
+   display: inline-block;
 }

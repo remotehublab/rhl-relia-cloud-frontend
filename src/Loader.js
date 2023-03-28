@@ -4,7 +4,7 @@ import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import { Dimensions } from 'react-native';
 import Collapsible from 'react-collapsible';
-import { BsChevronDown } from "react-icons/bs";
+import { BsChevronDown, BsFillQuestionCircleFill } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
 import  { Redirect, useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ const Loader = () => {
   }, [google]);
 
   return (
-    <div className="App" style={{ backgroundColor: '#e7f3fe', height: '100%', minHeight: '100vh' }}>
+    <div className="App" style={{ backgroundColor: '#E8E8E8', height: '100%', minHeight: '100vh' }}>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
@@ -73,7 +73,7 @@ const Loader = () => {
     <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
 
     <div class="heading">
-        RELIA
+        <b>RELIA</b>
     </div>
 
     <div class="container">
@@ -83,39 +83,49 @@ const Loader = () => {
         <br />
 
         <div class="row">
-          <Collapsible trigger={<div id="space"><div>Upload Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }}>
+          <Collapsible trigger={<div id="space"><div>Upload Tasks <div id="inner1" title="Select files to upload for either the transmitter or the receiver."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }} open={true}>
             <Main />
           </Collapsible>
         </div>
 
 	<div class="row">
-          <Collapsible trigger={<div id="space2"><div>Submit Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }}>
+          <Collapsible trigger={<div id="space2"><div>Submit Tasks <div id="inner2" title="Select a pair of previously uploaded transmitter and receiver files to execute for observation."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }} open={true}>
             <div id="body2">
             <br />
             <div class="row">
               <div class="column">
-                Most Recent Transmitter Files
-                <div id="appTransmitter"></div>
+                <div class="centered">
+                  <div class="align-left">
+                    <b>Most Recent Transmitter Files</b>
+                    <div id="appTransmitter"></div>
+                  </div>
+                </div>
 	      </div>
 
               <div class="column">
-                Most Recent Receiver Files
-                <div id="appReceiver"></div>
+                <div class="centered">
+                  <div class="align-left">
+                    <b>Most Recent Receiver Files</b>
+                    <div id="appReceiver"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="col-xs-12 col-sm-4 offset-sm-4">
-              <form onSubmit={handleUserAPI}><div>
-	        <button class="btn btn-lg btn-primary" id="runButton" disabled>Run the files</button>
-              </div></form>
-              <br />
+            <div>
+              <div class="true-centered">
+                <form onSubmit={handleUserAPI}><div>
+	          <button class="btn btn-lg btn-primary" id="runButton" disabled>Execute</button>
+                </div></form>
+                <br />
+              </div>
 	    </div>
             </div>
           </Collapsible>
 	</div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space3"><div>Delete Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
+          <Collapsible trigger={<div id="space3"><div>Delete Tasks <div id="inner3" title="Specify a task to delete using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
             <div id="body3">
               <br />
               <form onSubmit={handleCancellation}><div>
@@ -127,7 +137,7 @@ const Loader = () => {
         </div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space4"><div>Search Task Status</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
+          <Collapsible trigger={<div id="space4"><div>Search Task Status <div id="inner4" title="Search for the status of a task using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
              <div id="body4">
                 <br />
                 <form onSubmit={searchTasks}><div>
@@ -140,13 +150,13 @@ const Loader = () => {
         </div>
 
         <div class="row">
-          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
+          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks <div id="inner5" title="View the five most recently constructed tasks. For further tasks and/or details, please contact system administration."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
             <div id="currentTasks"></div>
           </Collapsible>
         </div>
         
         <div class="row">
-          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages</div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
+          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages <div id="inner6" title="View the most recently generated error messages produced by executed tasks."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
             <div id="errorMessages"></div>
           </Collapsible>
         </div>
@@ -218,26 +228,34 @@ class Main extends React.Component {
       <br />
       <div class="row">
         <div class="column">
-          <form onSubmit={this.handleUploadGRC_transmitter}>
-            Transmitter File
-            <div>
-              <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" accept=".grc"/>
+          <div class="centered">
+            <div class="align-left">
+              <b>Transmitter File</b>
+              <form onSubmit={this.handleUploadGRC_transmitter}>
+                <div>
+                  <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" size="15" accept=".grc"/>
+                </div>
+                <div>
+                  <button>Upload</button>
+                </div>
+              </form>
             </div>
-            <div>
-              <button>Upload</button>
-            </div>
-          </form>
+          </div>
         </div>
         <div class="column">
-          <form onSubmit={this.handleUploadGRC_receiver}>
-            Receiver File
-            <div>
-              <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" accept=".grc"/>
+          <div class="centered">
+            <div class="align-left">
+              <b>Receiver File</b>
+              <form onSubmit={this.handleUploadGRC_receiver}>
+                <div>
+                  <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" size="15" accept=".grc"/>
+                </div>
+                <div>
+                  <button>Upload</button>
+                </div>
+              </form>
             </div>
-            <div>
-              <button>Upload</button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
       <br />
@@ -367,7 +385,7 @@ async function getCurrentTasks() {
          if (responseJson.transmitters[i] == "null") {
             transmitter_string = " no transmitter";
          }
-         tasksToRender.push(<div>{"Task " + responseJson.ids[i] + " is " + responseJson.statuses[i] + " with" + receiver_string + "and" + transmitter_string + ".\n"}</div>);
+         tasksToRender.push(<div>{"Task "}<b>{responseJson.ids[i]}</b>{" is "}<b>{responseJson.statuses[i]}</b>{" with" + receiver_string + "and" + transmitter_string + ".\n"}</div>);
       }
       rootTasks.render(tasksToRender);
       return responseJson
@@ -398,7 +416,7 @@ async function getErrorMessages() {
      // errorsToRender.push(<div><b>Most Recent Error Messages</b>{"\n"}</div>);
      // }
      for (let i = 0; i < responseJson.ids.length; i++) {
-         errorsToRender.push(<div>{"Task " + responseJson.ids[i] + " encountered the following error: " + responseJson.errors[i] + "\n"}</div>);
+         errorsToRender.push(<div>{"Task "}<b>{responseJson.ids[i]}</b>{" encountered the following error: " + responseJson.errors[i] + "\n"}</div>);
      }
      rootTasks.render(errorsToRender);
      return responseJson

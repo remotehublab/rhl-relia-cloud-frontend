@@ -105,6 +105,7 @@ export function ReliaWidgets($divElement) {
 							self.blocks.push(frequencysink);
 							frequencysink.redraw();
 						};
+						// $("#all-together").load(window.location.href + " #all-together");
 					}
 				});
 			});

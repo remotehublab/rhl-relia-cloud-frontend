@@ -11,7 +11,9 @@ var RECEIVER_FLAG = "";
 var TRANSMITTER_FLAG = "";
 var COMBINED_FLAG = 0;
 var FIVE_SECOND_FLAG = 0;
-var TIME_REMAINING = 60;
+var TIME_REMAINING = 0;
+var STATUS_STATE = 0;
+var LEAVE_PAGE = 0;
 
 var userId = "";
 var taskId = "";
@@ -115,35 +117,10 @@ const LoaderDevelopment = () => {
         .catch((error) => {
           console.log(error);
         });
-
-        const time_bar = ReactDOM.createRoot(document.getElementById("timeBar"));
-        let time_to_render = [];
-
-        let timeString = "";
-        let time_baseline = TIME_REMAINING;
-        let days = parseInt(TIME_REMAINING / (24 * 3600));
-        if (days > 0) {
-          timeString = days.toString() + " days, ";
-        }
-        TIME_REMAINING = TIME_REMAINING % (24 * 3600);
-        let hours = parseInt(TIME_REMAINING / 3600);
-        if (hours > 0) {
-          timeString = timeString + hours.toString() + " hours, ";
-        }
-        TIME_REMAINING = TIME_REMAINING % 3600;
-        let minutes = parseInt(TIME_REMAINING / 60);
-        if (minutes > 0) {
-          timeString = timeString + minutes.toString() + " minutes, ";
-        }
-        TIME_REMAINING = TIME_REMAINING % 60;
-        timeString = timeString + TIME_REMAINING.toString() + " seconds";
-        time_to_render.push(<div>Time Elapsed: {timeString}</div>);
-        TIME_REMAINING = time_baseline;
-        time_bar.render(time_to_render);
       }, TIMEFRAME_MS);
 
       const interval2 = setInterval(() => {
-        if (FIVE_SECOND_FLAG == 0) {
+        if ((FIVE_SECOND_FLAG == 0 || STATUS_STATE == 0) && LEAVE_PAGE == 0) {
           return fetch('/scheduler/user/tasks/' + taskId + '/' + userId, {
             method: 'GET',
             headers: {'relia-secret': altIdentifier},
@@ -154,9 +131,12 @@ const LoaderDevelopment = () => {
               console.log("Uh oh... are you sure you are logged in?");
             } else {
               status = responseJson.status;
+              if (status == "completed") {
+                STATUS_STATE = 1;
+              }
               const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
               let status_to_render = [];
-              status_to_render.push(<div>Task {taskId} is {status}<br /></div>);
+              status_to_render.push(<div>Your task is {status}<br /></div>);
               status_bar.render(status_to_render);
               if (RECEIVER_FLAG == "") {
                 if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
@@ -218,6 +198,7 @@ const LoaderDevelopment = () => {
     };
 
     FIVE_SECOND_FLAG = 0;
+    STATUS_STATE = 0;
     if (TRANSMITTER_FLAG != "") {
       let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
       for (let i = 0; i < t_length; i++) {
@@ -243,7 +224,7 @@ const LoaderDevelopment = () => {
   };
 
   return (
-    <div className="App" style={{ backgroundColor: '#e7f3fe', height: '100%', minHeight: '100vh' }}>
+    <div className="App" style={{ backgroundColor: '#E8E8E8', height: '100%', minHeight: '100vh' }}>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
@@ -259,6 +240,8 @@ const LoaderDevelopment = () => {
     <form onClick={reschedule}><div>
     <button class="btn btn-lg btn-primary" id="runButton">Reschedule</button>
     </div></form>
+
+    <div className="invisible">{timerSet()}</div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
     </div>
@@ -276,11 +259,43 @@ function leavePage(navigate, taskId, userId) {
     })
     .then((response) => response.json())
     .then((responseJson) => {
+      LEAVE_PAGE = 1;
       console.log(responseJson.status);
       navigate('/loader')
     }).catch((error) => {
       console.log(error);
     });
+}
+
+function timerSet() {
+  const interval1 = setInterval(() => {
+    if (LEAVE_PAGE == 0) {
+      let time_to_render = [];
+      let timeString = "";
+      let time_baseline = TIME_REMAINING;
+      let days = parseInt(TIME_REMAINING / (24 * 3600));
+      if (days > 0) {
+        timeString = days.toString() + " days, ";
+      }
+      TIME_REMAINING = TIME_REMAINING % (24 * 3600);
+      let hours = parseInt(TIME_REMAINING / 3600);
+      if (hours > 0) {
+        timeString = timeString + hours.toString() + " hours, ";
+      }
+      TIME_REMAINING = TIME_REMAINING % 3600;
+      let minutes = parseInt(TIME_REMAINING / 60);
+      if (minutes > 0) {
+        timeString = timeString + minutes.toString() + " minutes, ";
+      }
+      TIME_REMAINING = TIME_REMAINING % 60;
+      timeString = timeString + TIME_REMAINING.toString() + " seconds";
+      time_to_render.push(<div>Time Elapsed: {timeString}</div>);
+      TIME_REMAINING = time_baseline;
+
+      const time_bar = ReactDOM.createRoot(document.getElementById("timeBar"));
+      time_bar.render(time_to_render);
+    }
+  }, TIMEFRAME_MS);
 }
 
 function loadUI(deviceId_r, deviceId_t, taskId, userId) {
@@ -290,6 +305,8 @@ function loadUI(deviceId_r, deviceId_t, taskId, userId) {
       if (window.TIMES.has(deviceId_t) && window.TIMES.has(deviceId_r)) {
         let t_length = window.TIMES.get(deviceId_t).length;
         let r_length = window.TIMES.get(deviceId_r).length;
+        window.TOTAL_NUM = t_length + r_length;
+        console.log("T_LENGTH: " + t_length.toString() + ", R_LENGTH: " + r_length.toString());
         for (let i = 0; i < t_length; i++) {
           if (window.TIMES.get(deviceId_t)[i] > 0) {
             relocate_flag = false;

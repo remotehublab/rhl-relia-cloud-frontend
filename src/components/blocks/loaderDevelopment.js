@@ -28,13 +28,18 @@ export function ReliaWidgets($divElement) {
 		var devices = data.devices;
 		$.each(devices, function (pos, deviceName) {
            		var $deviceContents;
+            // window.BLOCKS = {
+            //     deviceName1: [block1, block2...],
+            //     deviceName2: [block3, block4...],
+            // }
+            var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
 			if (!window.BLOCKS.has(deviceName)) {
-    				$deviceContents = $("<div id='device-" + deviceName + "' class='col-6'><center><h2>Device:" + deviceName + "</h2></center><br>" + "</div>");
+    				$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device:" + deviceName + "</h2></center><br>" + "</div>");
 				$divElement.append($deviceContents);
 				window.BLOCKS.set(deviceName, []);
 				window.TIMES.set(deviceName, []);
 			} else {
-    				$deviceContents = $("#device-" + deviceName);
+    				$deviceContents = $("#" + deviceNameIdentifier);
             		}
             
 			for (let j = 0; j < window.TIMES.get(deviceName).length; j++) {
@@ -46,8 +51,11 @@ export function ReliaWidgets($divElement) {
 					console.log("Error loading blocks:", data);
 					return;
 				}
+                // console.log("Listing blocks in ", deviceName);
 				$.each(data.blocks, function (post, blockName) {
+                    // console.log("Block", blockName, " found at ", deviceName);
 					if (!window.BLOCKS.get(deviceName).includes(blockName)) {
+                        // console.log("Block", blockName, " found at ", deviceName, "was NOT included, so we include it now");
 						window.BLOCKS.get(deviceName).push(blockName);
 						window.TIMES.get(deviceName).push(10);
 						var $newDiv = $(

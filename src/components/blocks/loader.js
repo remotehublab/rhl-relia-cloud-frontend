@@ -12,6 +12,7 @@ import ReliaChooser from './VariableChooser.js';
 import ReliaNumberSink from './NumberSink.js';
 import ReliaEyePlot from './EyePlot.js';
 import ReliaFrequencySink from './FrequencySink.js';
+import ReliaAutoCorrSink from './AutoCorrSink.js';
 
 
 export function ReliaWidgets($divElement) {
@@ -95,6 +96,10 @@ export function ReliaWidgets($divElement) {
 						var frequencysink = new ReliaFrequencySink($divContents, deviceName, blockName);
 						self.blocks.push(frequencysink);
 						frequencysink.redraw();
+					} else if (blockName.startsWith("RELIA AutoCorr Sink")) {
+						var autocorrsink = new ReliaAutoCorrSink($divContents, deviceName, blockName);
+						self.blocks.push(autocorrsink);
+						autocorrsink.redraw();
 					};
 				});
 			});

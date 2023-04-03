@@ -56,7 +56,7 @@ export function ReliaVariableRange($divElement, deviceIdentifier, blockIdentifie
 				return;
 			}
 
-			console.log(data.data);
+			//console.log(data.data);
 
 			var params = data.data.params;
 			self.$slider.attr("min", params.min);

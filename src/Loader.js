@@ -7,7 +7,7 @@ import Collapsible from 'react-collapsible';
 import { BsChevronDown, BsFillQuestionCircleFill } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loader.js";
 import ReactDOM from 'react-dom/client';
-import  { Redirect, useNavigate } from 'react-router-dom';
+import { Redirect, useNavigate } from 'react-router-dom';
 import RHL_logo from './components/images/RHL_logo.png';
 import LabsLand_logo from './components/images/LabsLand_logo.png';
 import Background_logo from './components/images/Background.png';
@@ -17,8 +17,19 @@ var transmitterContents = '';
 var receiverName = '';
 var receiverContents = '';
 var userid = '';
+var taskId = '';
+var receiverName = '';
+var transmitterName = '';
+var altIdentifier_outer = '';
+var RECEIVER_FLAG = '';
+var TRANSMITTER_FLAG = '';
+var COMBINED_FLAG = 0;
+var FIVE_SECOND_FLAG = 0;
+var STATUS_STATE = 0;
+var LEAVE_PAGE = 0;
 
 const TIMEFRAME_MS = 30000;
+const TIMEFRAME_MS_WINDOW = 1000;
 const width = Dimensions.get('window').width;
 
 const Loader = () => {
@@ -46,7 +57,7 @@ const Loader = () => {
     }
 
     $(".container").css("padding-bottom", $(".footer").height());
-    $(".container").css("padding-bottom", "+=20");
+    $(".container").css("padding-bottom", "+=0");
 
     const interval = setInterval(() => {
       poll_call();
@@ -69,16 +80,14 @@ const Loader = () => {
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
     <div className="invisible">{JSON.stringify(poll_call())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
-    <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
-    <div className="invisible">{JSON.stringify(getErrorMessages())}</div>
+    {/* <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
+    <div className="invisible">{JSON.stringify(getErrorMessages())}</div> */}
 
     <div class="heading">
         <b>RELIA</b>
     </div>
 
-    <div class="container">
-
-        <br />
+    <div class="container" id="containerLoader">
         <br />
         <br />
 
@@ -124,7 +133,7 @@ const Loader = () => {
           </Collapsible>
 	</div>
 
-        <div class="row">
+        {/* <div class="row">
           <Collapsible trigger={<div id="space3"><div>Delete Tasks <div id="inner3" title="Specify a task to delete using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
             <div id="body3">
               <br />
@@ -134,9 +143,9 @@ const Loader = () => {
               <br />
             </div>
           </Collapsible>
-        </div>
+         </div>
 
-        <div class="row">
+         <div class="row">
           <Collapsible trigger={<div id="space4"><div>Search Task Status <div id="inner4" title="Search for the status of a task using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
              <div id="body4">
                 <br />
@@ -147,25 +156,28 @@ const Loader = () => {
                 <br />
              </div>
           </Collapsible>
-        </div>
+         </div>
 
-        <div class="row">
+         <div class="row">
           <Collapsible trigger={<div id="space5"><div>Most Recent Tasks <div id="inner5" title="View the five most recently constructed tasks. For further tasks and/or details, please contact system administration."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
             <div id="currentTasks"></div>
           </Collapsible>
-        </div>
+         </div>
         
-        <div class="row">
+         <div class="row">
           <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages <div id="inner6" title="View the most recently generated error messages produced by executed tasks."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
             <div id="errorMessages"></div>
           </Collapsible>
-        </div>
+        </div> */}
 
     </div>
 
+    <div class="container" id="containerWindow">
+    </div>
+
     <div class="footer">
-         <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.1 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
-         <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.1 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
+         <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.075 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
+         <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.075 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
     </div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
@@ -264,6 +276,162 @@ class Main extends React.Component {
   }
 }
 
+const LoaderDevelopment = () => {
+  window.API_BASE_URL = "/api/";
+  window.BLOCKS = new Map();
+  window.TIMES = new Map();
+  let status = 'queued';
+
+  useEffect(() => {
+
+    (async () => {
+      const interval1 = setInterval(() => {
+        // if (TIME_REMAINING <= 0) {
+        //  leavePage(taskId, userid);
+        // }
+        if (RECEIVER_FLAG != "" && TRANSMITTER_FLAG != "" && COMBINED_FLAG == 0) {
+          loadUI_window(RECEIVER_FLAG, TRANSMITTER_FLAG, taskId, userid);
+          COMBINED_FLAG = 1;
+        }
+        fetch('/scheduler/user/tasks/poll/' + taskId, {
+          method: 'POST',
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.success) {
+            console.log("Set user as active");
+          } else {
+            console.log("Did not set user as active");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }, TIMEFRAME_MS_WINDOW);
+
+      const interval2 = setInterval(() => {
+        if ((FIVE_SECOND_FLAG == 0 || STATUS_STATE == 0) && LEAVE_PAGE == 0) {
+          return fetch('/scheduler/user/tasks/' + taskId + '/' + userid, {
+            method: 'GET',
+          })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            if (responseJson.success == false) {
+              console.log("Uh oh... are you sure you are logged in?");
+            } else {
+              status = responseJson.status;
+              if (status == "completed") {
+                STATUS_STATE = 1;
+              }
+              const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+              let status_to_render = [];
+              status_to_render.push(<div>Your task is {status}<br /></div>);
+              status_bar.render(status_to_render);
+              if (RECEIVER_FLAG == "") {
+                if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
+                  RECEIVER_FLAG = responseJson.receiver;
+                }
+              }
+              if (TRANSMITTER_FLAG == "") {
+                if (status == "transmitter still processing" || status == "fully assigned") {
+                  TRANSMITTER_FLAG = responseJson.transmitter;   
+                }
+              }
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
+      }, TIMEFRAME_MS_WINDOW);
+
+      return () => {
+        let script = document.getElementById('googleChartsScript');
+        if (script) {
+          script.remove();
+        }
+      }
+
+    })();
+  });
+
+  const handleNavigate = ev => {
+    ev.preventDefault();
+    leavePage(taskId, userid);
+  };
+
+  const reschedule = async (ev) => {
+    ev.preventDefault();
+    let object0 = {
+      "action": "delete"
+    };
+
+    await fetch('/scheduler/user/tasks/' + taskId + '/' + userid, {
+      method: 'POST',
+      body: JSON.stringify(object0),
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson.status);
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    let object = {
+       "r_filename": receiverName,
+       "t_filename": transmitterName,
+       "priority": 10,
+       "taskId": taskId,
+    };
+
+    FIVE_SECOND_FLAG = 0;
+    STATUS_STATE = 0;
+    if (TRANSMITTER_FLAG != "") {
+      let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
+      for (let i = 0; i < t_length; i++) {
+        window.TIMES.get(TRANSMITTER_FLAG)[i] = 10;
+      }
+    }
+    if (RECEIVER_FLAG != "") {
+      let r_length = window.TIMES.get(RECEIVER_FLAG).length;
+      for (let j = 0; j < r_length; j++) {
+        window.TIMES.get(RECEIVER_FLAG)[j] = 10;
+      }
+    }
+
+    fetch('/user/route/' + userid, {
+       method: 'POST',
+       body: JSON.stringify(object),
+    }).then((response) => response.json())
+    .then((responseJson) => {
+       // if (responseJson.success) {
+       //   window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
+       // }
+    });
+  };
+
+  return (
+    <div className="App">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
+    <div id="statusBar"></div>
+
+    <form><div>
+    <button onClick={handleNavigate} class="btn btn-lg btn-primary" id="runButton">Return to File Upload</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={reschedule} class="btn btn-lg btn-primary" id="runButton">Reschedule</button>
+    </div></form>
+
+    <br /><br />
+
+    <div id="all-together" class="row"></div>
+	
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
+    </div>
+  );
+
+};
+
 function loadUI() {
     // var widgets = new ReliaWidgets($("#all-together"));
 }
@@ -292,7 +460,6 @@ function handleUserAPI(ev) {
       "t_filename": transmitterName,
       "priority": 10,
       "taskId": "None",
-      "altId": "None",
    };
 
    fetch('/user/route/' + userid, {
@@ -301,7 +468,8 @@ function handleUserAPI(ev) {
    }).then((response) => response.json())
    .then((responseJson) => {
       if (responseJson.success) {
-         window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
+         taskId = responseJson.taskIdentifier;
+         switch_to_window();
       }
    });
 }
@@ -356,6 +524,7 @@ async function searchTasks(ev) {
 
 }
 
+/*
 async function getCurrentTasks() {
    await poll_call();
    let object = {
@@ -425,6 +594,7 @@ async function getErrorMessages() {
      console.error(error);
    });
 }
+*/
 
 function getTransactions() {
    return fetch('/user/transactions')
@@ -490,6 +660,74 @@ function getTransactions() {
    .catch((error) => {
      console.error(error);
    });
+}
+
+function leavePage(taskId, userId) {
+    fetch('/scheduler/user/complete-tasks/' + taskId, {
+      method: 'POST',
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      LEAVE_PAGE = 1;
+      console.log(responseJson.status);
+      switch_to_loader();
+    }).catch((error) => {
+      console.log(error);
+    });
+}
+
+function loadUI_window(deviceId_r, deviceId_t, taskId, userId) {
+    const interval4 = setInterval(() => {
+      var widgets = new ReliaWidgets($("#all-together"));
+      let relocate_flag = true;
+      if (window.TIMES.has(deviceId_t) && window.TIMES.has(deviceId_r)) {
+        let t_length = window.TIMES.get(deviceId_t).length;
+        let r_length = window.TIMES.get(deviceId_r).length;
+        for (let i = 0; i < t_length; i++) {
+          if (window.TIMES.get(deviceId_t)[i] > 0) {
+            relocate_flag = false;
+          }
+        }
+        for (let j = 0; j < r_length; j++) {
+          if (window.TIMES.get(deviceId_r)[j] > 0) {
+            relocate_flag = false;
+          }
+        }
+        if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
+          fetch('/scheduler/user/complete-tasks/' + taskId, {
+            method: 'POST',
+          })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            console.log(responseJson.status);
+            FIVE_SECOND_FLAG = 1;
+          }).catch((error) => {
+            console.log(error);
+          });
+        }
+      }
+    }, TIMEFRAME_MS_WINDOW);
+}
+
+function switch_to_window() {
+    let element = document.getElementById("containerLoader");
+    let hidden = element.getAttribute("hidden");
+    element.setAttribute("hidden", "hidden");
+
+    const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
+    let window_to_render = [];
+    window_to_render.push(<LoaderDevelopment />);
+    container_window.render(window_to_render);
+}
+
+function switch_to_loader() {
+    let element = document.getElementById("containerLoader");
+    let hidden = element.getAttribute("hidden");
+    element.removeAttribute("hidden");
+
+    const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
+    let window_to_render = [];
+    container_window.render(window_to_render);
 }
   
 export default Loader;

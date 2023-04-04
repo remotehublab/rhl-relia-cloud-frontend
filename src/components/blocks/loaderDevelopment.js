@@ -13,7 +13,6 @@ import ReliaNumberSink from './NumberSink.js';
 import ReliaEyePlot from './EyePlot.js';
 import ReliaFrequencySink from './FrequencySink.js';
 
-
 export function ReliaWidgets($divElement) {
 	var self = this;
 	var devicesUrl = window.API_BASE_URL + "data/current/devices";
@@ -34,7 +33,7 @@ export function ReliaWidgets($divElement) {
             // }
             var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
 			if (!window.BLOCKS.has(deviceName)) {
-    				$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device:" + deviceName + "</h2></center><br>" + "</div>");
+    				$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device: " + deviceName + "</h2></center><br>" + "</div>");
 				$divElement.append($deviceContents);
 				window.BLOCKS.set(deviceName, []);
 				window.TIMES.set(deviceName, []);

@@ -16,23 +16,18 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 	    "<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 		"<div class=\"col\">" +
 		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked> Signal 1 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked> Signal 2 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-2\" checked> Signal 3 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-2\" checked> Signal 4 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-3\" checked> Signal 5 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-3\" checked> Signal 6 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-4\" checked> Signal 7 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-4\" checked> Signal 8 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-5\" checked> Signal 9 </label>&nbsp;" +
-		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-5\" checked> Signal 10 </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
+		        "<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+
 
 		"</div>" +
 
 		"<div class=\"col\">" +
 		        "<button class=\"button zoom-in-button\"><i class=\"bi bi-zoom-in\"></i></button>" +
-		        "<button class=\"button autoscale-button\"><i class=\"bi bi-window\"></i></button>" +
 		        "<button class=\"button zoom-out-button\"><i class=\"bi bi-zoom-out\"></i></button>" +
+		        "<button class=\"button pause-play-button\"><i class=\"bi bi-pause-btn\"></i></button>" +
+		        "<input class=\"textbox time-ymin-textbox\" type=\"text\" size=\"4\" value=\"ymin\">" +
+		        "<input class=\"textbox time-ymax-textbox\" type=\"text\" size=\"4\" value=\"ymax\">" +
 		"</div>" +
 
 
@@ -72,22 +67,28 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 	
 	var $constChartDiv = self.$div.find(".time-chart");
 	self.$gridCheckbox = self.$div.find(".time-sink-grid-checkbox");
-	self.$timesinkrealCheckbox = self.$div.find(".time-sink-real-checkbox-1");
-	self.$timesinkimagCheckbox = self.$div.find(".time-sink-imag-checkbox-1");
-	self.$nop2plot = self.$div.find(".TimeSink_NumberOfPoints2Plot");
+	self.$autoscaleCheckbox = self.$div.find(".time-sink-autoscale-checkbox");
+	self.$axisLabelsCheckbox = self.$div.find(".time-sink-axis-labels-checkbox");
 
 	self.maxValueRealChannels = [0,0,0,0,0]
 	self.minValueRealChannels = [0,0,0,0,0]
 	self.maxValueImagChannels = [0,0,0,0,0]
 	self.minValueImagChannels = [0,0,0,0,0]
 
-
 	
-	self.maxTimeSinkRe=1;
-	self.minTimeSinkRe=1;
-	self.zoomInTimeSink=1;
-    self.zoomOutTimeSink=1;
-    //self.flagPauseRun=true;
+	self.maxTimeSink=1;
+	self.minTimeSink=1;
+    //self.zoomOutTimeSink=1;
+    self.titleTimeSink='';
+    self.colorsTimeSink=[];
+    self.verticalnameTimeSink=" ";
+	self.yLabelTimeSink=" ";
+	self.yUnitTimeSink=" ";
+	self.pausePlayTimeSink=true;
+	self.yminTimeSink=-1;
+	self.ymaxTimeSink=1;
+	self.zoomStep=0;
+	self.zoomFactor=0;
 
 //
 	//self.redraw = function() {
@@ -144,16 +145,34 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 //
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInTimeSink += 1;
+		self.zoomFactor += 1;
+		self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
 	});
 	self.$div.find(".zoom-out-button").click(function() {
+		self.zoomFactor -= 1;
+		self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);		
+	});
+	self.$div.find(".pause-play-button").click(function() {
+		self.pausePlayTimeSink ^= true;
+	});
 
-		self.zoomOutTimeSink += 1;
-	});
-	self.$div.find(".autoscale-button").click(function() {
-		self.zoomInTimeSink = 1;
-		self.zoomOutTimeSink = 1;
-	});
+
+	self.$timeYvalMaximumText = self.$div.find(".time-ymax-textbox");
+	$(".time-ymax-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.maxTimeSink = self.$timeYvalMaximumText.val();
+      self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
+      //console.log(textboxValue);
+    }
+  });
+
+	self.$timeYvalMinimumText = self.$div.find(".time-ymin-textbox");
+	$(".time-ymin-textbox").keypress(function(event) {
+    if (event.which == 13) {
+      self.minTimeSink = self.$timeYvalMinimumText.val();
+      self.$div.find(".time-sink-autoscale-checkbox").prop('checked', false);
+    }
+  })	
 
 	//This commented code is to add noise slider
 	/*
@@ -215,6 +234,14 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 			}
 			},
 			vAxis: {
+
+				viewWindow:{
+					//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
+					//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
+					min: self.minTimeSink*1.0 + self.zoomFactor*self.zoomStep,
+					max: self.maxTimeSink*1.0 - self.zoomFactor*self.zoomStep
+				},/**/
+
 				title: 'Amplitude',
 				gridlines: {
 				color: GridColor,
@@ -258,13 +285,6 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 				realData[pos] = parseFloat(value);
 			});
 
-			var enableReal;
-        	if(self.$timesinkrealCheckbox.is(':checked'))  {
-        		enableReal = true; }
-        	else { 
-        		enableReal = false; 
-        		//realData= new Array(realData.length).fill(null);
-        	}
    
    			var columns = ["Point"];
 			var formattedData = [
@@ -276,11 +296,11 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 
 			var counter = 0;
 
-			if (enableReal) {
+			
 				columns.push("Real 1", "Real 2","Real 1", "Real 2","Real 1", "Real 2","Real 1", "Real 2","Real 1", "Real 2");
 				self.options.series[counter] = '#e2431e';
 				counter++;
-			}	
+				
 			console.log(self.options);
 			
 			var Number2plot = params.nop
@@ -294,7 +314,6 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 			
 			for (var pos = 0; pos < Number2plot	; ++pos) {
 				var currentRow = [pos * timePerSample];
-				if (enableReal){
 					currentRow.push(realData[pos]);
 					currentRow.push(realData[pos+eyePlotDelay*1]);
 					currentRow.push(realData[pos+eyePlotDelay*2]);
@@ -305,7 +324,6 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 					currentRow.push(realData[pos+eyePlotDelay*7]);
 					currentRow.push(realData[pos+eyePlotDelay*8]);
 					currentRow.push(realData[pos+eyePlotDelay*9]);
-				}
 
 				formattedData.push(currentRow);
 			}
@@ -313,6 +331,18 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 			var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 			
 			self.chart.draw(dataTable, self.options);
+
+			if(self.$autoscaleCheckbox.is(':checked'))  {
+				self.maxTimeSink=Math.max.apply(Math, realData);
+				self.minTimeSink=Math.min.apply(Math, realData);
+	
+				self.zoomStep=0;
+				self.zoomFactor=0;
+				//console.log(tempmax);
+			}
+			else self.zoomStep=0.07*Math.abs(self.minTimeSink-self.maxTimeSink);
+
+
 		});
 	};
 

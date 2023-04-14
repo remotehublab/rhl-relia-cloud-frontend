@@ -5,7 +5,7 @@ import React, { useEffect, useState }  from 'react';
 import { Dimensions } from 'react-native';
 import Collapsible from 'react-collapsible';
 import { BsChevronDown, BsFillQuestionCircleFill } from "react-icons/bs";
-import { ReliaWidgets } from "./components/blocks/loader.js";
+import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
 import ReactDOM from 'react-dom/client';
 import { Redirect, useNavigate } from 'react-router-dom';
 import RHL_logo from './components/images/RHL_logo.png';

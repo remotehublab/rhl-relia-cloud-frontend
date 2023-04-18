@@ -53,7 +53,7 @@ export function ReliaWidgets($divElement) {
                 // console.log("Listing blocks in ", deviceName);
 				$.each(data.blocks, function (post, blockName) {
                     // console.log("Block", blockName, " found at ", deviceName);
-					if (!window.BLOCKS.get(deviceName).includes(blockName)) {
+					if (window.BLOCKS.has(deviceName) && !window.BLOCKS.get(deviceName).includes(blockName)) {
                         // console.log("Block", blockName, " found at ", deviceName, "was NOT included, so we include it now");
 						window.BLOCKS.get(deviceName).push(blockName);
 						window.TIMES.get(deviceName).push(10);

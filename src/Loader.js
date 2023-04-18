@@ -28,6 +28,12 @@ var FIVE_SECOND_FLAG = 0;
 var STATUS_STATE = 0;
 var LEAVE_PAGE = 0;
 
+var renderStats = 0;
+
+window.API_BASE_URL = "/api/";
+window.BLOCKS = new Map();
+window.TIMES = new Map();
+
 const TIMEFRAME_MS = 30000;
 const TIMEFRAME_MS_WINDOW = 1000;
 const width = Dimensions.get('window').width;
@@ -277,10 +283,10 @@ class Main extends React.Component {
 }
 
 const LoaderDevelopment = () => {
+  let status = 'queued';
   window.API_BASE_URL = "/api/";
   window.BLOCKS = new Map();
   window.TIMES = new Map();
-  let status = 'queued';
 
   useEffect(() => {
 
@@ -353,7 +359,7 @@ const LoaderDevelopment = () => {
       }
 
     })();
-  });
+  }, [renderStats]);
 
   const handleNavigate = ev => {
     ev.preventDefault();
@@ -362,52 +368,41 @@ const LoaderDevelopment = () => {
 
   const reschedule = async (ev) => {
     ev.preventDefault();
-    let object0 = {
-      "action": "delete"
-    };
+    if (FIVE_SECOND_FLAG == 1) {
+      let object = {
+        "r_filename": receiverName,
+        "t_filename": transmitterName,
+        "priority": 10,
+        "taskId": taskId,
+      };
 
-    await fetch('/scheduler/user/tasks/' + taskId + '/' + userid, {
-      method: 'POST',
-      body: JSON.stringify(object0),
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log(responseJson.status);
-    }).catch((error) => {
-      console.log(error);
-    });
+      FIVE_SECOND_FLAG = 0;
+      STATUS_STATE = 0;
+      renderStats = renderStats + 1;
 
-    let object = {
-       "r_filename": receiverName,
-       "t_filename": transmitterName,
-       "priority": 10,
-       "taskId": taskId,
-    };
-
-    FIVE_SECOND_FLAG = 0;
-    STATUS_STATE = 0;
-    if (TRANSMITTER_FLAG != "") {
-      let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
-      for (let i = 0; i < t_length; i++) {
-        window.TIMES.get(TRANSMITTER_FLAG)[i] = 10;
+      if (TRANSMITTER_FLAG != "") {
+        let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
+        for (let i = 0; i < t_length; i++) {
+          window.TIMES.get(TRANSMITTER_FLAG)[i] = 10;
+        }
       }
-    }
-    if (RECEIVER_FLAG != "") {
-      let r_length = window.TIMES.get(RECEIVER_FLAG).length;
-      for (let j = 0; j < r_length; j++) {
-        window.TIMES.get(RECEIVER_FLAG)[j] = 10;
+      if (RECEIVER_FLAG != "") {
+        let r_length = window.TIMES.get(RECEIVER_FLAG).length;
+        for (let j = 0; j < r_length; j++) {
+          window.TIMES.get(RECEIVER_FLAG)[j] = 10;
+        }
       }
-    }
 
-    fetch('/user/route/' + userid, {
-       method: 'POST',
-       body: JSON.stringify(object),
-    }).then((response) => response.json())
-    .then((responseJson) => {
-       // if (responseJson.success) {
-       //   window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
-       // }
-    });
+      fetch('/user/route/' + userid, {
+        method: 'POST',
+        body: JSON.stringify(object),
+      }).then((response) => response.json())
+      .then((responseJson) => {
+        // if (responseJson.success) {
+        //   window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
+        // }
+      });
+    }
   };
 
   return (
@@ -663,56 +658,68 @@ function getTransactions() {
 }
 
 function leavePage(taskId, userId) {
-    fetch('/scheduler/user/complete-tasks/' + taskId, {
-      method: 'POST',
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      LEAVE_PAGE = 1;
-      console.log(responseJson.status);
-      switch_to_loader();
-    }).catch((error) => {
-      console.log(error);
-    });
+    if (FIVE_SECOND_FLAG == 0) {
+      fetch('/scheduler/user/complete-tasks/' + taskId, {
+        method: 'POST',
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson.status);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+    switch_to_loader();
 }
 
 function loadUI_window(deviceId_r, deviceId_t, taskId, userId) {
     const interval4 = setInterval(() => {
-      var widgets = new ReliaWidgets($("#all-together"));
-      let relocate_flag = true;
-      if (window.TIMES.has(deviceId_t) && window.TIMES.has(deviceId_r)) {
-        let t_length = window.TIMES.get(deviceId_t).length;
-        let r_length = window.TIMES.get(deviceId_r).length;
-        for (let i = 0; i < t_length; i++) {
-          if (window.TIMES.get(deviceId_t)[i] > 0) {
-            relocate_flag = false;
+      if (LEAVE_PAGE == 0) {
+        var widgets = new ReliaWidgets($("#all-together"));
+        let relocate_flag = true;
+        if (window.TIMES.has(deviceId_t) && window.TIMES.has(deviceId_r)) {
+          let t_length = window.TIMES.get(deviceId_t).length;
+          let r_length = window.TIMES.get(deviceId_r).length;
+          for (let i = 0; i < t_length; i++) {
+            if (window.TIMES.get(deviceId_t)[i] > 0) {
+              relocate_flag = false;
+            }
           }
-        }
-        for (let j = 0; j < r_length; j++) {
-          if (window.TIMES.get(deviceId_r)[j] > 0) {
-            relocate_flag = false;
+          for (let j = 0; j < r_length; j++) {
+            if (window.TIMES.get(deviceId_r)[j] > 0) {
+              relocate_flag = false;
+            }
           }
-        }
-        if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
-          fetch('/scheduler/user/complete-tasks/' + taskId, {
-            method: 'POST',
-          })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log(responseJson.status);
-            FIVE_SECOND_FLAG = 1;
-          }).catch((error) => {
-            console.log(error);
-          });
+          if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
+            fetch('/scheduler/user/complete-tasks/' + taskId, {
+              method: 'POST',
+            })
+            .then((response) => response.json())
+            .then((responseJson) => {
+              console.log(responseJson.status);
+              FIVE_SECOND_FLAG = 1;
+            }).catch((error) => {
+              console.log(error);
+            });
+          }
         }
       }
     }, TIMEFRAME_MS_WINDOW);
 }
 
 function switch_to_window() {
+    LEAVE_PAGE = 0;
+    RECEIVER_FLAG = '';
+    TRANSMITTER_FLAG = '';
+
+    window.BLOCKS = new Map();
+    window.TIMES = new Map();
+
     let element = document.getElementById("containerLoader");
     let hidden = element.getAttribute("hidden");
     element.setAttribute("hidden", "hidden");
+
+    renderStats = renderStats + 1;
 
     const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
     let window_to_render = [];
@@ -721,13 +728,20 @@ function switch_to_window() {
 }
 
 function switch_to_loader() {
-    let element = document.getElementById("containerLoader");
-    let hidden = element.getAttribute("hidden");
-    element.removeAttribute("hidden");
+    FIVE_SECOND_FLAG = 0;
+    STATUS_STATE = 0;
+    COMBINED_FLAG = 0;
+    LEAVE_PAGE = 1;
 
-    const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
-    let window_to_render = [];
-    container_window.render(window_to_render);
+    // let element = document.getElementById("containerLoader");
+    // let hidden = element.getAttribute("hidden");
+    // element.removeAttribute("hidden");
+
+    // const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
+    // let window_to_render = [];
+    // container_window.render(window_to_render);
+
+    window.location.reload(true);
 }
   
 export default Loader;

@@ -251,7 +251,7 @@ export function ReliaEyePlot($divElement, deviceIdentifier, blockIdentifier) {
 			actions: ['dragToZoom', 'rightClickToReset'],
 			axis: 'horizontal',
 			keepInBounds: true,
-			maxZoomIn: 4.0,
+			maxZoomIn: 100.0,
 		},
 		colors: ['#0000FF', '#FF0000','#008000','#000000','#00FFFF','#FF00FF'],
 		};

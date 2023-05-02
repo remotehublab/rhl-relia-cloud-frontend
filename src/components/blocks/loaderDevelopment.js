@@ -32,18 +32,18 @@ export function ReliaWidgets($divElement) {
             //     deviceName2: [block3, block4...],
             // }
             var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
-			if (!window.BLOCKS.has(deviceName)) {
+			if (!window.TIMES.has(deviceName)) {
     				$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device: " + deviceName + "</h2></center><br>" + "</div>");
 				$divElement.append($deviceContents);
 				window.BLOCKS.set(deviceName, []);
 				window.TIMES.set(deviceName, []);
 			} else {
     				$deviceContents = $("#" + deviceNameIdentifier);
+                                for (let j = 0; j < window.TIMES.get(deviceName).length; j++) {
+					window.TIMES.get(deviceName)[j] -= 1;
+				}
             		}
             
-			for (let j = 0; j < window.TIMES.get(deviceName).length; j++) {
-				window.TIMES.get(deviceName)[j] -= 1;
-			}
 			var blocksUrl = window.API_BASE_URL + "data/current/devices/" + deviceName + "/blocks";
 			$.get(blocksUrl).done(function (data) {
 				if (!data.success) {

@@ -380,18 +380,8 @@ const LoaderDevelopment = () => {
       STATUS_STATE = 0;
       renderStats = renderStats + 1;
 
-      if (TRANSMITTER_FLAG != "") {
-        let t_length = window.TIMES.get(TRANSMITTER_FLAG).length;
-        for (let i = 0; i < t_length; i++) {
-          window.TIMES.get(TRANSMITTER_FLAG)[i] = 10;
-        }
-      }
-      if (RECEIVER_FLAG != "") {
-        let r_length = window.TIMES.get(RECEIVER_FLAG).length;
-        for (let j = 0; j < r_length; j++) {
-          window.TIMES.get(RECEIVER_FLAG)[j] = 10;
-        }
-      }
+      window.BLOCKS.clear();
+      window.TIMES.clear();
 
       fetch('/user/route/' + userid, {
         method: 'POST',

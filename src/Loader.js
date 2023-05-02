@@ -404,7 +404,7 @@ const LoaderDevelopment = () => {
 
     <form><div>
     <button onClick={handleNavigate} class="btn btn-lg btn-primary" id="runButton">Return to File Upload</button> &nbsp;&nbsp;&nbsp;
-    <button onClick={reschedule} class="btn btn-lg btn-primary" id="runButton">Reschedule</button>
+    <button onClick={reschedule} class="btn btn-lg btn-primary" id="runButton">Re-Execute</button>
     </div></form>
 
     <br /><br />

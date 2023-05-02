@@ -395,6 +395,22 @@ const LoaderDevelopment = () => {
     }
   };
 
+  const stopTask = async (ev) => {
+    ev.preventDefault();
+    if (FIVE_SECOND_FLAG == 0) {
+      fetch('/scheduler/user/complete-tasks/' + taskId, {
+        method: 'POST',
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson.status);
+        FIVE_SECOND_FLAG = 1;
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  };
+
   return (
     <div className="App">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -404,6 +420,7 @@ const LoaderDevelopment = () => {
 
     <form><div>
     <button onClick={handleNavigate} class="btn btn-lg btn-primary" id="runButton">Return to File Upload</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={stopTask} class="btn btn-lg btn-primary" id="runButton">Stop Execution</button> &nbsp;&nbsp;&nbsp;
     <button onClick={reschedule} class="btn btn-lg btn-primary" id="runButton">Re-Execute</button>
     </div></form>
 

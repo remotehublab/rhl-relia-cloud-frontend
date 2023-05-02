@@ -290,7 +290,7 @@ export function ReliaTimeSink($divElement, deviceIdentifier, blockIdentifier) {
         		actions: ['dragToZoom', 'rightClickToReset'],
         		axis: 'horizontal',
         		keepInBounds: true,
-        		maxZoomIn: 16.0
+        		maxZoomIn: 100.0
 			},	       	 
 //                        lineDashStyle: [4, 2],
 			// TODO: Marcos: move colors to series[0].color, so everything is in series

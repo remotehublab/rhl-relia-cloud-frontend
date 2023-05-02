@@ -50,13 +50,17 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 	self.ymaxConstSink=1;
 	self.xminConstSink=-1;
 	self.xmaxConstSink=1;
+	self.zoomStep=0;
+	self.zoomFactor=0;
+
 
 	self.$div.find(".zoom-in-button").click(function() {
-		self.zoomInConstSink += 1;
+		self.zoomFactor += 1;
+		self.$div.find(".const-sink-autoscale-checkbox").prop('checked', false);
 	});
 	self.$div.find(".zoom-out-button").click(function() {
-
-		self.zoomOutConstSink += 1;
+		self.zoomFactor -= 1;
+		self.$div.find(".const-sink-autoscale-checkbox").prop('checked', false);		
 	});
 	self.$div.find(".pause-play-button").click(function() {
 		self.pausePlayConstSink ^= true;
@@ -100,10 +104,9 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 				},/**/
 
 				viewWindow:{
+					min: self.yminConstSink*1.0 + self.zoomFactor*self.zoomStep,					
+					max: self.ymaxConstSink*1.0 - self.zoomFactor*self.zoomStep,					
 					
-					
-					min: -18,
-					max: 18	
 				},/**/
 				title: 'Quadrature',
 			gridlines: {
@@ -114,7 +117,7 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
         		actions: ['dragToZoom', 'rightClickToReset'],
         		axis: 'horizontal',
         		keepInBounds: true,
-        		maxZoomIn: 16.0
+        		maxZoomIn: 100.0
 			},	       	 
 //                        lineDashStyle: [4, 2],
 			// TODO: Marcos: move colors to series[0].color, so everything is in series
@@ -169,7 +172,10 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 			self.titleConstSink=params.name;
 			self.colorsConstSink=params.colors;
 			self.Number2plot=params.nop;
-			
+			self.xminConstSink=params.xmin;
+			self.xmaxConstSink=params.xmax;
+			//self.yminConstSink=params.ymin;
+			//self.ymaxConstSink=params.ymin;
 			
 			//Remove all the unused channels from 5 to nconnections
 			for (var index = 5; index > nconnections; --index) 
@@ -264,12 +270,28 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 			self.chart.draw(dataTable, self.options);
 			
 			if(self.$autoscaleCheckbox.is(':checked'))  {
-				//self.minTimeSink=Math.min.apply(Math, dataout_real[0]);
-				//self.maxTimeSink=Math.max.apply(Math, dataout_imag[0]);
-				self.minTimeSink=-18;
-				self.maxTimeSink=18;
-				
+				//var tempmax_real=new Array(chEnabledCounter).fill(null);
+				//var tempmin_real=new Array(chEnabledCounter).fill(null);
+				var tempmax_imag=new Array(chEnabledCounter).fill(null);
+				var tempmin_imag=new Array(chEnabledCounter).fill(null);
+				for (var v=0; v<chEnabledCounter;++v){
+					//tempmax_real[v]=Math.max.apply(Math, dataout_real[v]);
+					//tempmin_real[v]=Math.min.apply(Math, dataout_real[v]);
+					tempmax_imag[v]=Math.max.apply(Math, dataout_imag[v]);
+					tempmin_imag[v]=Math.min.apply(Math, dataout_imag[v]);
+				}
+				//self.xmaxConstSink=Math.max.apply(Math, tempmax_real);
+				//self.xminConstSink=Math.min.apply(Math, tempmin_real);
+				self.ymaxConstSink=Math.max.apply(Math, tempmax_imag);
+				self.yminConstSink=Math.min.apply(Math, tempmin_imag);
+				self.zoomStep=0;
+				self.zoomFactor=0;
+
+
 			}
+			else self.zoomStep=0.07*Math.abs(self.yminConstSink-self.ymaxConstSink);
+			console.log(self.yminConstSink,self.ymaxConstSink);
+			console.log(self.zoomStep);
 
 			
 			}

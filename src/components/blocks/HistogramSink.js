@@ -6,6 +6,7 @@ export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifie
 	var self = this;
 
 	self.$div = $divElement;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.$div.html(
 	    "<div class=\"time-chart\" style=\"width: 900px; height: 500px\"></div>\n" 
@@ -16,8 +17,6 @@ export function ReliaHistogramSink($divElement, deviceIdentifier, blockIdentifie
 	self.binHistogram=100;
 	
 	self.chart = new window.google.visualization.Histogram($constChartDiv[0]);
-
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.redraw = function() {
 

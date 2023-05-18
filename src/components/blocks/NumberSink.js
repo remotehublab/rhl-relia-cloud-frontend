@@ -6,6 +6,7 @@ export function ReliaNumberSink($divElement, deviceIdentifier, blockIdentifier) 
 	var self = this;
 
 	self.$div = $divElement;
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.$div.html(
 	    "<div class=\"number-chart\" style=\"width: 900px; height: 500px\"></div>\n" 
@@ -17,7 +18,6 @@ export function ReliaNumberSink($divElement, deviceIdentifier, blockIdentifier) 
 	//window.google.charts.setOnLoadCallback(drawChart);
 	self.chart = new window.google.visualization.BarChart($constChartDiv[0]);
 
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.redraw = function() {
 

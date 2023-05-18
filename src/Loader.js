@@ -23,19 +23,22 @@ var transmitterName = '';
 var altIdentifier_outer = '';
 var RECEIVER_FLAG = '';
 var TRANSMITTER_FLAG = '';
-var COMBINED_FLAG = 0;
-var FIVE_SECOND_FLAG = 0;
-var STATUS_STATE = 0;
-var LEAVE_PAGE = 0;
+var TASK_RUNNING = false;
+var DISPLAYING_TASK_WIDGETS = false;
+var PAGE_TASK_WIDGETS_DISPLAY = "task-widgets-display";
+var PAGE_FILE_LOADER = "file-loader";
+var ACTIVE_PAGE = PAGE_FILE_LOADER;
+var TASK_POLL_INTERVAL = null;
+var TASK_STATUS_CHECKING_INTERVAL = null;
 
-var renderStats = 0;
+var RELIA_WIDGETS = null;
 
 window.API_BASE_URL = "/api/";
 window.BLOCKS = new Map();
-window.TIMES = new Map();
 
-const TIMEFRAME_MS = 30000;
-const TIMEFRAME_MS_WINDOW = 1000;
+const USER_POLL_INTERVAL_MS = 30000;
+const TASK_POLL_INTERVAL_MS = 4000;
+const TASK_STATUS_INTERVAL_MS = 500;
 const width = Dimensions.get('window').width;
 
 const Loader = () => {
@@ -68,7 +71,7 @@ const Loader = () => {
     const interval = setInterval(() => {
       poll_call();
       console.log('Polling');
-    }, TIMEFRAME_MS);
+    }, USER_POLL_INTERVAL_MS);
 
     return () => {
       let script = document.getElementById('googleChartsScript');
@@ -82,44 +85,44 @@ const Loader = () => {
   return (
     <div className="App" style={{ backgroundColor: '#E8E8E8', height: '100%', minHeight: '100vh' }}>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
     <div className="invisible">{JSON.stringify(poll_call())}</div>
     <div className="invisible">{JSON.stringify(getTransactions())}</div>
     {/* <div className="invisible">{JSON.stringify(getCurrentTasks())}</div>
     <div className="invisible">{JSON.stringify(getErrorMessages())}</div> */}
 
-    <div class="heading">
+    <div className="heading">
         <b>RELIA</b>
     </div>
 
-    <div class="container" id="containerLoader">
+    <div className="container" id="containerLoader">
         <br />
         <br />
 
-        <div class="row">
+        <div className="row">
           <Collapsible trigger={<div id="space"><div>Upload Tasks <div id="inner1" title="Select files to upload for either the transmitter or the receiver."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }} open={true}>
             <Main />
           </Collapsible>
         </div>
 
-	<div class="row">
+	<div className="row">
           <Collapsible trigger={<div id="space2"><div>Submit Tasks <div id="inner2" title="Select a pair of previously uploaded transmitter and receiver files to execute for observation."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }} open={true}>
             <div id="body2">
             <br />
-            <div class="row">
-              <div class="column">
-                <div class="centered">
-                  <div class="align-left">
+            <div className="row">
+              <div className="column">
+                <div className="centered">
+                  <div className="align-left">
                     <b>Most Recent Transmitter Files</b>
                     <div id="appTransmitter"></div>
                   </div>
                 </div>
 	      </div>
 
-              <div class="column">
-                <div class="centered">
-                  <div class="align-left">
+              <div className="column">
+                <div className="centered">
+                  <div className="align-left">
                     <b>Most Recent Receiver Files</b>
                     <div id="appReceiver"></div>
                   </div>
@@ -128,9 +131,9 @@ const Loader = () => {
             </div>
 
             <div>
-              <div class="true-centered">
+              <div className="true-centered">
                 <form onSubmit={handleUserAPI}><div>
-	          <button class="btn btn-lg btn-primary" id="runButton" disabled>Execute</button>
+	          <button className="btn btn-lg btn-primary" id="runButton" disabled>Execute</button>
                 </div></form>
                 <br />
               </div>
@@ -139,7 +142,7 @@ const Loader = () => {
           </Collapsible>
 	</div>
 
-        {/* <div class="row">
+        {/* <div className="row">
           <Collapsible trigger={<div id="space3"><div>Delete Tasks <div id="inner3" title="Specify a task to delete using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
             <div id="body3">
               <br />
@@ -151,7 +154,7 @@ const Loader = () => {
           </Collapsible>
          </div>
 
-         <div class="row">
+         <div className="row">
           <Collapsible trigger={<div id="space4"><div>Search Task Status <div id="inner4" title="Search for the status of a task using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
              <div id="body4">
                 <br />
@@ -164,13 +167,13 @@ const Loader = () => {
           </Collapsible>
          </div>
 
-         <div class="row">
+         <div className="row">
           <Collapsible trigger={<div id="space5"><div>Most Recent Tasks <div id="inner5" title="View the five most recently constructed tasks. For further tasks and/or details, please contact system administration."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
             <div id="currentTasks"></div>
           </Collapsible>
          </div>
         
-         <div class="row">
+         <div className="row">
           <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages <div id="inner6" title="View the most recently generated error messages produced by executed tasks."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
             <div id="errorMessages"></div>
           </Collapsible>
@@ -178,10 +181,10 @@ const Loader = () => {
 
     </div>
 
-    <div class="container" id="containerWindow">
+    <div className="container" id="containerWindow">
     </div>
 
-    <div class="footer">
+    <div className="footer">
          <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.075 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
          <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.075 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
     </div>
@@ -244,10 +247,10 @@ class Main extends React.Component {
     return (
       <div id="body1">
       <br />
-      <div class="row">
-        <div class="column">
-          <div class="centered">
-            <div class="align-left">
+      <div className="row">
+        <div className="column">
+          <div className="centered">
+            <div className="align-left">
               <b>Transmitter File</b>
               <form onSubmit={this.handleUploadGRC_transmitter}>
                 <div>
@@ -260,9 +263,9 @@ class Main extends React.Component {
             </div>
           </div>
         </div>
-        <div class="column">
-          <div class="centered">
-            <div class="align-left">
+        <div className="column">
+          <div className="centered">
+            <div className="align-left">
               <b>Receiver File</b>
               <form onSubmit={this.handleUploadGRC_receiver}>
                 <div>
@@ -282,23 +285,14 @@ class Main extends React.Component {
   }
 }
 
-const LoaderDevelopment = () => {
-  let status = 'queued';
-  window.API_BASE_URL = "/api/";
-  window.BLOCKS = new Map();
-  window.TIMES = new Map();
-
-  useEffect(() => {
-
-    (async () => {
-      const interval1 = setInterval(() => {
-        // if (TIME_REMAINING <= 0) {
-        //  leavePage(taskId, userid);
-        // }
-        if (RECEIVER_FLAG != "" && TRANSMITTER_FLAG != "" && COMBINED_FLAG == 0) {
-          loadUI_window(RECEIVER_FLAG, TRANSMITTER_FLAG, taskId, userid);
-          COMBINED_FLAG = 1;
-        }
+function createTaskPollInterval() {
+  if (TASK_POLL_INTERVAL != null) {
+    clearInterval(TASK_POLL_INTERVAL);
+    TASK_POLL_INTERVAL = null;
+  }
+  TASK_POLL_INTERVAL = setInterval(() => {
+    if (ACTIVE_PAGE == PAGE_TASK_WIDGETS_DISPLAY) {
+      if (TASK_RUNNING) {
         fetch('/scheduler/user/tasks/poll/' + taskId, {
           method: 'POST',
         })
@@ -313,43 +307,89 @@ const LoaderDevelopment = () => {
         .catch((error) => {
           console.log(error);
         });
-      }, TIMEFRAME_MS_WINDOW);
+      } else {
+        // No task running anymore, stop this interval
+        clearInterval(TASK_POLL_INTERVAL);
+        TASK_POLL_INTERVAL = null;
+      }
+    } else {
+      // If we are in another page, stop this process
+      clearInterval(TASK_POLL_INTERVAL);
+      TASK_POLL_INTERVAL = null;
+    }
+  }, TASK_POLL_INTERVAL_MS);
+}
 
-      const interval2 = setInterval(() => {
-        if ((FIVE_SECOND_FLAG == 0 || STATUS_STATE == 0) && LEAVE_PAGE == 0) {
-          return fetch('/scheduler/user/tasks/' + taskId + '/' + userid, {
-            method: 'GET',
-          })
-          .then((response) => response.json())
-          .then((responseJson) => {
-            if (responseJson.success == false) {
-              console.log("Uh oh... are you sure you are logged in?");
-            } else {
-              status = responseJson.status;
-              if (status == "completed") {
-                STATUS_STATE = 1;
-              }
-              const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
-              let status_to_render = [];
-              status_to_render.push(<div>Your task is {status}<br /></div>);
-              status_bar.render(status_to_render);
-              if (RECEIVER_FLAG == "") {
-                if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
-                  RECEIVER_FLAG = responseJson.receiver;
-                }
-              }
-              if (TRANSMITTER_FLAG == "") {
-                if (status == "transmitter still processing" || status == "fully assigned") {
-                  TRANSMITTER_FLAG = responseJson.transmitter;   
-                }
-              }
+function createTaskStatusInterval() {
+  if (TASK_STATUS_CHECKING_INTERVAL != null) {
+    clearInterval(TASK_STATUS_CHECKING_INTERVAL);
+    TASK_STATUS_CHECKING_INTERVAL = null;
+  }
+
+  TASK_STATUS_CHECKING_INTERVAL = setInterval(() => {
+    if (TASK_RUNNING && ACTIVE_PAGE == PAGE_TASK_WIDGETS_DISPLAY) {
+      return fetch('/scheduler/user/tasks/' + taskId + '/' + userid, {
+        method: 'GET',
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if (responseJson.success == false) {
+          console.log("Uh oh... are you sure you are logged in?");
+        } else {
+          var status = responseJson.status;
+          if (status == "completed") {
+            stopTask();
+          }
+          const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+          let status_to_render = [];
+          status_to_render.push(<div>Your task is {status}<br /></div>);
+          status_bar.render(status_to_render);
+
+          if (RECEIVER_FLAG == "") {
+            if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
+              RECEIVER_FLAG = responseJson.receiver;
             }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+          }
+          if (TRANSMITTER_FLAG == "") {
+            if (status == "transmitter still processing" || status == "fully assigned") {
+              TRANSMITTER_FLAG = responseJson.transmitter;   
+            }
+          }
+
+          if (RECEIVER_FLAG && TRANSMITTER_FLAG) {
+            if (!DISPLAYING_TASK_WIDGETS) {
+              loadUI_TaskWidgetDisplay_widgets();
+              DISPLAYING_TASK_WIDGETS = true;
+            }
+          }
         }
-      }, TIMEFRAME_MS_WINDOW);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    } else {
+      if (TASK_STATUS_CHECKING_INTERVAL != null) {
+        clearInterval(TASK_STATUS_CHECKING_INTERVAL);
+        TASK_STATUS_CHECKING_INTERVAL = null;
+      }
+    }
+  }, TASK_STATUS_INTERVAL_MS);  
+}
+
+const TaskWidgetDisplay = () => {
+  let status = 'queued';
+  window.API_BASE_URL = "/api/";
+  window.BLOCKS = new Map();
+
+  console.log("TaskWidgetDisplay()");
+
+  useEffect(() => {
+
+    console.log("TaskWidgetDisplay::userEffect()");
+
+    (async () => {
+      createTaskPollInterval();
+      createTaskStatusInterval();
 
       return () => {
         let script = document.getElementById('googleChartsScript');
@@ -359,52 +399,49 @@ const LoaderDevelopment = () => {
       }
 
     })();
-  }, [renderStats]);
+  }, []);
 
   const handleNavigate = ev => {
     ev.preventDefault();
     leavePage(taskId, userid);
   };
 
-  const reschedule = async (ev) => {
+  const handleReschedule = async (ev) => {
     ev.preventDefault();
-    if (FIVE_SECOND_FLAG == 1) {
-      let object = {
-        "r_filename": receiverName,
-        "t_filename": transmitterName,
-        "priority": 10,
-        "taskId": taskId,
-      };
+    let object = {
+      "r_filename": receiverName,
+      "t_filename": transmitterName,
+      "priority": 10,
+      "taskId": taskId,
+    };
 
-      FIVE_SECOND_FLAG = 0;
-      STATUS_STATE = 0;
-      renderStats = renderStats + 1;
+    window.BLOCKS.clear();
 
-      window.BLOCKS.clear();
-      window.TIMES.clear();
-
-      fetch('/user/route/' + userid, {
-        method: 'POST',
-        body: JSON.stringify(object),
-      }).then((response) => response.json())
-      .then((responseJson) => {
-        // if (responseJson.success) {
-        //   window.location.href = '/loaderDevelopment/' + responseJson.altIdentifier;
-        // }
-      });
-    }
+    fetch('/user/route/' + userid, {
+      method: 'POST',
+      body: JSON.stringify(object),
+    }).then((response) => response.json())
+    .then((responseJson) => {
+      console.log("we are in the right response");
+      console.log(responseJson);
+      if (responseJson.success) {
+        startTask();
+        createTaskPollInterval();
+        createTaskStatusInterval();
+      }
+    });
   };
 
-  const stopTask = async (ev) => {
+  const handleStopTask = async (ev) => {
     ev.preventDefault();
-    if (FIVE_SECOND_FLAG == 0) {
+    if (TASK_RUNNING) {
       fetch('/scheduler/user/complete-tasks/' + taskId, {
         method: 'POST',
       })
       .then((response) => response.json())
       .then((responseJson) => {
         console.log(responseJson.status);
-        FIVE_SECOND_FLAG = 1;
+        stopTask();
       }).catch((error) => {
         console.log(error);
       });
@@ -414,21 +451,21 @@ const LoaderDevelopment = () => {
   return (
     <div className="App">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" /> 
-    <div id="statusBar"></div>
+    <div id="statusBar">Your GNU Radio files are being processed. Please wait...</div>
 
-    <form><div>
-    <button onClick={handleNavigate} class="btn btn-lg btn-primary" id="runButton">Return to File Upload</button> &nbsp;&nbsp;&nbsp;
-    <button onClick={stopTask} class="btn btn-lg btn-primary" id="runButton">Stop Execution</button> &nbsp;&nbsp;&nbsp;
-    <button onClick={reschedule} class="btn btn-lg btn-primary" id="runButton">Re-Execute</button>
-    </div></form>
+    <div>
+    <button onClick={handleNavigate} className="btn btn-lg btn-secondary"><i className="fas fa-arrow-left"></i>Return to File Upload</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={handleStopTask} className="btn btn-lg btn-danger" id="stopExecutionButton">Stop</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={handleReschedule} className="btn btn-lg btn-primary" id="reExecuteButton">Run again</button>
+    </div>
 
     <br /><br />
 
-    <div id="all-together" class="row"></div>
+    <div id="all-together" className="row"></div>
 	
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
     </div>
   );
 
@@ -454,6 +491,34 @@ async function poll_call() {
    });
 }
 
+function startTaskUIChanges () {
+  console.log($("#reExecuteButton").length);
+  $("#stopExecutionButton").prop("disabled", false);
+  $("#reExecuteButton").prop("disabled", true);
+  $("#statusBar").html("Your GNU Radio files are being processed. Please wait...");
+}
+
+function startTask() {
+  if (!TASK_RUNNING) {
+    TASK_RUNNING = true;
+    startTaskUIChanges();
+  }
+}
+
+function stopTask() {
+  if (TASK_RUNNING) {
+    TASK_RUNNING = false;
+    $("#stopExecutionButton").prop("disabled", true);
+    $("#reExecuteButton").prop("disabled", false);
+    $("#statusBar").html("Your GNU Radio code is not running anymore. Feel free to run it again");
+
+    if (TASK_STATUS_CHECKING_INTERVAL != null) {
+      clearInterval(TASK_STATUS_CHECKING_INTERVAL);
+      TASK_STATUS_CHECKING_INTERVAL = null;
+    }
+  }
+}
+
 function handleUserAPI(ev) {
    ev.preventDefault();
 
@@ -471,7 +536,9 @@ function handleUserAPI(ev) {
    .then((responseJson) => {
       if (responseJson.success) {
          taskId = responseJson.taskIdentifier;
-         switch_to_window();
+         startTask();
+         switch_to_task_widget_display();
+         startTaskUIChanges();
       }
    });
 }
@@ -665,7 +732,7 @@ function getTransactions() {
 }
 
 function leavePage(taskId, userId) {
-    if (FIVE_SECOND_FLAG == 0) {
+    if (TASK_RUNNING) {
       fetch('/scheduler/user/complete-tasks/' + taskId, {
         method: 'POST',
       })
@@ -676,69 +743,45 @@ function leavePage(taskId, userId) {
         console.log(error);
       });
     }
+    stopTask();
     switch_to_loader();
 }
 
-function loadUI_window(deviceId_r, deviceId_t, taskId, userId) {
-    const interval4 = setInterval(() => {
-      if (LEAVE_PAGE == 0) {
-        var widgets = new ReliaWidgets($("#all-together"));
-        let relocate_flag = true;
-        if (window.TIMES.has(deviceId_t) && window.TIMES.has(deviceId_r)) {
-          let t_length = window.TIMES.get(deviceId_t).length;
-          let r_length = window.TIMES.get(deviceId_r).length;
-          for (let i = 0; i < t_length; i++) {
-            if (window.TIMES.get(deviceId_t)[i] > 0) {
-              relocate_flag = false;
-            }
-          }
-          for (let j = 0; j < r_length; j++) {
-            if (window.TIMES.get(deviceId_r)[j] > 0) {
-              relocate_flag = false;
-            }
-          }
-          if (relocate_flag && FIVE_SECOND_FLAG == 0 && !(t_length == 0 && r_length == 0)) {
-            fetch('/scheduler/user/complete-tasks/' + taskId, {
-              method: 'POST',
-            })
-            .then((response) => response.json())
-            .then((responseJson) => {
-              console.log(responseJson.status);
-              FIVE_SECOND_FLAG = 1;
-            }).catch((error) => {
-              console.log(error);
-            });
-          }
-        }
-      }
-    }, TIMEFRAME_MS_WINDOW);
+function loadUI_TaskWidgetDisplay_widgets(deviceId_r, deviceId_t, taskId, userId) {  
+  if (RELIA_WIDGETS != null) {
+    RELIA_WIDGETS.stop();
+    RELIA_WIDGETS = null;
+  }
+
+  RELIA_WIDGETS = new ReliaWidgets($("#all-together"));
+  RELIA_WIDGETS.start();
 }
 
-function switch_to_window() {
-    LEAVE_PAGE = 0;
+function switch_to_task_widget_display() {
+    ACTIVE_PAGE = PAGE_TASK_WIDGETS_DISPLAY;
     RECEIVER_FLAG = '';
     TRANSMITTER_FLAG = '';
 
     window.BLOCKS = new Map();
-    window.TIMES = new Map();
 
     let element = document.getElementById("containerLoader");
     let hidden = element.getAttribute("hidden");
     element.setAttribute("hidden", "hidden");
 
-    renderStats = renderStats + 1;
-
     const container_window = ReactDOM.createRoot(document.getElementById("containerWindow"));
     let window_to_render = [];
-    window_to_render.push(<LoaderDevelopment />);
+    window_to_render.push(<TaskWidgetDisplay />);
     container_window.render(window_to_render);
 }
 
 function switch_to_loader() {
-    FIVE_SECOND_FLAG = 0;
-    STATUS_STATE = 0;
-    COMBINED_FLAG = 0;
-    LEAVE_PAGE = 1;
+    stopTask();
+    DISPLAYING_TASK_WIDGETS = false;
+    ACTIVE_PAGE = PAGE_FILE_LOADER;
+    if (RELIA_WIDGETS != null) {
+      RELIA_WIDGETS.stop();
+      RELIA_WIDGETS = null;
+    }
 
     // let element = document.getElementById("containerLoader");
     // let hidden = element.getAttribute("hidden");

@@ -3,6 +3,8 @@ import useScript from '../../useScript';
 
 export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
+	
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.$div = $divElement;
 
@@ -67,8 +69,6 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 	});
 
     self.chart = new window.google.visualization.ScatterChart($constChartDiv[0]);
-
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 	
 	self.redraw = function() {
 	

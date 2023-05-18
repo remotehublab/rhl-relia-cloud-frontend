@@ -15,14 +15,45 @@ import ReliaFrequencySink from './FrequencySink.js';
 
 export function ReliaWidgets($divElement) {
 	var self = this;
-	var devicesUrl = window.API_BASE_URL + "data/current/devices";
-	self.blocks = [];
+	this.devicesUrl = window.API_BASE_URL + "data/current/devices";
+	this.running = false;
+	this.$divElement = $divElement;
+	this.blocks = [];
+}
 
-	$.get(devicesUrl).done(function (data) {
+var CHECK_DEVICES_TIME_MS = 1000;
+
+ReliaWidgets.prototype.start = function () {
+	this.running = true;
+	this.process();
+}
+
+ReliaWidgets.prototype.stop = function () {
+	this.running = false;
+
+	for (var block in this.blocks) {
+		// block.stop();
+	}
+}
+
+ReliaWidgets.prototype.process = function () {
+	var self = this;
+
+	if (!self.running) {
+		return;
+	}
+
+	// we are running
+
+	$.get(self.devicesUrl).done(function (data) {
 		if (!data.success) {
 			console.log("Error loading devices:", data);
 			return;
 		}
+
+		setTimeout(function () {
+			self.process();
+		}, CHECK_DEVICES_TIME_MS);
 
 		var devices = data.devices;
 		$.each(devices, function (pos, deviceName) {
@@ -32,17 +63,14 @@ export function ReliaWidgets($divElement) {
             //     deviceName2: [block3, block4...],
             // }
             var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
-			if (!window.TIMES.has(deviceName)) {
-    				$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device: " + deviceName + "</h2></center><br>" + "</div>");
-				$divElement.append($deviceContents);
+			if (!window.BLOCKS.has(deviceName)) {
+				console.log("device name ", deviceName, " not found in window.BLOCKS. Creating new block with identifier: ", deviceNameIdentifier);
+    			$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device: " + deviceName + "</h2></center><br>" + "</div>");
+				self.$divElement.append($deviceContents);
 				window.BLOCKS.set(deviceName, []);
-				window.TIMES.set(deviceName, []);
 			} else {
-    				$deviceContents = $("#" + deviceNameIdentifier);
-                                for (let j = 0; j < window.TIMES.get(deviceName).length; j++) {
-					window.TIMES.get(deviceName)[j] -= 1;
-				}
-            		}
+    			$deviceContents = $("#" + deviceNameIdentifier);
+            }
             
 			var blocksUrl = window.API_BASE_URL + "data/current/devices/" + deviceName + "/blocks";
 			$.get(blocksUrl).done(function (data) {
@@ -56,7 +84,6 @@ export function ReliaWidgets($divElement) {
 					if (window.BLOCKS.has(deviceName) && !window.BLOCKS.get(deviceName).includes(blockName)) {
                         // console.log("Block", blockName, " found at ", deviceName, "was NOT included, so we include it now");
 						window.BLOCKS.get(deviceName).push(blockName);
-						window.TIMES.get(deviceName).push(10);
 						var $newDiv = $(
 							'<div class="" style="padding: 10px">' +
 								'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +

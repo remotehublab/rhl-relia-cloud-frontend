@@ -5,6 +5,8 @@ export function ReliaAutoCorrSink($divElement, deviceIdentifier, blockIdentifier
 	var self = this;
 	self.$div = $divElement;
 
+	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+
 	
 	/*$.get(self.url).done(function (data) {
 		var nconnections = data.data.params.nconnections;	
@@ -223,8 +225,6 @@ export function ReliaAutoCorrSink($divElement, deviceIdentifier, blockIdentifier
 	//self.$div.find(".time-sink-real-checkbox-1").closest("label").text('ssdss');
 	//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 	self.chart = new window.google.visualization.ColumnChart($constChartDiv[0]);
-
-	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
 
 	self.redraw = function() {
 

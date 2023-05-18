@@ -4,7 +4,7 @@ import $ from 'jquery';
 import React, { useEffect, useState }  from 'react';
 import { Dimensions } from 'react-native';
 import Collapsible from 'react-collapsible';
-import { BsChevronDown, BsFillQuestionCircleFill } from "react-icons/bs";
+import { BsChevronDown, BsFillQuestionCircleFill, BsFillCaretLeftFill, BsFillStopFill, BsPlayFill } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
 import ReactDOM from 'react-dom/client';
 import { Redirect, useNavigate } from 'react-router-dom';
@@ -336,22 +336,47 @@ function createTaskStatusInterval() {
         if (responseJson.success == false) {
           console.log("Uh oh... are you sure you are logged in?");
         } else {
+           if (!TASK_RUNNING || ACTIVE_PAGE != PAGE_TASK_WIDGETS_DISPLAY)
+               return;
           var status = responseJson.status;
           if (status == "completed") {
             stopTask();
           }
           const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
           let status_to_render = [];
-          status_to_render.push(<div>Your task is {status}<br /></div>);
-          status_bar.render(status_to_render);
+          switch (status) {
+            case "fully-assigned":
+                    status_to_render.push(<div>Your GNU Radio code is now running in both the remote set-up</div>);
+                break;
+            case "queued":
+                    status_to_render.push(<div>Waiting for a remote set-up to be available...</div>);
+                break;
+            case "deleted":
+                    status_to_render.push(<div>Your GNU Radio code has stopped</div>);
+                break;
+            case "error":
+                    status_to_render.push(<div>There was an error running your GNU Radio code in the remote set-up</div>);
+                break;
+            case "receiver-assigned":
+                    status_to_render.push(<div>Remote set-up assigned. Waiting to start running your GNU Radio code...</div>);
+                break;
+            case "receiver-still-processing":
+                    status_to_render.push(<div>The remote set-up is processing your GNU Radio in the receiver device</div>);
+                break;
+            case "transmitter-still-processing":
+                    status_to_render.push(<div>The remote set-up is processing your GNU Radio in the transmitter device</div>);
+                break;
+          }
+          if (status_to_render.length > 0)
+            status_bar.render(status_to_render);
 
           if (RECEIVER_FLAG == "") {
-            if (status == "receiver assigned" || status == "receiver still processing" || status == "fully assigned") {
+            if (status == "receiver-assigned" || status == "receiver-still-processing" || status == "fully-assigned") {
               RECEIVER_FLAG = responseJson.receiver;
             }
           }
           if (TRANSMITTER_FLAG == "") {
-            if (status == "transmitter still processing" || status == "fully assigned") {
+            if (status == "transmitter-still-processing" || status == "fully-assigned") {
               TRANSMITTER_FLAG = responseJson.transmitter;   
             }
           }
@@ -417,13 +442,16 @@ const TaskWidgetDisplay = () => {
 
     window.BLOCKS.clear();
 
+    const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+    let status_to_render = [];
+    status_to_render.push(<div>Starting to run again your GNU Radio code</div>);
+    status_bar.render(status_to_render);
+
     fetch('/user/route/' + userid, {
       method: 'POST',
       body: JSON.stringify(object),
     }).then((response) => response.json())
     .then((responseJson) => {
-      console.log("we are in the right response");
-      console.log(responseJson);
       if (responseJson.success) {
         startTask();
         createTaskPollInterval();
@@ -435,6 +463,11 @@ const TaskWidgetDisplay = () => {
   const handleStopTask = async (ev) => {
     ev.preventDefault();
     if (TASK_RUNNING) {
+        const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
+        let status_to_render = [];
+        status_to_render.push(<div>Stopping...</div>);
+        status_bar.render(status_to_render);
+
       fetch('/scheduler/user/complete-tasks/' + taskId, {
         method: 'POST',
       })
@@ -456,9 +489,9 @@ const TaskWidgetDisplay = () => {
     <div id="statusBar">Your GNU Radio files are being processed. Please wait...</div>
 
     <div>
-    <button onClick={handleNavigate} className="btn btn-lg btn-secondary"><i className="fas fa-arrow-left"></i>Return to File Upload</button> &nbsp;&nbsp;&nbsp;
-    <button onClick={handleStopTask} className="btn btn-lg btn-danger" id="stopExecutionButton">Stop</button> &nbsp;&nbsp;&nbsp;
-    <button onClick={handleReschedule} className="btn btn-lg btn-primary" id="reExecuteButton">Run again</button>
+    <button onClick={handleNavigate} className="btn btn-lg btn-secondary">{ <BsFillCaretLeftFill />}&nbsp;Return to File Upload</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={handleStopTask} className="btn btn-lg btn-danger" id="stopExecutionButton">{ <BsFillStopFill /> }&nbsp;Stop</button> &nbsp;&nbsp;&nbsp;
+    <button onClick={handleReschedule} className="btn btn-lg btn-primary" id="reExecuteButton" hidden>{ <BsPlayFill /> }&nbsp;Run again</button>
     </div>
 
     <br /><br />
@@ -510,11 +543,17 @@ function stopTask() {
     TASK_RUNNING = false;
     $("#stopExecutionButton").prop("disabled", true);
     $("#reExecuteButton").prop("disabled", false);
+    $("#reExecuteButton").prop("hidden", false);
     $("#statusBar").html("Your GNU Radio code is not running anymore. Feel free to run it again");
 
     if (TASK_STATUS_CHECKING_INTERVAL != null) {
       clearInterval(TASK_STATUS_CHECKING_INTERVAL);
       TASK_STATUS_CHECKING_INTERVAL = null;
+    }
+
+    if (RELIA_WIDGETS != null) {
+      RELIA_WIDGETS.stop();
+      RELIA_WIDGETS = null;
     }
   }
 }
@@ -778,10 +817,6 @@ function switch_to_loader() {
     stopTask();
     DISPLAYING_TASK_WIDGETS = false;
     ACTIVE_PAGE = PAGE_FILE_LOADER;
-    if (RELIA_WIDGETS != null) {
-      RELIA_WIDGETS.stop();
-      RELIA_WIDGETS = null;
-    }
 
     // let element = document.getElementById("containerLoader");
     // let hidden = element.getAttribute("hidden");

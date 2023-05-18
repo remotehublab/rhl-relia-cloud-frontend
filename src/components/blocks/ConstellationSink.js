@@ -1,7 +1,9 @@
 import $ from 'jquery';
 import useScript from '../../useScript';
+import ReliaWidget from './ReliaWidget';
+import extend from '../../Utils';
 
-export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIdentifier) {
+function ReliaConstellationSink ($divElement, deviceIdentifier, blockIdentifier) {
 	var self = this;
 	
 	self.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
@@ -301,5 +303,7 @@ export function ReliaConstellationSink ($divElement, deviceIdentifier, blockIden
 	};
 
 }
+
+extend(ReliaConstellationSink, ReliaWidget)
 
 export default ReliaConstellationSink;

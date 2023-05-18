@@ -72,7 +72,6 @@ class ReliaConstellationSink extends ReliaWidget {
 	}
 
 	redraw() {
-		console.log("ConstellationSink::redraw()");
 		var self = this;
 
 		var GridColor = '#808080';
@@ -160,8 +159,6 @@ class ReliaConstellationSink extends ReliaWidget {
 	};
 
 	handleResponseData(data) {
-		console.log("ConstellationSink::handleResponseData() called.");
-
 		var self = this;
 
 		setTimeout(function () {

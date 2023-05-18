@@ -15,11 +15,9 @@ class ReliaWidget {
     }
 
     performRequest() {
-        console.log("ReliaWidget::performRequest()");
         var self = this;
 
         $.get(this.url).done(function (response) {
-            console.log("ReliaWidget::get() finished with response:", response);
             if (!self.running) {
                 // Do not even print the new data
                 return;

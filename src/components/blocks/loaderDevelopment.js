@@ -150,13 +150,15 @@ ReliaWidgets.prototype.process = function () {
 							var frequencysink = new ReliaFrequencySink($divContents, deviceName, blockName);
 							self.blocks.push(frequencysink);
 							self.blocksById[deviceName][blockName] = frequencysink;
-							frequencysink.redraw();
+							frequencysink.start();
 						};
 						// $("#all-together").load(window.location.href + " #all-together");
 					} else {
-						var block = self.blocksById[deviceName][blockName];
-						if (block)
-							block.start();
+						if (self.blocksById[deviceName]) {
+							var block = self.blocksById[deviceName][blockName];
+							if (block)
+								block.start();
+						}
 					}
 				});
 			});

@@ -238,246 +238,239 @@ export class FrequencySink extends ReliaWidget {
 		//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 		self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
 
-		self.redraw = function () {
+	}
 
-			var GridColor = '#808080';
-			if (self.$gridCheckbox.is(':checked')) {
-				GridColor = '#808080';
-			}
-			else {
-				GridColor = '#ffffff';
-			}
+	redraw() {
+		var self = this;
 
-
-			if (self.$axisLabelsCheckbox.is(':checked')) {
-				self.titleVAxis = self.yLabelFreqSink + " (" + self.yUnitFreqSink + ")";
-				self.titleHAxis = 'Freq (Hz)';
-			}
-			else {
-				self.titleVAxis = ' ';
-				self.titleHAxis = ' ';
-			}
-
-			/*	var ZoomIn_factor;
-					if($("#time-sink-grid-checkbox").is(':checked'))  {
-						GridColor = '#808080'; }
-					else { 
-						GridColor = '#ffffff'; }/**/
+		var GridColor = '#808080';
+		if (self.$gridCheckbox.is(':checked')) {
+			GridColor = '#808080';
+		}
+		else {
+			GridColor = '#ffffff';
+		}
 
 
-			self.options = {
-				title: self.titleFreqSink,
-				curveType: 'function',
-				legend: { position: 'right' },
-				hAxis: {
-					title: self.titleHAxis,
-					gridlines: {
-						color: GridColor,
-						//title: self.yunit,
-					}
-				},
-				vAxis: {
-					viewWindow: {
-						min: self.minFreqSink * 1.0 + self.zoomFactor * self.zoomStep,
-						max: self.maxFreqSink * 1.0 - self.zoomFactor * self.zoomStep
-					},/**/
-					title: self.titleVAxis,
-					gridlines: {
-						color: GridColor,
-					}
-				},
-				explorer: {
-					actions: ['dragToZoom', 'rightClickToReset'],
-					axis: 'horizontal',
-					keepInBounds: true,
-					maxZoomIn: 100.0
-				},
-				//                        lineDashStyle: [4, 2],
-				// TODO: Marcos: move colors to series[0].color, so everything is in series
-				//colors: self.colorsTimeSink,
+		if (self.$axisLabelsCheckbox.is(':checked')) {
+			self.titleVAxis = self.yLabelFreqSink + " (" + self.yUnitFreqSink + ")";
+			self.titleHAxis = 'Freq (Hz)';
+		}
+		else {
+			self.titleVAxis = ' ';
+			self.titleHAxis = ' ';
+		}
+
+		/*	var ZoomIn_factor;
+				if($("#time-sink-grid-checkbox").is(':checked'))  {
+					GridColor = '#808080'; }
+				else { 
+					GridColor = '#ffffff'; }/**/
 
 
-				series: {
-					0: {
-					},
-					1: {
-
-
-					},
-					2: {
-					},
-					3: {
-					},
-					4: {
-					},
-					5: {
-					},
-					6: {
-					},
-					7: {
-					},
-					8: {
-					},
-					9: {
-					},
-
+		self.options = {
+			title: self.titleFreqSink,
+			curveType: 'function',
+			legend: { position: 'right' },
+			hAxis: {
+				title: self.titleHAxis,
+				gridlines: {
+					color: GridColor,
+					//title: self.yunit,
 				}
-			};
+			},
+			vAxis: {
+				viewWindow: {
+					min: self.minFreqSink * 1.0 + self.zoomFactor * self.zoomStep,
+					max: self.maxFreqSink * 1.0 - self.zoomFactor * self.zoomStep
+				},/**/
+				title: self.titleVAxis,
+				gridlines: {
+					color: GridColor,
+				}
+			},
+			explorer: {
+				actions: ['dragToZoom', 'rightClickToReset'],
+				axis: 'horizontal',
+				keepInBounds: true,
+				maxZoomIn: 100.0
+			},
+			//                        lineDashStyle: [4, 2],
+			// TODO: Marcos: move colors to series[0].color, so everything is in series
+			//colors: self.colorsTimeSink,
 
 
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
+			series: {
+				0: {
+				},
+				1: {
+
+
+				},
+				2: {
+				},
+				3: {
+				},
+				4: {
+				},
+				5: {
+				},
+				6: {
+				},
+				7: {
+				},
+				8: {
+				},
+				9: {
+				},
+
+			}
+		};
+
+		this.performRequest();
+	}
+
+	handleResponseData (data) {
+		var self = this;
+		setTimeout(function () {
+			self.redraw();
+		});
+
+		var params = data.data.params;
+
+		var nconnections = params.nconnections;
+		self.fftsize = params.fftsize;
+
+		self.titleFreqSink = params.name;
+		self.centerFrequency = params.fc;
+		self.bandwidth = params.bw;
+		self.ymin = params.ymin;
+		self.ymax = params.ymax;
+		self.average = params.average
+
+		//self.colorsFreqSink=params.colors;
+		self.yLabelFreqSink = params.label;
+		self.yUnitFreqSink = params.units
+
+
+		//Remove all the unused channels from 5 to nconnections
+		for (var index = 10; index > nconnections; --index) {
+			self.$temp = self.$div.find(".freq-sink-real-checkbox-" + index);
+			self.$temp.parent().remove();
+		}
+
+		//console.log(data.data.block_type);
+		//console.log(data.data.type);
+		//console.log(params.labels[0].replace(/'/g, ""));
+		//console.log(params);
+
+
+		var Number2plot = self.fftsize;
+		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
+
+
+		var columns = ["Point"];
+		var formattedData = [
+			columns
+		];
+
+		// self.options['series'] = {};
+
+
+		var enableReal = new Array(nconnections).fill(null);
+		var enableImag = new Array(nconnections).fill(null);
+		var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
+		//var ttemp = Array.from(Array(self.fftsize), () => new Array(nconnections));
+
+		//int[][] matrixxx = new dataType[5][1024];
+		//var realData=new Array(nconnections*Number2plot).fill(null);
+
+		if (self.pausePlayFreqSink == true) {
+
+			//self.colorsFreqSink=[];
+			var chEnabledCounter = 0;
+			for (var index = 1; index <= nconnections; ++index) {
+				//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
+
+				if (self.$div.find(".freq-sink-real-checkbox-" + index).is(':checked')) {
+					dataout[chEnabledCounter] = data.data.data.streams[index - 1]['real'];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
+					//console.log(dataout[0]);					
+					enableReal[index - 1] = true;
+					self.$div.find(".freq-sink-real-checkbox-" + index + "-label").text(params.labels[index - 1].replace(/'/g, ""));
+					self.options.series[chEnabledCounter].color = params.colors[index - 1];
+					self.options.series[chEnabledCounter].lineWidth = params.widths[index - 1];
+					columns.push(params.labels[index - 1]);
+					//console.log(params);
+
+
+					//self.colorsTimeSink.push(params.colors[2*index-2]);
+					chEnabledCounter = chEnabledCounter + 1;
+				}
+				else {
+					enableReal[index - 1] = false;
+					//self.options.series[chEnabledCounter].color='#ffffff';
+					//chEnabledCounter=chEnabledCounter+1;
+					//self.colorsTimeSink.push('#ffff00');
+					//realData= new Array(realData.length).fill(null);
+				}
+
+			}
+			//console.log(ttemp[0][0])	
+			if (self.avgCounter < params.average) {
+				$.each(self.dataAvgOut, function (rowIndex, row) {
+					$.each(row, function (colIndex, value) {
+						self.dataAvgOut[rowIndex][colIndex] += dataout[rowIndex][colIndex];
+					});
 				});
 
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
+				self.avgCounter += 1;
+				//for (var avgCounter=0;avgCounter<1;++avgCounter){	
 
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
+			}
+			else {
 
-				var params = data.data.params;
-
-				var nconnections = params.nconnections;
-				self.fftsize = params.fftsize;
-
-				self.titleFreqSink = params.name;
-				self.centerFrequency = params.fc;
-				self.bandwidth = params.bw;
-				self.ymin = params.ymin;
-				self.ymax = params.ymax;
-				self.average = params.average
-
-				//self.colorsFreqSink=params.colors;
-				self.yLabelFreqSink = params.label;
-				self.yUnitFreqSink = params.units
-
-
-				//Remove all the unused channels from 5 to nconnections
-				for (var index = 10; index > nconnections; --index) {
-					self.$temp = self.$div.find(".freq-sink-real-checkbox-" + index);
-					self.$temp.parent().remove();
-				}
-
-				//console.log(data.data.block_type);
-				//console.log(data.data.type);
-				//console.log(params.labels[0].replace(/'/g, ""));
-				//console.log(params);
-
-
-				var Number2plot = self.fftsize;
-				//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
-
-
-				var columns = ["Point"];
-				var formattedData = [
-					columns
-				];
-
-				// self.options['series'] = {};
-
-
-				var enableReal = new Array(nconnections).fill(null);
-				var enableImag = new Array(nconnections).fill(null);
-				var dataout = Array.from(Array(self.fftsize), () => new Array(nconnections));
-				//var ttemp = Array.from(Array(self.fftsize), () => new Array(nconnections));
-
-				//int[][] matrixxx = new dataType[5][1024];
-				//var realData=new Array(nconnections*Number2plot).fill(null);
-
-				if (self.pausePlayFreqSink == true) {
-
-					//self.colorsFreqSink=[];
-					var chEnabledCounter = 0;
-					for (var index = 1; index <= nconnections; ++index) {
-						//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
-
-						if (self.$div.find(".freq-sink-real-checkbox-" + index).is(':checked')) {
-							dataout[chEnabledCounter] = data.data.data.streams[index - 1]['real'];
-							$.each(dataout[chEnabledCounter], function (pos, value) {
-								dataout[chEnabledCounter][pos] = parseFloat(value);
-							});
-							//console.log(dataout[0]);					
-							enableReal[index - 1] = true;
-							self.$div.find(".freq-sink-real-checkbox-" + index + "-label").text(params.labels[index - 1].replace(/'/g, ""));
-							self.options.series[chEnabledCounter].color = params.colors[index - 1];
-							self.options.series[chEnabledCounter].lineWidth = params.widths[index - 1];
-							columns.push(params.labels[index - 1]);
-							//console.log(params);
-
-
-							//self.colorsTimeSink.push(params.colors[2*index-2]);
-							chEnabledCounter = chEnabledCounter + 1;
-						}
-						else {
-							enableReal[index - 1] = false;
-							//self.options.series[chEnabledCounter].color='#ffffff';
-							//chEnabledCounter=chEnabledCounter+1;
-							//self.colorsTimeSink.push('#ffff00');
-							//realData= new Array(realData.length).fill(null);
-						}
-
+				if (self.$autoscaleCheckbox.is(':checked')) {
+					var tempmax = new Array(chEnabledCounter).fill(0);
+					var tempmin = new Array(chEnabledCounter).fill(0);
+					for (var v = 0; v < chEnabledCounter; ++v) {
+						tempmax[v] = Math.max.apply(Math, self.dataAvgOut[v]);
+						tempmin[v] = Math.min.apply(Math, self.dataAvgOut[v]);
 					}
-					//console.log(ttemp[0][0])	
-					if (self.avgCounter < params.average) {
-						$.each(self.dataAvgOut, function (rowIndex, row) {
-							$.each(row, function (colIndex, value) {
-								self.dataAvgOut[rowIndex][colIndex] += dataout[rowIndex][colIndex];
-							});
-						});
-
-						self.avgCounter += 1;
-						//for (var avgCounter=0;avgCounter<1;++avgCounter){	
-
-					}
-					else {
-
-						if (self.$autoscaleCheckbox.is(':checked')) {
-							var tempmax = new Array(chEnabledCounter).fill(0);
-							var tempmin = new Array(chEnabledCounter).fill(0);
-							for (var v = 0; v < chEnabledCounter; ++v) {
-								tempmax[v] = Math.max.apply(Math, self.dataAvgOut[v]);
-								tempmin[v] = Math.min.apply(Math, self.dataAvgOut[v]);
-							}
-							self.maxFreqSink = Math.max.apply(Math, tempmax) / params.average;
-							self.minFreqSink = Math.min.apply(Math, tempmin) / params.average;
-							self.zoomStep = 0;
-							self.zoomFactor = 0;
-							//console.log(tempmax);
-						}
-						else self.zoomStep = 0.07 * Math.abs(self.minFreqSink - self.maxFreqSink);
-
-						self.avgCounter = 0;
-						//console.log(typeof data.data.data.streams[0]['real'])
-						if (chEnabledCounter != 0) {
-							var freqRes = self.bandwidth / self.fftsize
-							for (var pos = 0; pos < self.fftsize; ++pos) {
-								var currentRow = [self.centerFrequency - 0.5 * self.bandwidth + pos * freqRes];
-								for (var idx = 0; idx < chEnabledCounter; ++idx) {
-									//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-									currentRow.push(self.dataAvgOut[idx][pos] / self.average);
-									self.dataAvgOut[idx][pos] = 0;
-									//console.log(ttemp)	
-								}
-								formattedData.push(currentRow);
-							}
-							//console.log(formattedData);
-							var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-							self.chart.draw(dataTable, self.options);
-
-
-
-
-						}
-					}
+					self.maxFreqSink = Math.max.apply(Math, tempmax) / params.average;
+					self.minFreqSink = Math.min.apply(Math, tempmin) / params.average;
+					self.zoomStep = 0;
+					self.zoomFactor = 0;
+					//console.log(tempmax);
 				}
+				else self.zoomStep = 0.07 * Math.abs(self.minFreqSink - self.maxFreqSink);
 
-			});
-		};
+				self.avgCounter = 0;
+				//console.log(typeof data.data.data.streams[0]['real'])
+				if (chEnabledCounter != 0) {
+					var freqRes = self.bandwidth / self.fftsize
+					for (var pos = 0; pos < self.fftsize; ++pos) {
+						var currentRow = [self.centerFrequency - 0.5 * self.bandwidth + pos * freqRes];
+						for (var idx = 0; idx < chEnabledCounter; ++idx) {
+							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
+							currentRow.push(self.dataAvgOut[idx][pos] / self.average);
+							self.dataAvgOut[idx][pos] = 0;
+							//console.log(ttemp)	
+						}
+						formattedData.push(currentRow);
+					}
+					//console.log(formattedData);
+					var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+					self.chart.draw(dataTable, self.options);
+
+
+
+
+				}
+			}
+		}
 	}
 }
 

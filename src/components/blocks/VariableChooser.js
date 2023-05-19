@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import slugify from 'react-slugify';
 import ReliaWidget from './ReliaWidget';
 
@@ -40,8 +39,6 @@ export class ReliaVariableChooser extends ReliaWidget {
 
 			var value = checked.attr("value");
 
-			console.log("on chooser change:", value);
-
 			$.ajax({
 				type: "POST",
 				url: self.url,
@@ -58,56 +55,6 @@ export class ReliaVariableChooser extends ReliaWidget {
 
 		self.$chooserInput.change(self.changeChooser);
 
-		self.redraw = function () {
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-				console.log(data.data);
-
-				var params = data.data.params;
-
-				// params.labels: ["Square", "Cosine"]
-				// params.options: [ 1, 2 ]
-				$.each(params.labels, function (index, label) {
-					var correspondingOption = params.options[index];
-					if (self.$chooserInput.find('input[value="' + correspondingOption + '"]').length == 0) {
-						var optionIdentifier = self.radioButtonName + "-" + correspondingOption;
-						self.choices[correspondingOption] = label;
-						self.$chooserInput.append(
-							'<div class="form-check">' +
-							'<input class="form-check-input" name="' + self.radioButtonName + '" type="radio" id="' + optionIdentifier + '" value="' + correspondingOption + '">' +
-							'<label class="form-check-label" for="' + optionIdentifier + '">' +
-							label +
-							'</label>' +
-							'</div>'
-						);
-					}
-				});
-
-				if (!self.stateInitialized) {
-					if (params.state) {
-						self.$chooserInput.find("input").prop("checked", false);
-						self.$chooserInput.find('input[value="' + params.state + '"]').prop("checked", true);
-					} else {
-						self.$chooserInput.find("input").prop("checked", false);
-					}
-					self.stateInitialized = true;
-				}
-			});
-		};
-
 		$.ajax({
 			type: "POST",
 			url: self.url,
@@ -119,6 +66,39 @@ export class ReliaVariableChooser extends ReliaWidget {
 		}).done(function () {
 			// TBD
 		});
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+
+		// params.labels: ["Square", "Cosine"]
+		// params.options: [ 1, 2 ]
+		$.each(params.labels, function (index, label) {
+			var correspondingOption = params.options[index];
+			if (self.$chooserInput.find('input[value="' + correspondingOption + '"]').length == 0) {
+				var optionIdentifier = self.radioButtonName + "-" + correspondingOption;
+				self.choices[correspondingOption] = label;
+				self.$chooserInput.append(
+					'<div class="form-check">' +
+					'<input class="form-check-input" name="' + self.radioButtonName + '" type="radio" id="' + optionIdentifier + '" value="' + correspondingOption + '">' +
+					'<label class="form-check-label" for="' + optionIdentifier + '">' +
+					label +
+					'</label>' +
+					'</div>'
+				);
+			}
+		});
+
+		if (!self.stateInitialized) {
+			if (params.state) {
+				self.$chooserInput.find("input").prop("checked", false);
+				self.$chooserInput.find('input[value="' + params.state + '"]').prop("checked", true);
+			} else {
+				self.$chooserInput.find("input").prop("checked", false);
+			}
+			self.stateInitialized = true;
+		}
 	}
 }
 

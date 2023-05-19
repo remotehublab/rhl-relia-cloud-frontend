@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 class ReliaConstellationSink extends ReliaWidget {
@@ -154,18 +153,11 @@ class ReliaConstellationSink extends ReliaWidget {
 
 			}
 		};
-
-		self.performRequest();
 	};
 
 	handleResponseData(data) {
 		var self = this;
-
-		setTimeout(function () {
-			self.redraw();
-		});
-
-		var params = data.data.params;
+		var params = data.params;
 
 		var nconnections = params.nconnections;
 		self.titleConstSink = params.name;
@@ -182,8 +174,8 @@ class ReliaConstellationSink extends ReliaWidget {
 			self.$temp.parent().remove();
 		}
 
-		//console.log(data.data.block_type);
-		//console.log(data.data.type);
+		//console.log(data.block_type);
+		//console.log(data.type);
 		//console.log(params.labels[0].replace(/'/g, ""));
 
 		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
@@ -208,12 +200,12 @@ class ReliaConstellationSink extends ReliaWidget {
 			for (var index = 1; index <= nconnections; ++index) {
 
 				if (self.$div.find(".const-sink-real-checkbox-" + index).is(':checked')) {
-					dataout_real[chEnabledCounter] = data.data.data.streams[index - 1]['real'];
+					dataout_real[chEnabledCounter] = data.data.streams[index - 1]['real'];
 					$.each(dataout_real[chEnabledCounter], function (pos, value) {
 						dataout_real[chEnabledCounter][pos] = parseFloat(value);
 					});
 
-					dataout_imag[chEnabledCounter] = data.data.data.streams[index - 1]['imag'];
+					dataout_imag[chEnabledCounter] = data.data.streams[index - 1]['imag'];
 					$.each(dataout_imag[chEnabledCounter], function (pos, value) {
 						dataout_imag[chEnabledCounter][pos] = parseFloat(value);
 					});

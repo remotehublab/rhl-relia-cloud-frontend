@@ -12,10 +12,14 @@ class ReliaWidget {
     start() {
         this.running = true;
         this.redraw();
+        this.performRequest();
     }
 
     performRequest() {
         var self = this;
+
+        if (!this.running)
+            return;
 
         $.get(this.url).done(function (response) {
             if (!self.running) {
@@ -29,20 +33,27 @@ class ReliaWidget {
             }
 
             if (response.data == null) {
-                console.log("No data");
                 return;
             }
 
-            console.log("ReliaWidget::calling handleNewData()");
-            self.handleResponseData(response);
+            // call redraw just after
+            setTimeout(function () {
+                self.redraw();
+                self.performRequest();
+            });
+
+            self.handleResponseData(response.data);
         });
     }
 
-    redraw () {
-        console.log("ReliaWidget::redraw() called. About to raise an error");
-        throw "redraw not implemented";
-    }
+    /*
+    * redraw the widget. Optional method.
+    */
+    redraw () {}
 
+    /*
+    * handle the response data from the call to self.url. Mandatory method.
+    */
     handleResponseData (response) {
         console.log("ReliaWidget::handleResponseData() called. About to raise an error");
         throw "handleNewData not implemented";

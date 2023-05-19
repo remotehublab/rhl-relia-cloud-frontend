@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaTimeSink extends ReliaWidget {
@@ -229,270 +228,254 @@ export class ReliaTimeSink extends ReliaWidget {
 		//self.$div.find(".time-sink-real-checkbox-1").closest("label").text('ssdss');
 		//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 		self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
+	}
 
-		self.redraw = function () {
+	redraw () {
+		var self = this;
 
-			var GridColor = '#808080';
-			if (self.$gridCheckbox.is(':checked')) {
-				GridColor = '#808080';
-			}
-			else {
-				GridColor = '#ffffff';
-			}
-
-
-			if (self.$axisLabelsCheckbox.is(':checked')) {
-				self.titleVAxis = self.yLabelTimeSink + " (" + self.yUnitTimeSink + ")";
-				self.titleHAxis = 'Time (milliseconds)';
-			}
-			else {
-				self.titleVAxis = ' ';
-				self.titleHAxis = ' ';
-			}
-
-			/*	var ZoomIn_factor;
-					if($("#time-sink-grid-checkbox").is(':checked'))  {
-						GridColor = '#808080'; }
-					else { 
-						GridColor = '#ffffff'; }/**/
+		var GridColor = '#808080';
+		if (self.$gridCheckbox.is(':checked')) {
+			GridColor = '#808080';
+		}
+		else {
+			GridColor = '#ffffff';
+		}
 
 
-			self.options = {
-				title: self.titleTimeSink,
-				curveType: 'function',
-				legend: { position: 'right' },
-				hAxis: {
-					title: self.titleHAxis,
-					gridlines: {
-						color: GridColor,
-						//title: self.yunit,
-					}
+		if (self.$axisLabelsCheckbox.is(':checked')) {
+			self.titleVAxis = self.yLabelTimeSink + " (" + self.yUnitTimeSink + ")";
+			self.titleHAxis = 'Time (milliseconds)';
+		}
+		else {
+			self.titleVAxis = ' ';
+			self.titleHAxis = ' ';
+		}
+
+		/*	var ZoomIn_factor;
+				if($("#time-sink-grid-checkbox").is(':checked'))  {
+					GridColor = '#808080'; }
+				else { 
+					GridColor = '#ffffff'; }/**/
+
+
+		self.options = {
+			title: self.titleTimeSink,
+			curveType: 'function',
+			legend: { position: 'right' },
+			hAxis: {
+				title: self.titleHAxis,
+				gridlines: {
+					color: GridColor,
+					//title: self.yunit,
+				}
+			},
+			vAxis: {
+				viewWindow: {
+					//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
+					//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
+					min: self.minTimeSink * 1.0 + self.zoomFactor * self.zoomStep,
+					max: self.maxTimeSink * 1.0 - self.zoomFactor * self.zoomStep
+				},/**/
+				/*viewWindow:{
+					
+					
+					min: -3,
+					max: 3
+				},/**/
+				title: self.titleVAxis,
+				gridlines: {
+					color: GridColor,
+				}
+			},
+			explorer: {
+				actions: ['dragToZoom', 'rightClickToReset'],
+				axis: 'horizontal',
+				keepInBounds: true,
+				maxZoomIn: 100.0
+			},
+			//                        lineDashStyle: [4, 2],
+			// TODO: Marcos: move colors to series[0].color, so everything is in series
+			//colors: self.colorsTimeSink,
+
+
+			series: {
+				0: {
 				},
-				vAxis: {
-					viewWindow: {
-						//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
-						//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
-						min: self.minTimeSink * 1.0 + self.zoomFactor * self.zoomStep,
-						max: self.maxTimeSink * 1.0 - self.zoomFactor * self.zoomStep
-					},/**/
-					/*viewWindow:{
-						
-						
-						min: -3,
-						max: 3
-					},/**/
-					title: self.titleVAxis,
-					gridlines: {
-						color: GridColor,
-					}
+				1: {
+
+
 				},
-				explorer: {
-					actions: ['dragToZoom', 'rightClickToReset'],
-					axis: 'horizontal',
-					keepInBounds: true,
-					maxZoomIn: 100.0
+				2: {
 				},
-				//                        lineDashStyle: [4, 2],
-				// TODO: Marcos: move colors to series[0].color, so everything is in series
-				//colors: self.colorsTimeSink,
+				3: {
+				},
+				4: {
+				},
+				5: {
+				},
+				6: {
+				},
+				7: {
+				},
+				8: {
+				},
+				9: {
+				},
 
-
-				series: {
-					0: {
-					},
-					1: {
-
-
-					},
-					2: {
-					},
-					3: {
-					},
-					4: {
-					},
-					5: {
-					},
-					6: {
-					},
-					7: {
-					},
-					8: {
-					},
-					9: {
-					},
-
-				}
-			};
-
-
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-				var params = data.data.params;
-
-				var nconnections = params.nconnections;
-				self.titleTimeSink = params.name;
-				self.colorsTimeSink = params.colors;
-				self.yLabelTimeSink = params.ylabel;
-				self.yUnitTimeSink = params.yunit
-
-
-
-				//Remove all the unused channels from 5 to nconnections
-				for (var index = 5; index > nconnections; --index) {
-					self.$temp = self.$div.find(".time-sink-real-checkbox-" + index);
-					self.$temp.parent().remove();
-					self.$temp = self.$div.find(".time-sink-imag-checkbox-" + index);
-					self.$temp.parent().remove();
-				}
-
-				//console.log(data.data.block_type);
-				//console.log(data.data.type);
-				//console.log(params.labels[0].replace(/'/g, ""));
-				//console.log(params.markers[0]);
-				//console.log(self.zoomStep,self.zoomFactor,self.minTimeSink,self.maxTimeSink,self.zoomStep);
-				//console.log(data.data.data.streams[0]['real']);
-
-				var Number2plot = self.$nop2plot.val();
-				//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
-
-				var timePerSample = 1000.0 / params.srate; // in milliseconds
-
-				var columns = ["Point"];
-				var formattedData = [
-					columns
-				];
-
-				// self.options['series'] = {};
-
-
-				var enableReal = new Array(nconnections).fill(null);
-				var enableImag = new Array(nconnections).fill(null);
-				var dataout = Array.from(Array(Number2plot), () => new Array(2 * nconnections));
-				//var realData=new Array(nconnections*Number2plot).fill(null);
-
-				if (self.pausePlayTimeSink == true) {
-
-					self.colorsTimeSink = [];
-					var chEnabledCounter = 0;
-					for (var index = 1; index <= nconnections; ++index) {
-						//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
-
-						if (self.$div.find(".time-sink-real-checkbox-" + index).is(':checked')) {
-							dataout[chEnabledCounter] = data.data.data.streams[index - 1]['real'];
-							$.each(dataout[chEnabledCounter], function (pos, value) {
-								dataout[chEnabledCounter][pos] = parseFloat(value);
-							});
-							enableReal[index - 1] = true;
-							self.$div.find(".time-sink-real-checkbox-" + index + "-label").text(params.labels[2 * index - 2].replace(/'/g, ""));
-							self.options.series[chEnabledCounter].color = params.colors[2 * index - 2];
-							self.options.series[chEnabledCounter].lineWidth = params.widths[2 * index - 2];
-							self.options.series[chEnabledCounter].lineDashStyle = params.styles[2 * index - 2];
-							self.options.series[chEnabledCounter].pointShape = params.markers[2 * index - 2];
-							if (self.options.series[chEnabledCounter].pointShape != "none") {
-								self.options.series[chEnabledCounter].pointSize = 4 * params.widths[2 * index - 2];
-							}
-
-							//self.colorsTimeSink.push(params.colors[2*index-2]);
-							chEnabledCounter = chEnabledCounter + 1;
-						}
-						else {
-							enableReal[index - 1] = false;
-							//self.options.series[chEnabledCounter].color='#ffffff';
-							//chEnabledCounter=chEnabledCounter+1;
-							//self.colorsTimeSink.push('#ffff00');
-							//realData= new Array(realData.length).fill(null);
-						}
-
-						if (self.$div.find(".time-sink-imag-checkbox-" + index).is(':checked')) {
-							dataout[chEnabledCounter] = data.data.data.streams[index - 1]['imag'];
-							$.each(dataout[chEnabledCounter], function (pos, value) {
-								dataout[chEnabledCounter][pos] = parseFloat(value);
-							});
-							enableImag[index - 1] = true;
-							self.$div.find(".time-sink-imag-checkbox-" + index + "-label").text(params.labels[2 * index - 1].replace(/'/g, ""));
-							self.options.series[chEnabledCounter].color = params.colors[2 * index - 1];
-							self.options.series[chEnabledCounter].lineWidth = params.widths[2 * index - 1];
-							self.options.series[chEnabledCounter].lineDashStyle = params.styles[2 * index - 1];
-							self.options.series[chEnabledCounter].pointShape = params.markers[2 * index - 1];
-							if (self.options.series[chEnabledCounter].pointShape != "none") {
-								self.options.series[chEnabledCounter].pointSize = 4 * params.widths[2 * index - 1];
-							}
-
-
-							chEnabledCounter = chEnabledCounter + 1;
-						}
-						else {
-							enableImag[index - 1] = false;
-							//self.options.series[2*index-1].color='#ffffff';
-							//chEnabledCounter=chEnabledCounter+1;
-							//imagData=Array(realData.length).fill(null);
-						}
-						/*if (!enableReal[index-1] && !enableImag[index-1]) {
-							console.log("Error: activate real or imag");
-							return;
-						}/**/
-						//console.log(enableImag[index-1]);
-						// counter = 0;
-
-						if (enableReal[index - 1]) {
-							columns.push(params.labels[2 * index - 2]);
-							// self.options.series[counter].color = '#3FFF33';
-							//counter++;
-						}
-
-						if (enableImag[index - 1]) {
-							columns.push(params.labels[2 * index - 1]);
-							// self.options.series[counter].color = '#1221c0';
-							//counter++;
-						}
-
-					}
-					if (chEnabledCounter != 0) {
-						for (var pos = 0; pos < Number2plot; ++pos) {
-							var currentRow = [pos * timePerSample];
-							for (var idx = 0; idx < chEnabledCounter; ++idx) {
-								//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
-								currentRow.push(dataout[idx][pos]);
-							}
-							formattedData.push(currentRow);
-						}
-						//console.log(formattedData);
-						var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-						self.chart.draw(dataTable, self.options);
-
-						if (self.$autoscaleCheckbox.is(':checked')) {
-							var tempmax = new Array(chEnabledCounter).fill(null);
-							var tempmin = new Array(chEnabledCounter).fill(null);
-							for (var v = 0; v < chEnabledCounter; ++v) {
-								tempmax[v] = Math.max.apply(Math, dataout[v]);
-								tempmin[v] = Math.min.apply(Math, dataout[v]);
-							}
-							self.maxTimeSink = Math.max.apply(Math, tempmax);
-							self.minTimeSink = Math.min.apply(Math, tempmin);
-							self.zoomStep = 0;
-							self.zoomFactor = 0;
-						}
-						else self.zoomStep = 0.07 * Math.abs(self.minTimeSink - self.maxTimeSink);
-
-
-					}
-				}
-
-			});
+			}
 		};
+	}
+
+	handleResponseData (data) {
+		var self = this;
+		var params = data.params;
+
+		var nconnections = params.nconnections;
+		self.titleTimeSink = params.name;
+		self.colorsTimeSink = params.colors;
+		self.yLabelTimeSink = params.ylabel;
+		self.yUnitTimeSink = params.yunit
+
+		//Remove all the unused channels from 5 to nconnections
+		for (var index = 5; index > nconnections; --index) {
+			self.$temp = self.$div.find(".time-sink-real-checkbox-" + index);
+			self.$temp.parent().remove();
+			self.$temp = self.$div.find(".time-sink-imag-checkbox-" + index);
+			self.$temp.parent().remove();
+		}
+
+		//console.log(data.block_type);
+		//console.log(data.type);
+		//console.log(params.labels[0].replace(/'/g, ""));
+		//console.log(params.markers[0]);
+		//console.log(self.zoomStep,self.zoomFactor,self.minTimeSink,self.maxTimeSink,self.zoomStep);
+		//console.log(data.data.streams[0]['real']);
+
+		var Number2plot = self.$nop2plot.val();
+		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
+
+		var timePerSample = 1000.0 / params.srate; // in milliseconds
+
+		var columns = ["Point"];
+		var formattedData = [
+			columns
+		];
+
+		// self.options['series'] = {};
+
+
+		var enableReal = new Array(nconnections).fill(null);
+		var enableImag = new Array(nconnections).fill(null);
+		var dataout = Array.from(Array(Number2plot), () => new Array(2 * nconnections));
+		//var realData=new Array(nconnections*Number2plot).fill(null);
+
+		if (self.pausePlayTimeSink == true) {
+
+			self.colorsTimeSink = [];
+			var chEnabledCounter = 0;
+			for (var index = 1; index <= nconnections; ++index) {
+				//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
+
+				if (self.$div.find(".time-sink-real-checkbox-" + index).is(':checked')) {
+					dataout[chEnabledCounter] = data.data.streams[index - 1]['real'];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
+					enableReal[index - 1] = true;
+					self.$div.find(".time-sink-real-checkbox-" + index + "-label").text(params.labels[2 * index - 2].replace(/'/g, ""));
+					self.options.series[chEnabledCounter].color = params.colors[2 * index - 2];
+					self.options.series[chEnabledCounter].lineWidth = params.widths[2 * index - 2];
+					self.options.series[chEnabledCounter].lineDashStyle = params.styles[2 * index - 2];
+					self.options.series[chEnabledCounter].pointShape = params.markers[2 * index - 2];
+					if (self.options.series[chEnabledCounter].pointShape != "none") {
+						self.options.series[chEnabledCounter].pointSize = 4 * params.widths[2 * index - 2];
+					}
+
+					//self.colorsTimeSink.push(params.colors[2*index-2]);
+					chEnabledCounter = chEnabledCounter + 1;
+				}
+				else {
+					enableReal[index - 1] = false;
+					//self.options.series[chEnabledCounter].color='#ffffff';
+					//chEnabledCounter=chEnabledCounter+1;
+					//self.colorsTimeSink.push('#ffff00');
+					//realData= new Array(realData.length).fill(null);
+				}
+
+				if (self.$div.find(".time-sink-imag-checkbox-" + index).is(':checked')) {
+					dataout[chEnabledCounter] = data.data.streams[index - 1]['imag'];
+					$.each(dataout[chEnabledCounter], function (pos, value) {
+						dataout[chEnabledCounter][pos] = parseFloat(value);
+					});
+					enableImag[index - 1] = true;
+					self.$div.find(".time-sink-imag-checkbox-" + index + "-label").text(params.labels[2 * index - 1].replace(/'/g, ""));
+					self.options.series[chEnabledCounter].color = params.colors[2 * index - 1];
+					self.options.series[chEnabledCounter].lineWidth = params.widths[2 * index - 1];
+					self.options.series[chEnabledCounter].lineDashStyle = params.styles[2 * index - 1];
+					self.options.series[chEnabledCounter].pointShape = params.markers[2 * index - 1];
+					if (self.options.series[chEnabledCounter].pointShape != "none") {
+						self.options.series[chEnabledCounter].pointSize = 4 * params.widths[2 * index - 1];
+					}
+
+
+					chEnabledCounter = chEnabledCounter + 1;
+				}
+				else {
+					enableImag[index - 1] = false;
+					//self.options.series[2*index-1].color='#ffffff';
+					//chEnabledCounter=chEnabledCounter+1;
+					//imagData=Array(realData.length).fill(null);
+				}
+				/*if (!enableReal[index-1] && !enableImag[index-1]) {
+					console.log("Error: activate real or imag");
+					return;
+				}/**/
+				//console.log(enableImag[index-1]);
+				// counter = 0;
+
+				if (enableReal[index - 1]) {
+					columns.push(params.labels[2 * index - 2]);
+					// self.options.series[counter].color = '#3FFF33';
+					//counter++;
+				}
+
+				if (enableImag[index - 1]) {
+					columns.push(params.labels[2 * index - 1]);
+					// self.options.series[counter].color = '#1221c0';
+					//counter++;
+				}
+
+			}
+			if (chEnabledCounter != 0) {
+				for (var pos = 0; pos < Number2plot; ++pos) {
+					var currentRow = [pos * timePerSample];
+					for (var idx = 0; idx < chEnabledCounter; ++idx) {
+						//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
+						currentRow.push(dataout[idx][pos]);
+					}
+					formattedData.push(currentRow);
+				}
+				//console.log(formattedData);
+				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+				self.chart.draw(dataTable, self.options);
+
+				if (self.$autoscaleCheckbox.is(':checked')) {
+					var tempmax = new Array(chEnabledCounter).fill(null);
+					var tempmin = new Array(chEnabledCounter).fill(null);
+					for (var v = 0; v < chEnabledCounter; ++v) {
+						tempmax[v] = Math.max.apply(Math, dataout[v]);
+						tempmin[v] = Math.min.apply(Math, dataout[v]);
+					}
+					self.maxTimeSink = Math.max.apply(Math, tempmax);
+					self.minTimeSink = Math.min.apply(Math, tempmin);
+					self.zoomStep = 0;
+					self.zoomFactor = 0;
+				}
+				else self.zoomStep = 0.07 * Math.abs(self.minTimeSink - self.maxTimeSink);
+
+
+			}
+		}
 	}
 }
 

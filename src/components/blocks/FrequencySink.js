@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class FrequencySink extends ReliaWidget {
@@ -326,17 +325,11 @@ export class FrequencySink extends ReliaWidget {
 
 			}
 		};
-
-		this.performRequest();
 	}
 
 	handleResponseData (data) {
 		var self = this;
-		setTimeout(function () {
-			self.redraw();
-		});
-
-		var params = data.data.params;
+		var params = data.params;
 
 		var nconnections = params.nconnections;
 		self.fftsize = params.fftsize;
@@ -359,8 +352,8 @@ export class FrequencySink extends ReliaWidget {
 			self.$temp.parent().remove();
 		}
 
-		//console.log(data.data.block_type);
-		//console.log(data.data.type);
+		//console.log(data.block_type);
+		//console.log(data.type);
 		//console.log(params.labels[0].replace(/'/g, ""));
 		//console.log(params);
 
@@ -393,7 +386,7 @@ export class FrequencySink extends ReliaWidget {
 				//console.log(self.options.series[0].pointShape,params.markers[2*index-2]);
 
 				if (self.$div.find(".freq-sink-real-checkbox-" + index).is(':checked')) {
-					dataout[chEnabledCounter] = data.data.data.streams[index - 1]['real'];
+					dataout[chEnabledCounter] = data.data.streams[index - 1]['real'];
 					$.each(dataout[chEnabledCounter], function (pos, value) {
 						dataout[chEnabledCounter][pos] = parseFloat(value);
 					});

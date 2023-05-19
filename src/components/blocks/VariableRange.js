@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariableRange extends ReliaWidget {
@@ -40,30 +39,6 @@ export class ReliaVariableRange extends ReliaWidget {
 
 		self.$slider.change(self.changeSlider);
 
-		self.redraw = function () {
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-				//console.log(data.data);
-
-				var params = data.data.params;
-				self.$slider.attr("min", params.min);
-				self.$slider.attr("max", params.max);
-			});
-		};
-
 		$.ajax({
 			type: "POST",
 			url: self.url,
@@ -75,6 +50,14 @@ export class ReliaVariableRange extends ReliaWidget {
 		}).done(function () {
 			// TBD
 		});
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		
+		var params = data.params;
+		self.$slider.attr("min", params.min);
+		self.$slider.attr("max", params.max);
 	}
 }
 

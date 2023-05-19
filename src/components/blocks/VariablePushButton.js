@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariablePushButton extends ReliaWidget {
@@ -46,30 +45,6 @@ export class ReliaVariablePushButton extends ReliaWidget {
 		};
 		// self.changePushButton();
 
-		self.redraw = function () {
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-				console.log(data.data);
-
-				var params = data.data.params;
-				if (params.label != undefined && params.label != null)
-					self.$button.text(params.label);
-			});
-		};
-
 		$.ajax({
 			type: "POST",
 			url: self.url,
@@ -81,6 +56,13 @@ export class ReliaVariablePushButton extends ReliaWidget {
 		}).done(function () {
 			// TBD
 		});
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+		if (params.label != undefined && params.label != null)
+			self.$button.text(params.label);
 	}
 }
 

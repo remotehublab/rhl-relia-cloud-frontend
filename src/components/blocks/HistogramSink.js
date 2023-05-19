@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaHistogramSink extends ReliaWidget {
@@ -16,69 +15,55 @@ export class ReliaHistogramSink extends ReliaWidget {
 		self.binHistogram = 100;
 
 		self.chart = new window.google.visualization.Histogram($constChartDiv[0]);
+	}
 
-		self.redraw = function () {
+	redraw () {
+		var self = this;
+		self.options = {
+			title: 'Histogram',
+			legend: { position: 'none' },
+			hAxis: {
+				title: 'Bins',
+			},
+			histogram: {
+				bucketSize: 1.0 / self.binHistogram,
+				minValue: self.minXAxisHistogram,
+				maxValue: self.maxXAxisHistogram,
+			},
 
-			self.options = {
-				title: 'Histogram',
-				legend: { position: 'none' },
-				hAxis: {
-					title: 'Bins',
-				},
-				histogram: {
-					bucketSize: 1.0 / self.binHistogram,
-					minValue: self.minXAxisHistogram,
-					maxValue: self.maxXAxisHistogram,
-				},
-
-				vAxis: {
-					title: 'Count',
-				},
-				colors: ['#e2431e', '#000000'],
-			};
-
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-
-				var params = data.data.params;
-				var Data = data.data.data.streams['0'];
-
-				self.minXAxisHistogram = params.xmin;
-				self.maxXAxisHistogram = params.xmax;
-				self.binHistogram = params.bins;
-				//console.log(data.data.block_type);
-				//console.log(data.data.type);
-				//console.log(Data);
-
-
-				$.each(Data, function (pos, value) {
-					Data[pos] = parseFloat(value);
-				});
-
-				var formattedData = [['Voltage Values']];
-
-				for (var pos = 0; pos < params.size_hist; ++pos) {
-					formattedData.push([Data[pos]]);
-				}
-
-				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-				self.chart.draw(dataTable, self.options);
-				//console.log(DataArray);
-			});
+			vAxis: {
+				title: 'Count',
+			},
+			colors: ['#e2431e', '#000000'],
 		};
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+		var Data = data.data.streams['0'];
+
+		self.minXAxisHistogram = params.xmin;
+		self.maxXAxisHistogram = params.xmax;
+		self.binHistogram = params.bins;
+		//console.log(data.block_type);
+		//console.log(data.type);
+		//console.log(Data);
+
+
+		$.each(Data, function (pos, value) {
+			Data[pos] = parseFloat(value);
+		});
+
+		var formattedData = [['Voltage Values']];
+
+		for (var pos = 0; pos < params.size_hist; ++pos) {
+			formattedData.push([Data[pos]]);
+		}
+
+		var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+		self.chart.draw(dataTable, self.options);
+		//console.log(DataArray);
 	}
 }
 

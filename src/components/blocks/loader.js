@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 
 import ReliaConstellationSink from './ConstellationSink.js';
 import ReliaTimeSink from './TimeSink.js';

@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaAutoCorrSink extends ReliaWidget {
@@ -226,181 +225,162 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 		//self.$div.find(".time-sink-real-checkbox-1").closest("label").text('ssdss');
 		//self.$div.find(".time-sink-real-checkbox-1").prop('checked', true);
 		self.chart = new window.google.visualization.ColumnChart($constChartDiv[0]);
+	}
 
-		self.redraw = function () {
-
-			var GridColor = '#808080';
-			if (self.$gridCheckbox.is(':checked')) {
-				GridColor = '#808080';
-			}
-			else {
-				GridColor = '#ffffff';
-			}
-
-
-			if (self.$axisLabelsCheckbox.is(':checked')) {
-				self.titleVAxis = self.yLabelAutoCorrSink + " (" + self.yUnitAutoCorrSink + ")";
-				self.titleHAxis = 'lag';
-			}
-			else {
-				self.titleVAxis = ' ';
-				self.titleHAxis = ' ';
-			}
-
-			/*	var ZoomIn_factor;
-					if($("#time-sink-grid-checkbox").is(':checked'))  {
-						GridColor = '#808080'; }
-					else { 
-						GridColor = '#ffffff'; }/**/
+	redraw () {
+		var self = this;
+		var GridColor = '#808080';
+		if (self.$gridCheckbox.is(':checked')) {
+			GridColor = '#808080';
+		}
+		else {
+			GridColor = '#ffffff';
+		}
 
 
-			self.options = {
-				title: self.titleAutoCorrSink,
-				curveType: 'function',
-				legend: { position: 'right' },
-				hAxis: {
-					title: self.titleHAxis,
-					gridlines: {
-						color: GridColor,
-						//title: self.yunit,
-					}
-				},
-				vAxis: {
-					viewWindow: {
-						min: self.minAutoCorrSink * 1.0 + self.zoomFactor * self.zoomStep,
-						max: self.maxAutoCorrSink * 1.0 - self.zoomFactor * self.zoomStep
-					},/**/
-					title: self.titleVAxis,
-					gridlines: {
-						color: GridColor,
-					}
-				},
-				explorer: {
-					actions: ['dragToZoom', 'rightClickToReset'],
-					axis: 'horizontal',
-					keepInBounds: true,
-					maxZoomIn: 16.0
-				},
-				//                        lineDashStyle: [4, 2],
-				// TODO: Marcos: move colors to series[0].color, so everything is in series
-				//colors: self.colorsTimeSink,
+		if (self.$axisLabelsCheckbox.is(':checked')) {
+			self.titleVAxis = self.yLabelAutoCorrSink + " (" + self.yUnitAutoCorrSink + ")";
+			self.titleHAxis = 'lag';
+		}
+		else {
+			self.titleVAxis = ' ';
+			self.titleHAxis = ' ';
+		}
+
+		/*	var ZoomIn_factor;
+				if($("#time-sink-grid-checkbox").is(':checked'))  {
+					GridColor = '#808080'; }
+				else { 
+					GridColor = '#ffffff'; }/**/
 
 
-				series: {
-					0: {
-					},
+		self.options = {
+			title: self.titleAutoCorrSink,
+			curveType: 'function',
+			legend: { position: 'right' },
+			hAxis: {
+				title: self.titleHAxis,
+				gridlines: {
+					color: GridColor,
+					//title: self.yunit,
 				}
-			};
+			},
+			vAxis: {
+				viewWindow: {
+					min: self.minAutoCorrSink * 1.0 + self.zoomFactor * self.zoomStep,
+					max: self.maxAutoCorrSink * 1.0 - self.zoomFactor * self.zoomStep
+				},/**/
+				title: self.titleVAxis,
+				gridlines: {
+					color: GridColor,
+				}
+			},
+			explorer: {
+				actions: ['dragToZoom', 'rightClickToReset'],
+				axis: 'horizontal',
+				keepInBounds: true,
+				maxZoomIn: 16.0
+			},
+			//                        lineDashStyle: [4, 2],
+			// TODO: Marcos: move colors to series[0].color, so everything is in series
+			//colors: self.colorsTimeSink,
 
 
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
+			series: {
+				0: {
+				},
+			}
+		};
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+
+		var nconnections = params.nconnections;
+		self.fac_size = params.fac_size;
+
+		self.titleAutoCorrSink = params.title;
+		self.centerFrequency = params.fc;
+		self.bandwidth = params.bw;
+		self.ymin = params.ymin;
+		self.ymax = params.ymax;
+		self.average = params.average
+
+		//self.colorsFreqSink=params.colors;
+		self.yLabelAutoCorrResSink = params.label;
+		self.yUnitAutoCorrResSink = params.units
+
+
+		//Remove all the unused channels from 5 to nconnections
+		//console.log(data.block_type);
+		//console.log(data.type);
+		//console.log(params.labels[0].replace(/'/g, ""));
+		//console.log(data.data.streams[0].real);
+		console.log(params);
+
+
+		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
+
+
+		var columns = ["Point"];
+		var formattedData = [
+			columns
+		];
+
+		// self.options['series'] = {};
+
+		columns.push("Real");
+		var dataout = new Array(self.fac_size).fill(0);
+
+		//int[][] matrixxx = new dataType[5][1024];
+		//var realData=new Array(nconnections*Number2plot).fill(null);
+
+		if (self.pausePlayAutoCorrSink == true) {
+
+			dataout = data.data.streams[0]['real'];
+			$.each(dataout, function (pos, value) {
+				dataout[pos] = parseFloat(value);
+			});
+			//console.log(dataout[0]);					
+
+			if (self.avgCounter < params.fac_decimation) {
+				$.each(self.dataAvgOut, function (rowIndex, row) {
+					self.dataAvgOut[rowIndex] += dataout[rowIndex];
 				});
 
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
+				self.avgCounter += 1;
+				//for (var avgCounter=0;avgCounter<1;++avgCounter){	
+
+			}
+			else {
+
+				if (self.$autoscaleCheckbox.is(':checked')) {
+					self.maxAutoCorrSink = Math.max.apply(Math, self.dataAvgOut) / params.fac_decimation;
+					self.minAutoCorrSink = Math.min.apply(Math, self.dataAvgOut) / params.fac_decimation;
+					console.log(self.maxAutoCorrSink)
+					self.zoomStep = 0;
+					self.zoomFactor = 0;
+					//console.log(tempmax);
 				}
+				else self.zoomStep = 0.07 * Math.abs(self.minAutoCorrSink - self.maxAutoCorrSink);
 
-				if (data.data == null) {
-					console.log("No data");
-					return;
+
+				self.avgCounter = 0;
+				console.log(self.maxAutoCorrSink)
+				for (var pos = 0; pos < self.fac_size; ++pos) {
+					var currentRow = [pos];
+					currentRow.push(self.dataAvgOut[pos] / params.fac_decimation);
+					self.dataAvgOut[pos] = 0;
+					//console.log(ttemp)	
+
+					formattedData.push(currentRow);
 				}
-
-				var params = data.data.params;
-
-				var nconnections = params.nconnections;
-				self.fac_size = params.fac_size;
-
-				self.titleAutoCorrSink = params.title;
-				self.centerFrequency = params.fc;
-				self.bandwidth = params.bw;
-				self.ymin = params.ymin;
-				self.ymax = params.ymax;
-				self.average = params.average
-
-				//self.colorsFreqSink=params.colors;
-				self.yLabelAutoCorrResSink = params.label;
-				self.yUnitAutoCorrResSink = params.units
-
-
-				//Remove all the unused channels from 5 to nconnections
-				//console.log(data.data.block_type);
-				//console.log(data.data.type);
-				//console.log(params.labels[0].replace(/'/g, ""));
-				//console.log(data.data.data.streams[0].real);
-				console.log(params);
-
-
-				//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
-
-
-				var columns = ["Point"];
-				var formattedData = [
-					columns
-				];
-
-				// self.options['series'] = {};
-
-				columns.push("Real");
-				var dataout = new Array(self.fac_size).fill(0);
-
-				//int[][] matrixxx = new dataType[5][1024];
-				//var realData=new Array(nconnections*Number2plot).fill(null);
-
-				if (self.pausePlayAutoCorrSink == true) {
-
-					dataout = data.data.data.streams[0]['real'];
-					$.each(dataout, function (pos, value) {
-						dataout[pos] = parseFloat(value);
-					});
-					//console.log(dataout[0]);					
-
-					if (self.avgCounter < params.fac_decimation) {
-						$.each(self.dataAvgOut, function (rowIndex, row) {
-							self.dataAvgOut[rowIndex] += dataout[rowIndex];
-						});
-
-						self.avgCounter += 1;
-						//for (var avgCounter=0;avgCounter<1;++avgCounter){	
-
-					}
-					else {
-
-						if (self.$autoscaleCheckbox.is(':checked')) {
-							self.maxAutoCorrSink = Math.max.apply(Math, self.dataAvgOut) / params.fac_decimation;
-							self.minAutoCorrSink = Math.min.apply(Math, self.dataAvgOut) / params.fac_decimation;
-							console.log(self.maxAutoCorrSink)
-							self.zoomStep = 0;
-							self.zoomFactor = 0;
-							//console.log(tempmax);
-						}
-						else self.zoomStep = 0.07 * Math.abs(self.minAutoCorrSink - self.maxAutoCorrSink);
-
-
-						self.avgCounter = 0;
-						console.log(self.maxAutoCorrSink)
-						for (var pos = 0; pos < self.fac_size; ++pos) {
-							var currentRow = [pos];
-							currentRow.push(self.dataAvgOut[pos] / params.fac_decimation);
-							self.dataAvgOut[pos] = 0;
-							//console.log(ttemp)	
-
-							formattedData.push(currentRow);
-						}
-						//console.log(formattedData);
-						var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-						self.chart.draw(dataTable, self.options);
-
-
-
-
-					}
-				}
-
-			});
-		};
+				//console.log(formattedData);
+				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+				self.chart.draw(dataTable, self.options);
+			}
+		}
 	}
 }
 

@@ -1,10 +1,10 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariableCheckBox extends ReliaWidget {
 	constructor($divElement, deviceIdentifier, blockIdentifier) {
 		super($divElement, deviceIdentifier, blockIdentifier);
+
 		var self = this;
 
 		self.$div.html(
@@ -46,38 +46,6 @@ export class ReliaVariableCheckBox extends ReliaWidget {
 
 		self.$checkbox.change(self.changeCheckBox);
 
-		self.redraw = function () {
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
-				}
-
-				if (data.data == null) {
-					console.log("No data");
-					return;
-				}
-
-				console.log(data.data);
-
-				var params = data.data.params;
-				self.choices = params.choices;
-
-				if (!self.stateInitialized) {
-					if (params.state) {
-						self.$checkbox.prop('checked', true);
-					} else {
-						self.$checkbox.prop('checked', false);
-					}
-					self.stateInitialized = true;
-				}
-			});
-		};
-
 		$.ajax({
 			type: "POST",
 			url: self.url,
@@ -89,6 +57,21 @@ export class ReliaVariableCheckBox extends ReliaWidget {
 		}).done(function () {
 			// TBD
 		});
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+		self.choices = params.choices;
+
+		if (!self.stateInitialized) {
+			if (params.state) {
+				self.$checkbox.prop('checked', true);
+			} else {
+				self.$checkbox.prop('checked', false);
+			}
+			self.stateInitialized = true;
+		}
 	}
 }
 

@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import useScript from '../../useScript';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaEyePlot extends ReliaWidget {
@@ -8,7 +7,7 @@ export class ReliaEyePlot extends ReliaWidget {
 		var self = this;
 
 		/*$.get(self.url).done(function (data) {
-			var nconnections = data.data.params.nconnections;	
+			var nconnections = data.params.nconnections;	
 		});*/
 
 		self.$div.html(
@@ -205,146 +204,131 @@ export class ReliaEyePlot extends ReliaWidget {
 
 
 		self.chart = new window.google.visualization.LineChart($constChartDiv[0]);
+	}
 
-		self.redraw = function () {
+	redraw () {
+		var self = this;
 
-			var GridColor = '#808080';
-			if (self.$gridCheckbox.is(':checked')) {
-				GridColor = '#808080';
-			}
-			else {
-				GridColor = '#ffffff';
-			}
+		var GridColor = '#808080';
+		if (self.$gridCheckbox.is(':checked')) {
+			GridColor = '#808080';
+		}
+		else {
+			GridColor = '#ffffff';
+		}
 
-			/*	var ZoomIn_factor;
-					if($("#time-sink-grid-checkbox").is(':checked'))  {
-						GridColor = '#808080'; }
-					else { 
-						GridColor = '#ffffff'; }/**/
-
-
-			self.options = {
-				title: 'Time',
-				curveType: 'function',
-				legend: { position: 'bottom' },
-				hAxis: {
-					title: 'Time (milliseconds)',
-					gridlines: {
-						color: GridColor,
-					}
-				},
-				vAxis: {
-
-					viewWindow: {
-						//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
-						//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
-						min: self.minTimeSink * 1.0 + self.zoomFactor * self.zoomStep,
-						max: self.maxTimeSink * 1.0 - self.zoomFactor * self.zoomStep
-					},/**/
-
-					title: 'Amplitude',
-					gridlines: {
-						color: GridColor,
-					}
-				},
-				explorer: {
-					actions: ['dragToZoom', 'rightClickToReset'],
-					axis: 'horizontal',
-					keepInBounds: true,
-					maxZoomIn: 100.0,
-				},
-				colors: ['#0000FF', '#FF0000', '#008000', '#000000', '#00FFFF', '#FF00FF'],
-			};
+		/*	var ZoomIn_factor;
+				if($("#time-sink-grid-checkbox").is(':checked'))  {
+					GridColor = '#808080'; }
+				else { 
+					GridColor = '#ffffff'; }/**/
 
 
-			$.get(self.url).done(function (data) {
-				setTimeout(function () {
-					self.redraw();
-				});
-
-				if (!data.success) {
-					console.log("Error: " + data.message);
-					return;
+		self.options = {
+			title: 'Time',
+			curveType: 'function',
+			legend: { position: 'bottom' },
+			hAxis: {
+				title: 'Time (milliseconds)',
+				gridlines: {
+					color: GridColor,
 				}
+			},
+			vAxis: {
 
-				if (data.data == null) {
-					console.log("No data");
-					return;
+				viewWindow: {
+					//min: self.minTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink),
+					//max: self.maxTimeSink*1.0*(self.zoomOutTimeSink/self.zoomInTimeSink)
+					min: self.minTimeSink * 1.0 + self.zoomFactor * self.zoomStep,
+					max: self.maxTimeSink * 1.0 - self.zoomFactor * self.zoomStep
+				},/**/
+
+				title: 'Amplitude',
+				gridlines: {
+					color: GridColor,
 				}
-
-				var params = data.data.params;
-
-				//console.log(data.data.block_type);
-				//console.log(data.data.type);
-				console.log(params);
-				console.log(data.data.data);
-
-				var realData = data.data.data.streams['0']['real'];
-
-				$.each(realData, function (pos, value) {
-					realData[pos] = parseFloat(value);
-				});
-
-
-				var columns = ["Point"];
-				var formattedData = [
-					columns
-				];
-
-
-				self.options['series'] = {};
-
-				var counter = 0;
-
-
-				columns.push("Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2");
-				self.options.series[counter] = '#e2431e';
-				counter++;
-
-				console.log(self.options);
-
-				var Number2plot = params.nop
-
-				var timePerSample = 1000.0 / params.srate; // in milliseconds
-				var eyePlotDelay = params.time_delay
-
-
-				self.minTimeSinkRe = realData[0];
-				self.maxTimeSinkRe = realData[0];
-
-				for (var pos = 0; pos < Number2plot; ++pos) {
-					var currentRow = [pos * timePerSample];
-					currentRow.push(realData[pos]);
-					currentRow.push(realData[pos + eyePlotDelay * 1]);
-					currentRow.push(realData[pos + eyePlotDelay * 2]);
-					currentRow.push(realData[pos + eyePlotDelay * 3]);
-					currentRow.push(realData[pos + eyePlotDelay * 4]);
-					currentRow.push(realData[pos + eyePlotDelay * 5]);
-					currentRow.push(realData[pos + eyePlotDelay * 6]);
-					currentRow.push(realData[pos + eyePlotDelay * 7]);
-					currentRow.push(realData[pos + eyePlotDelay * 8]);
-					currentRow.push(realData[pos + eyePlotDelay * 9]);
-
-					formattedData.push(currentRow);
-				}
-
-				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
-
-				self.chart.draw(dataTable, self.options);
-
-				if (self.$autoscaleCheckbox.is(':checked')) {
-					self.maxTimeSink = Math.max.apply(Math, realData);
-					self.minTimeSink = Math.min.apply(Math, realData);
-
-					self.zoomStep = 0;
-					self.zoomFactor = 0;
-					//console.log(tempmax);
-				}
-				else self.zoomStep = 0.07 * Math.abs(self.minTimeSink - self.maxTimeSink);
-
-
-			});
+			},
+			explorer: {
+				actions: ['dragToZoom', 'rightClickToReset'],
+				axis: 'horizontal',
+				keepInBounds: true,
+				maxZoomIn: 100.0,
+			},
+			colors: ['#0000FF', '#FF0000', '#008000', '#000000', '#00FFFF', '#FF00FF'],
 		};
+	}
+
+	handleResponseData(data) {
+		var self = this;
+		var params = data.params;
+
+		//console.log(data.data.block_type);
+		//console.log(data.data.type);
+		console.log(params);
+		console.log(data.data);
+
+		var realData = data.data.streams['0']['real'];
+
+		$.each(realData, function (pos, value) {
+			realData[pos] = parseFloat(value);
+		});
+
+
+		var columns = ["Point"];
+		var formattedData = [
+			columns
+		];
+
+
+		self.options['series'] = {};
+
+		var counter = 0;
+
+
+		columns.push("Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2", "Real 1", "Real 2");
+		self.options.series[counter] = '#e2431e';
+		counter++;
+
+		console.log(self.options);
+
+		var Number2plot = params.nop
+
+		var timePerSample = 1000.0 / params.srate; // in milliseconds
+		var eyePlotDelay = params.time_delay
+
+
+		self.minTimeSinkRe = realData[0];
+		self.maxTimeSinkRe = realData[0];
+
+		for (var pos = 0; pos < Number2plot; ++pos) {
+			var currentRow = [pos * timePerSample];
+			currentRow.push(realData[pos]);
+			currentRow.push(realData[pos + eyePlotDelay * 1]);
+			currentRow.push(realData[pos + eyePlotDelay * 2]);
+			currentRow.push(realData[pos + eyePlotDelay * 3]);
+			currentRow.push(realData[pos + eyePlotDelay * 4]);
+			currentRow.push(realData[pos + eyePlotDelay * 5]);
+			currentRow.push(realData[pos + eyePlotDelay * 6]);
+			currentRow.push(realData[pos + eyePlotDelay * 7]);
+			currentRow.push(realData[pos + eyePlotDelay * 8]);
+			currentRow.push(realData[pos + eyePlotDelay * 9]);
+
+			formattedData.push(currentRow);
+		}
+
+		var dataTable = window.google.visualization.arrayToDataTable(formattedData);
+
+		self.chart.draw(dataTable, self.options);
+
+		if (self.$autoscaleCheckbox.is(':checked')) {
+			self.maxTimeSink = Math.max.apply(Math, realData);
+			self.minTimeSink = Math.min.apply(Math, realData);
+
+			self.zoomStep = 0;
+			self.zoomFactor = 0;
+			//console.log(tempmax);
+		}
+		else self.zoomStep = 0.07 * Math.abs(self.minTimeSink - self.maxTimeSink);
 	}
 }
 

@@ -16,6 +16,10 @@ label {
    float: left;
 }
 
+#checkbox1, #checkbox2 {
+   padding-block: 1px;
+}
+
 span {
    display: block;
    overflow: hidden;

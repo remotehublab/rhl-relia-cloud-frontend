@@ -185,8 +185,8 @@ const Loader = () => {
     </div>
 
     <div className="footer">
-         <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.075 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
-         <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.075 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
+         <img src={RHL_logo} alt={"Remote Hub Lab, University of Washington"} style={{width: 0.074 * width, aspectRatio: 1.5536159601, resizeMode: 'contain'}} />
+         <img src={LabsLand_logo} alt={"The LabsLand Network"} style={{width: 0.074 * width, aspectRatio: 1.69142857143, resizeMode: 'contain'}} />
     </div>
 	
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" crossOrigin="anonymous"></script>
@@ -716,14 +716,14 @@ function getTransactions() {
       let listIds = ['box0', 'box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'box7', 'box8', 'box9'];
       for (let i = 0; i < responseJson.transmitter_files.length; i++) {
          const url_link = '/user/transactions/' + responseJson.username + '/transmitter/' + responseJson.transmitter_files[i];
-         listLinksTransmitters.push(<div><label for={listIds[i]}><input type="checkbox" id={ listIds[i] } value="0" />{responseJson.transmitter_files[i]}</label><a href= {url_link} download> {<BsCloudDownloadFill />} </a><br /></div>);
+         listLinksTransmitters.push(<div id="checkbox1"><label for={listIds[i]}><input type="checkbox" id={ listIds[i] } value="0" />{responseJson.transmitter_files[i]}</label><a href= {url_link} download> {<BsCloudDownloadFill />} </a><br /></div>);
       }
       rootTransmitters.render(listLinksTransmitters);
       const rootReceivers = ReactDOM.createRoot(document.getElementById("appReceiver"));
       let listLinksReceivers = [];
       for (let j = 0; j < responseJson.receiver_files.length; j++) {
          const url_link = '/user/transactions/'  + responseJson.username + '/receiver/' + responseJson.receiver_files[j];
-         listLinksReceivers.push(<div><label for={listIds[j + 5]}><input type="checkbox" id={ listIds[j + 5] } value="0" />{responseJson.receiver_files[j]}</label><a href= {url_link} download> {<BsCloudDownloadFill />} </a><br /></div>);
+         listLinksReceivers.push(<div id="checkbox2"><label for={listIds[j + 5]}><input type="checkbox" id={ listIds[j + 5] } value="0" />{responseJson.receiver_files[j]}</label><a href= {url_link} download> {<BsCloudDownloadFill />} </a><br /></div>);
       }
       rootReceivers.render(listLinksReceivers);
       $(document).on("click change", "input[type='checkbox']", function () {

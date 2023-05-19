@@ -28,7 +28,7 @@ class ReliaWidget {
             }
 
             if (!response.success) {
-                console.log("Error: " + response.message);
+                console.log("Error on request" + self.url + ": " + response.message, response);
                 return;
             }
 

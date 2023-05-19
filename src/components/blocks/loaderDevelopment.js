@@ -26,22 +26,37 @@ export class ReliaWidgets {
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
+		console.log("CREATING RELIAWIDGETS", $divElement.length);
 	}
 
+	/*
+	* start() will start the process
+	*/
 	start() {
-		this.running = true;
-		this.process();
-	}
-
-	stop() {
-		this.running = false;
-
-		for (var i = 0; i < this.blocks.length; i++) {
-			var block = this.blocks[i];
-			block.stop();
+		if (!this.running) {
+			this.running = true;
+			this.process();
 		}
 	}
 
+	/*
+	* stop()
+	*/
+	stop() {
+		if (this.running) {
+			this.running = false;
+
+			for (var i = 0; i < this.blocks.length; i++) {
+				var block = this.blocks[i];
+				block.stop();
+			}
+		}
+	}
+
+	/*
+	* process() is run quite often (defined by CHECK_DEVICES_TIME_MS + time taken by the server to respond), will ask the server
+	* if there are devices, etc.
+	*/
 	process() {
 		var self = this;
 
@@ -49,9 +64,10 @@ export class ReliaWidgets {
 			return;
 		}
 
-		// we are running
-
 		$.get(self.devicesUrl).done(function (data) {
+			if (!self.running)
+				return;
+
 			if (!data.success) {
 				console.log("Error loading devices:", data);
 				return;
@@ -76,6 +92,9 @@ export class ReliaWidgets {
 
 				var blocksUrl = window.API_BASE_URL + "data/current/devices/" + deviceName + "/blocks";
 				$.get(blocksUrl).done(function (data) {
+					if (!self.running)
+						return;
+	
 					if (!data.success) {
 						console.log("Error loading blocks:", data);
 						return;

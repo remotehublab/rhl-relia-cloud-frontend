@@ -262,10 +262,8 @@ export class ReliaEyePlot extends ReliaWidget {
 		var self = this;
 		var params = data.params;
 
-		//console.log(data.data.block_type);
-		//console.log(data.data.type);
-		console.log(params);
-		console.log(data.data);
+		// console.log(params);
+		// console.log(data.data);
 
 		var realData = data.data.streams['0']['real'];
 
@@ -289,7 +287,7 @@ export class ReliaEyePlot extends ReliaWidget {
 		self.options.series[counter] = '#e2431e';
 		counter++;
 
-		console.log(self.options);
+		// console.log(self.options);
 
 		var Number2plot = params.nop
 

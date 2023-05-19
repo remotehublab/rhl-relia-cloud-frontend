@@ -28,7 +28,7 @@ export class ReliaVariableCheckBox extends ReliaWidget {
 			self.value = self.$checkbox.is(":checked");
 			self.$checkboxValue.text(self.choices[self.value]);
 
-			console.log("on checkbox change:", self.value);
+			// console.log("on checkbox change:", self.value);
 
 			$.ajax({
 				type: "POST",

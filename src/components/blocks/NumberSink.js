@@ -40,7 +40,7 @@ export class ReliaNumberSink extends ReliaWidget {
 		self.number_name = params.name;
 		//console.log(data.block_type);
 		//console.log(data.type);
-		console.log(Data[0]);
+		// console.log(Data[0]);
 
 
 		$.each(Data, function (pos, value) {

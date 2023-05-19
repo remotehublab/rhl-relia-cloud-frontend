@@ -317,7 +317,7 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 		//console.log(data.type);
 		//console.log(params.labels[0].replace(/'/g, ""));
 		//console.log(data.data.streams[0].real);
-		console.log(params);
+		// console.log(params);
 
 
 		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
@@ -358,7 +358,7 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 				if (self.$autoscaleCheckbox.is(':checked')) {
 					self.maxAutoCorrSink = Math.max.apply(Math, self.dataAvgOut) / params.fac_decimation;
 					self.minAutoCorrSink = Math.min.apply(Math, self.dataAvgOut) / params.fac_decimation;
-					console.log(self.maxAutoCorrSink)
+					// console.log(self.maxAutoCorrSink)
 					self.zoomStep = 0;
 					self.zoomFactor = 0;
 					//console.log(tempmax);
@@ -367,7 +367,7 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 
 
 				self.avgCounter = 0;
-				console.log(self.maxAutoCorrSink)
+				// console.log(self.maxAutoCorrSink)
 				for (var pos = 0; pos < self.fac_size; ++pos) {
 					var currentRow = [pos];
 					currentRow.push(self.dataAvgOut[pos] / params.fac_decimation);

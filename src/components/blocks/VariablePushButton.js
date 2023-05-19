@@ -29,7 +29,7 @@ export class ReliaVariablePushButton extends ReliaWidget {
 		});
 
 		self.changePushButton = function () {
-			console.log("on push button change:", self.flagPressedUnpressed);
+			// console.log("on push button change:", self.flagPressedUnpressed);
 
 			$.ajax({
 				type: "POST",

@@ -279,8 +279,8 @@ class ReliaConstellationSink extends ReliaWidget {
 
 				}
 				else self.zoomStep = 0.07 * Math.abs(self.yminConstSink - self.ymaxConstSink);
-				console.log(self.yminConstSink, self.ymaxConstSink);
-				console.log(self.zoomStep);
+				// console.log(self.yminConstSink, self.ymaxConstSink);
+				// console.log(self.zoomStep);
 
 
 			}

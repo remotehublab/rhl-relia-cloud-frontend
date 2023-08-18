@@ -82,7 +82,8 @@
       "the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device": "The remote setup is processing your GNU Radio in the transmitter device",
       "starting-to-run-again-your-gnu-radio-code": "Starting to run your GNU Radio code",
       "stopping": "Stopping",
-      "your-gnu-radio-files-are-being-processed-please-wait": "Your GNU Radio files are being processed. Please wait..."
+      "your-gnu-radio-files-are-being-processed-please-wait": "Your GNU Radio files are being processed. Please wait...",
+      "your-gnu-radio-code-is-not-running-anymore-feel-free-to-run-it-again": "Your GNU Radio code is not running anymore. Feel free to run it again."
     },
     "buttons": {
       "return-to-file-upload": "Return to file upload",

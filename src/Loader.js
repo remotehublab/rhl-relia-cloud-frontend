@@ -538,7 +538,7 @@ function confirmTaskStopped() {
     $("#stopExecutionButton").prop("disabled", true);
     $("#reExecuteButton").prop("disabled", false);
     $("#reExecuteButton").prop("hidden", false);
-    $("#statusBar").html("Your GNU Radio code is not running anymore. Feel free to run it again");
+    $("#statusBar").html(t("runner.messages.your-gnu-radio-code-is-not-running-anymore-feel-free-to-run-it-again"));
 
     if (TASK_STATUS_CHECKING_INTERVAL != null) {
       clearInterval(TASK_STATUS_CHECKING_INTERVAL);

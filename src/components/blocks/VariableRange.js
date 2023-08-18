@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariableRange extends ReliaWidget {
@@ -58,6 +59,10 @@ export class ReliaVariableRange extends ReliaWidget {
 		var params = data.params;
 		self.$slider.attr("min", params.min);
 		self.$slider.attr("max", params.max);
+	}
+
+	translatedName() {
+		return t("widgets.variable-range.name");
 	}
 }
 

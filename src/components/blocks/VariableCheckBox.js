@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariableCheckBox extends ReliaWidget {
@@ -72,6 +73,10 @@ export class ReliaVariableCheckBox extends ReliaWidget {
 			}
 			self.stateInitialized = true;
 		}
+	}
+
+	translatedName() {
+		return t("widgets.variable-check-box.name");
 	}
 }
 

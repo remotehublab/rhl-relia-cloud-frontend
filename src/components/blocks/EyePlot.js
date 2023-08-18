@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaEyePlot extends ReliaWidget {
@@ -14,9 +15,9 @@ export class ReliaEyePlot extends ReliaWidget {
 			"<div class=\"time-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
 			"<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 			"<div class=\"col\">" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked>" + t("widgets.general.grid") + "</label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked>" + t("widgets.general.autoscale") + "</label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked>" + t("widgets.general.axis-labels") + "</label>&nbsp;" +
 
 
 			"</div>" +
@@ -32,7 +33,7 @@ export class ReliaEyePlot extends ReliaWidget {
 
 			"<div style='display: none'>" +
 			"<br>" +
-			"<p>Add Noise</p>" +
+			"<p>" + t("widgets.eye-plot.add-noise") + "</p>" +
 			//"<input type=\"range\" min=\"0\" max=\"100\" value=\"1\" onchange=\"TimeSink_NoiseSlide(this.value)\" <br>" +
 			"<input class=\"noise-slider\" type=\"range\" min=\"0\" max=\"100\" value=\"0\">" +
 			"<p class=\"noise-slider-value\" value=\"1\"></p> <br>" +
@@ -225,11 +226,11 @@ export class ReliaEyePlot extends ReliaWidget {
 
 
 		self.options = {
-			title: 'Time',
+			title: t('widgets.general.time'),
 			curveType: 'function',
 			legend: { position: 'bottom' },
 			hAxis: {
-				title: 'Time (milliseconds)',
+				title: t('widgets.general.time-milliseconds'),
 				gridlines: {
 					color: GridColor,
 				}
@@ -243,7 +244,7 @@ export class ReliaEyePlot extends ReliaWidget {
 					max: self.maxTimeSink * 1.0 - self.zoomFactor * self.zoomStep
 				},/**/
 
-				title: 'Amplitude',
+				title: t('widgets.general.amplitude'),
 				gridlines: {
 					color: GridColor,
 				}
@@ -272,7 +273,7 @@ export class ReliaEyePlot extends ReliaWidget {
 		});
 
 
-		var columns = ["Point"];
+		var columns = [t("widgets.general.point")];
 		var formattedData = [
 			columns
 		];
@@ -327,6 +328,10 @@ export class ReliaEyePlot extends ReliaWidget {
 			//console.log(tempmax);
 		}
 		else self.zoomStep = 0.07 * Math.abs(self.minTimeSink - self.maxTimeSink);
+	}
+
+	translatedName() {
+		return t("widgets.eye-plot.name");
 	}
 }
 

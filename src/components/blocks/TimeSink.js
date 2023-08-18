@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaTimeSink extends ReliaWidget {
@@ -14,9 +15,9 @@ export class ReliaTimeSink extends ReliaWidget {
 			"<div class=\"time-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
 			"<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 			"<div class=\"col\">" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-grid-checkbox\" checked> " + t('widgets.general.grid') + " </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-autoscale-checkbox\" checked> " + t('widgets.general.autoscale') + " </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-axis-labels-checkbox\" checked> " + t('widgets.general.axis-labels') + " </label>&nbsp;" +
 
 			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-real-checkbox-1\" checked>&nbsp;<span class=\"time-sink-real-checkbox-1-label\" style=\"display: inline\">Real 1 </span></label>&nbsp;" +
 			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox time-sink-imag-checkbox-1\" checked>&nbsp;<span class=\"time-sink-imag-checkbox-1-label\" style=\"display: inline\">Imag 1 </span></label>&nbsp;" +
@@ -63,13 +64,13 @@ export class ReliaTimeSink extends ReliaWidget {
 
 			"<form>" +
 			"  <select class=\"TimeSink_NumberOfPoints2Plot\">" +
-			"    <option value=\"1024\"selected=\"selected\">1024 points</option>" +
-			"    <option value=\"64\" >64 points</option>" +
-			"    <option value=\"128\">128 points</option>" +
-			"    <option value=\"256\">256 points</option>" +
-			"    <option value=\"512\">512 points</option>" +
-			"    <option value=\"2048\">2048 points</option>" +
-			"    <option value=\"4096\">4096 points</option>" +
+			"    <option value=\"64\" >" + t("widgets.general.pointTranslation", {count: 64}) + "</option>" +
+			"    <option value=\"128\">" + t("widgets.general.pointTranslation", {count: 128}) + "</option>" +
+			"    <option value=\"256\">" + t("widgets.general.pointTranslation", {count: 256}) + "</option>" +
+			"    <option value=\"512\">" + t("widgets.general.pointTranslation", {count: 512}) + "</option>" +
+			"    <option value=\"1024\" selected=\"selected\">" + t("widgets.general.pointTranslation", {count: 1024}) + "</option>" +
+			"    <option value=\"2048\">" + t("widgets.general.pointTranslation", {count: 2048}) + "</option>" +
+			"    <option value=\"4096\">" + t("widgets.general.pointTranslation", {count: 4096}) + "</option>" +
 			"  </select>" +
 			"</form>" +
 			"</div>" +
@@ -244,7 +245,7 @@ export class ReliaTimeSink extends ReliaWidget {
 
 		if (self.$axisLabelsCheckbox.is(':checked')) {
 			self.titleVAxis = self.yLabelTimeSink + " (" + self.yUnitTimeSink + ")";
-			self.titleHAxis = 'Time (milliseconds)';
+			self.titleHAxis = t('widgets.general.time-milliseconds');
 		}
 		else {
 			self.titleVAxis = ' ';
@@ -356,7 +357,7 @@ export class ReliaTimeSink extends ReliaWidget {
 
 		var timePerSample = 1000.0 / params.srate; // in milliseconds
 
-		var columns = ["Point"];
+		var columns = [t("widgets.general.point")];
 		var formattedData = [
 			columns
 		];
@@ -476,6 +477,10 @@ export class ReliaTimeSink extends ReliaWidget {
 
 			}
 		}
+	}
+
+	translatedName() {
+		return t("widgets.time-sink.name");
 	}
 }
 

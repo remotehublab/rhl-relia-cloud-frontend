@@ -3,6 +3,8 @@ import './Loader.css';
 import $ from 'jquery';
 import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
+import i18n from './i18n';
+import { withTranslation } from 'react-i18next';
 import Collapsible from 'react-collapsible';
 import { BsChevronDown, BsFillQuestionCircleFill, BsFillCaretLeftFill, BsFillStopFill, BsPlayFill, BsCloudDownloadFill } from "react-icons/bs";
 import { ReliaWidgets } from "./components/blocks/loaderDevelopment.js";
@@ -30,6 +32,7 @@ var PAGE_FILE_LOADER = "file-loader";
 var ACTIVE_PAGE = PAGE_FILE_LOADER;
 var TASK_POLL_INTERVAL = null;
 var TASK_STATUS_CHECKING_INTERVAL = null;
+var TRANSLATIONS_FUNCTION = function(message){}; // this is horrible and should be somewhere else
 
 var RELIA_WIDGETS = null;
 
@@ -40,8 +43,9 @@ const TASK_POLL_INTERVAL_MS = 4000;
 const TASK_STATUS_INTERVAL_MS = 500;
 const width = Dimensions.get('window').width;
 
-const Loader = () => {
+const Loader = ({t}) => {
   window.API_BASE_URL = "/api/";
+  TRANSLATIONS_FUNCTION = t;
   const [google] = useState(null);
 
   useEffect(() => {
@@ -100,20 +104,20 @@ const Loader = () => {
         <br />
 
         <div className="row">
-          <Collapsible trigger={<div id="space"><div>Upload Tasks <div id="inner1" title="Select files to upload for either the transmitter or the receiver."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }} open={true}>
-            <Main />
+          <Collapsible trigger={<div id="space"><div>{t('loader.upload.upload-gnu-radio-files')} <div id="inner1" title={t('loader.upload.select-files-to-upload-for-either-the-transmitter-or-the-receiver')}><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#6eb9f7' }} open={true}>
+            <UploadButtons t={t}/>
           </Collapsible>
         </div>
 
         <div className="row">
-          <Collapsible trigger={<div id="space2"><div>Submit Tasks <div id="inner2" title="Select a pair of previously uploaded transmitter and receiver files to execute for observation."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }} open={true}>
+          <Collapsible trigger={<div id="space2"><div>{t('loader.select.submit-tasks')} <div id="inner2" title={t("loader.select.select-a-pair-of-previously-uploaded-transmitter-and-receiver-files-to-execute-for-observation")}><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#3da2f5' }} open={true}>
             <div id="body2">
               <br />
               <div className="row">
                 <div className="column">
                   <div className="centered">
                     <div className="align-left">
-                      <b>Most Recent Transmitter Files</b>
+                      <b>{t("loader.select.most-recent-transmitter-files")}</b>
                       <div id="appTransmitter"></div>
                     </div>
                   </div>
@@ -122,7 +126,7 @@ const Loader = () => {
                 <div className="column">
                   <div className="centered">
                     <div className="align-left">
-                      <b>Most Recent Receiver Files</b>
+                    <b>{t("loader.select.most-recent-receiver-files")}</b>
                       <div id="appReceiver"></div>
                     </div>
                   </div>
@@ -132,7 +136,7 @@ const Loader = () => {
               <div>
                 <div className="true-centered">
                   <form onSubmit={handleUserAPI}><div>
-                    <button className="btn btn-lg btn-primary" id="runButton" disabled>Send to SDR devices</button>
+                    <button className="btn btn-lg btn-primary" id="runButton" disabled>{t("loader.select.send-to-sdr-devices")}</button>
                   </div></form>
                   <br />
                 </div>
@@ -140,44 +144,6 @@ const Loader = () => {
             </div>
           </Collapsible>
         </div>
-
-        {/* <div className="row">
-          <Collapsible trigger={<div id="space3"><div>Delete Tasks <div id="inner3" title="Specify a task to delete using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0d8bf2' }}>
-            <div id="body3">
-              <br />
-              <form onSubmit={handleCancellation}><div>
-	        <input className="textInput" type="text" placeholder="Task ID" id="to_cancel" name="to_cancel"/><button id="cancelButton">Delete</button>
-              </div></form>
-              <br />
-            </div>
-          </Collapsible>
-         </div>
-
-         <div className="row">
-          <Collapsible trigger={<div id="space4"><div>Search Task Status <div id="inner4" title="Search for the status of a task using ID. IDs may be examined under the Most Recent Tasks tab."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#0a6fc2' }}>
-             <div id="body4">
-                <br />
-                <form onSubmit={searchTasks}><div>
-	           <input className="textInput" type="text" id="to_search" placeholder="Task ID" name="to_search"/><button id="searchButton">Search</button>
-                </div></form>
-                <div id="searchStatus"></div>
-                <br />
-             </div>
-          </Collapsible>
-         </div>
-
-         <div className="row">
-          <Collapsible trigger={<div id="space5"><div>Most Recent Tasks <div id="inner5" title="View the five most recently constructed tasks. For further tasks and/or details, please contact system administration."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#085391' }}>
-            <div id="currentTasks"></div>
-          </Collapsible>
-         </div>
-        
-         <div className="row">
-          <Collapsible trigger={<div id="space6"><div>Most Recent Error Messages <div id="inner6" title="View the most recently generated error messages produced by executed tasks."><BsFillQuestionCircleFill /></div> </div><div><BsChevronDown /></div></div>} triggerStyle={{ color: '#FFFFFF', background: '#053861' }}>
-            <div id="errorMessages"></div>
-          </Collapsible>
-        </div> */}
-
       </div>
 
       <div className="container" id="containerWindow">
@@ -193,7 +159,7 @@ const Loader = () => {
   );
 };
 
-class Main extends React.Component {
+class UploadButtons extends React.Component {
   constructor(props) {
     super(props);
 
@@ -243,6 +209,8 @@ class Main extends React.Component {
   }
 
   render() {
+    const { t } = this.props;  // Get the t function from props
+
     return (
       <div id="body1">
         <br />
@@ -250,13 +218,13 @@ class Main extends React.Component {
           <div className="column">
             <div className="centered">
               <div className="align-left">
-                <b>Transmitter File</b>
+                <b>{t("loader.upload.transmitter-file")}</b>
                 <form onSubmit={this.handleUploadGRC_transmitter}>
                   <div>
                     <input ref={(ref) => { this.uploadInput_transmitter = ref; }} type="file" size="15" accept=".grc" />
                   </div>
                   <div>
-                    <button>Upload</button>
+                    <button>{t('loader.upload.upload')}</button>
                   </div>
                 </form>
               </div>
@@ -265,13 +233,13 @@ class Main extends React.Component {
           <div className="column">
             <div className="centered">
               <div className="align-left">
-                <b>Receiver File</b>
+                <b>{t("loader.upload.receiver-file")}</b>
                 <form onSubmit={this.handleUploadGRC_receiver}>
                   <div>
                     <input ref={(ref) => { this.uploadInput_receiver = ref; }} type="file" size="15" accept=".grc" />
                   </div>
                   <div>
-                    <button>Upload</button>
+                    <button>{t('loader.upload.upload')}</button>
                   </div>
                 </form>
               </div>
@@ -320,6 +288,8 @@ function createTaskPollInterval() {
 }
 
 function createTaskStatusInterval() {
+  const t = TRANSLATIONS_FUNCTION;
+
   if (TASK_STATUS_CHECKING_INTERVAL != null) {
     clearInterval(TASK_STATUS_CHECKING_INTERVAL);
     TASK_STATUS_CHECKING_INTERVAL = null;
@@ -345,25 +315,25 @@ function createTaskStatusInterval() {
             let status_to_render = [];
             switch (status) {
               case "fully-assigned":
-                status_to_render.push(<div>Your GNU Radio code is now running in both the remote set-up</div>);
+                status_to_render.push(<div>{t('runner.messages.your-gnu-radio-code-is-now-running-in-both-remote-devices')}</div>);
                 break;
               case "queued":
-                status_to_render.push(<div>Waiting for a remote set-up to be available...</div>);
+                status_to_render.push(<div>{t('runner.messages.waiting-for-a-remote-set-up-to-be-available')}</div>);
                 break;
               case "deleted":
-                status_to_render.push(<div>Your GNU Radio code has stopped</div>);
+                status_to_render.push(<div>{t('runner.messages.your-gnu-radio-code-has-stopped')}</div>);
                 break;
               case "error":
-                status_to_render.push(<div>There was an error running your GNU Radio code in the remote set-up</div>);
+                status_to_render.push(<div>{t('runner.messages.there-was-an-error-running-your-gnu-radio-code')}</div>);
                 break;
               case "receiver-assigned":
-                status_to_render.push(<div>Remote set-up assigned. Waiting to start running your GNU Radio code...</div>);
+                status_to_render.push(<div>{t('runner.messages.remote-set-up-assigned-waiting-to-start-running-your-gnu-radio-code')}</div>);
                 break;
               case "receiver-still-processing":
-                status_to_render.push(<div>The remote set-up is processing your GNU Radio in the receiver device</div>);
+                status_to_render.push(<div>{t('runner.messages.the-remote-set-up-is-processing-your-GNU-Radio-in-the-receiver-device')}</div>);
                 break;
               case "transmitter-still-processing":
-                status_to_render.push(<div>The remote set-up is processing your GNU Radio in the transmitter device</div>);
+                status_to_render.push(<div>{t('runner.messages.the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device')}</div>);
                 break;
             }
             if (status_to_render.length > 0)
@@ -401,6 +371,8 @@ function createTaskStatusInterval() {
 }
 
 const TaskWidgetDisplay = () => {
+  const t = TRANSLATIONS_FUNCTION;
+
   let status = 'queued';
   window.API_BASE_URL = "/api/";
 
@@ -436,7 +408,7 @@ const TaskWidgetDisplay = () => {
 
     const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
     let status_to_render = [];
-    status_to_render.push(<div>Starting to run again your GNU Radio code</div>);
+    status_to_render.push(<div>{t('runner.messages.starting-to-run-again-your-gnu-radio-code')}</div>);
     status_bar.render(status_to_render);
 
     fetch('/user/route/' + userid, {
@@ -457,7 +429,7 @@ const TaskWidgetDisplay = () => {
     if (TASK_RUNNING) {
       const status_bar = ReactDOM.createRoot(document.getElementById("statusBar"));
       let status_to_render = [];
-      status_to_render.push(<div>Stopping...</div>);
+      status_to_render.push(<div>{t('runner.messages.stopping')}</div>);
       status_bar.render(status_to_render);
 
       stopWidgets();
@@ -479,12 +451,12 @@ const TaskWidgetDisplay = () => {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet" />
-      <div id="statusBar">Your GNU Radio files are being processed. Please wait...</div>
+      <div id="statusBar">{t('runner.messages.your-gnu-radio-files-are-being-processed-please-wait')}</div>
 
       <div>
-        <button onClick={handleNavigate} className="btn btn-lg btn-secondary">{<BsFillCaretLeftFill />}&nbsp;Return to File Upload</button> &nbsp;&nbsp;&nbsp;
-        <button onClick={handleStopTask} className="btn btn-lg btn-danger" id="stopExecutionButton">{<BsFillStopFill />}&nbsp;Stop</button> &nbsp;&nbsp;&nbsp;
-        <button onClick={handleReschedule} className="btn btn-lg btn-primary" id="reExecuteButton" hidden>{<BsPlayFill />}&nbsp;Run again</button>
+        <button onClick={handleNavigate} className="btn btn-lg btn-secondary">{<BsFillCaretLeftFill />}&nbsp;{t('runner.buttons.return-to-file-upload')}</button> &nbsp;&nbsp;&nbsp;
+        <button onClick={handleStopTask} className="btn btn-lg btn-danger" id="stopExecutionButton">{<BsFillStopFill />}&nbsp;{t('runner.buttons.stop')}</button> &nbsp;&nbsp;&nbsp;
+        <button onClick={handleReschedule} className="btn btn-lg btn-primary" id="reExecuteButton" hidden>{<BsPlayFill />}&nbsp;{t('runner.buttons.run-again')}</button>
       </div>
 
       <br /><br />
@@ -509,6 +481,9 @@ async function poll_call() {
         window.location.href = responseJson.redirectTo;
       }
       userid = responseJson.user_id;
+      if (responseJson.locale && responseJson.locale != i18n.language) {
+        i18n.changeLanguage(responseJson.locale);
+      }
       return responseJson;
     })
     .catch((error) => {
@@ -517,10 +492,11 @@ async function poll_call() {
 }
 
 function startTaskUIChanges() {
+  const t = TRANSLATIONS_FUNCTION;
   startWidgets();
   $("#stopExecutionButton").prop("disabled", false);
   $("#reExecuteButton").prop("disabled", true);
-  $("#statusBar").html("Your GNU Radio files are being processed. Please wait...");
+  $("#statusBar").html(t("runner.messages.your-gnu-radio-files-are-being-processed-please-wait"));
 }
 
 function startTask() {
@@ -840,4 +816,4 @@ function switch_to_loader() {
   window.location.reload(true);
 }
 
-export default Loader;
+export default withTranslation()(Loader);

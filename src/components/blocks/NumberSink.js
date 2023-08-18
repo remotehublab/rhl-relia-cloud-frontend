@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 
@@ -53,6 +54,11 @@ export class ReliaNumberSink extends ReliaWidget {
 		self.chart.draw(dataTable, self.options);
 		//console.log(DataArray);
 	}
+
+	translatedName() {
+		return t("widgets.number-sink.name");
+	}
+
 }
 
 export default ReliaNumberSink;

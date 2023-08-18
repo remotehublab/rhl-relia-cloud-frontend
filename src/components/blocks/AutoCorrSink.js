@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaAutoCorrSink extends ReliaWidget {
@@ -381,6 +382,10 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 				self.chart.draw(dataTable, self.options);
 			}
 		}
+	}
+	
+	translatedName() {
+		return t("widgets.auto-corr-sink.name");
 	}
 }
 

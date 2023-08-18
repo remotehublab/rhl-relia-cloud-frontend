@@ -9,10 +9,13 @@
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
     "http-proxy-middleware": "^2.0.6",
+    "i18next": "^23.4.4",
+    "i18next-http-backend": "^2.2.1",
     "jquery": "^3.6.1",
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^13.1.2",
     "react-icons": "^4.8.0",
     "react-native": "^0.71.4",
     "react-native-web": "^0.18.12",
@@ -26,7 +29,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "i18n:scan": "i18next-scanner"
   },
   "eslintConfig": {
     "extends": [
@@ -45,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "i18next-scanner": "^4.3.0"
   }
 }

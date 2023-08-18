@@ -62,6 +62,28 @@ class ReliaWidget {
     stop() {
         this.running = false;
     }
+
+    /*
+    * Mandatory method. Translated name
+    */
+    translatedName() {
+        // by default we provide the block identifier
+        return this.englishName();
+    }
+    
+    /*
+    * No need to do anything with this function
+    */
+    englishName() {
+        return this.blockIdentifier.split("(")[0];
+    }
+
+    /*
+    * No need to do anything with this function
+    */
+    translatedIdentifier() {
+        return this.blockIdentifier.replace(this.englishName(), this.translatedName());
+    }
 }
 
 export default ReliaWidget;

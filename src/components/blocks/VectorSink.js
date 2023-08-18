@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVectorSink extends ReliaWidget {
@@ -16,20 +17,20 @@ export class ReliaVectorSink extends ReliaWidget {
 			"<div class=\"vector-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
 			"<div class=\"Checkbox_VectorSink_OnOffSignal row\">" +
 			"<div class=\"col\">" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-axis-labels-checkbox\" checked> Axis Labels </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-grid-checkbox\" checked>" + t("widgets.general.grid") + "</label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-autoscale-checkbox\" checked>" + t("widgets.general.autoscale") + "</label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-axis-labels-checkbox\" checked>" + t("widgets.general.axis-labels") + "</label>&nbsp;" +
 
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-1\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-1-label\" style=\"display: inline\">Ch 1 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-2\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-2-1-label\" style=\"display: inline\">Ch 2 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-3\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-3-label\" style=\"display: inline\">Ch 3 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-4\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-4-label\" style=\"display: inline\">Ch 4 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-5\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-5-label\" style=\"display: inline\">Ch 5 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-6\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-6-label\" style=\"display: inline\">Ch 6 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-7\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-7-label\" style=\"display: inline\">Ch 7 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-8\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-8-label\" style=\"display: inline\">Ch 8 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-9\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-9-label\" style=\"display: inline\">Ch 9 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-10\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-10-label\" style=\"display: inline\">Ch 10 </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-1\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-1-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-2\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-2-1-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-3\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-3-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-4\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-4-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-5\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-5-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-6\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-6-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-7\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-7-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-8\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-8-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-9\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-9-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox vector-sink-real-checkbox-10\" checked>&nbsp;<span class=\"vector-sink-real-checkbox-10-label\" style=\"display: inline\">" + t("widgets.general.channel-abbreviation", {count: 1}) + " </span></label>&nbsp;" +
 			"</div>" +
 
 			"<div class=\"col\">" +
@@ -362,7 +363,7 @@ export class ReliaVectorSink extends ReliaWidget {
 		//var randomArr = Array.from({length: Number2plot}, () => Math.random()*2-1);
 
 
-		var columns = ["Point"];
+		var columns = [t("widgets.general.point")];
 		var formattedData = [
 			columns
 		];
@@ -459,6 +460,10 @@ export class ReliaVectorSink extends ReliaWidget {
 				}
 			}
 		}
+	}
+
+	translatedName() {
+		return t("widgets.vector-sink.name");
 	}
 }
 

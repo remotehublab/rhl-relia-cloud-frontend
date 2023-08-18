@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaHistogramSink extends ReliaWidget {
@@ -64,6 +65,10 @@ export class ReliaHistogramSink extends ReliaWidget {
 		var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 		self.chart.draw(dataTable, self.options);
 		//console.log(DataArray);
+	}
+
+	translatedName() {
+		return t("widgets.histogram-sink.name");
 	}
 }
 

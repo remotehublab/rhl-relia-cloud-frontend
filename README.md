@@ -15,3 +15,11 @@ $ npm start
 # Building the client
 
 $ npm run build
+
+# Translations
+
+$ npm run i18n:scan
+
+And edit public/locales/en/translations.json
+And edit public/locales/es/translations.json
+

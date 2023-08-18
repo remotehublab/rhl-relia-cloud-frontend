@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaVariablePushButton extends ReliaWidget {
@@ -63,6 +64,10 @@ export class ReliaVariablePushButton extends ReliaWidget {
 		var params = data.params;
 		if (params.label != undefined && params.label != null)
 			self.$button.text(params.label);
+	}
+
+	translatedName() {
+		return t("widgets.variable-push-button.name");
 	}
 }
 

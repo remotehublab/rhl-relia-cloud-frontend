@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import slugify from 'react-slugify';
 import ReliaWidget from './ReliaWidget';
 
@@ -99,6 +100,10 @@ export class ReliaVariableChooser extends ReliaWidget {
 			}
 			self.stateInitialized = true;
 		}
+	}
+
+	translatedName() {
+		return t("widgets.variable-chooser.name");
 	}
 }
 

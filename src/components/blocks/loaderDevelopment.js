@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import { t } from '../../i18n';
+
 import ReliaConstellationSink from './ConstellationSink.js';
 import ReliaTimeSink from './TimeSink.js';
 import ReliaVectorSink from './VectorSink.js';
@@ -83,7 +85,7 @@ export class ReliaWidgets {
 				var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
 				if (!self.blocksById[deviceName]) {
 					console.log("device name ", deviceName, " not found in self.blocksById. Creating new block with identifier: ", deviceNameIdentifier);
-					$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>Device: " + deviceName + "</h2></center><br>" + "</div>");
+					$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>" + t("widgets.general.device") + ": " + deviceName + "</h2></center><br>" + "</div>");
 					self.$divElement.append($deviceContents);
 					self.blocksById[deviceName] = {};
 				} else {
@@ -107,7 +109,7 @@ export class ReliaWidgets {
 							var $newDiv = $(
 								'<div class="" style="padding: 10px">' +
 								'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +
-								"<h5>" + blockName + "</h5>" +
+								"<h5 class='deviceTitle'></h5>" +
 								"<div class=\"block-contents\" style=\"width: 100%\"></div>" +
 								'</div>' +
 								'</div>'
@@ -142,6 +144,7 @@ export class ReliaWidgets {
 								console.log("Unsupported block: ", blockName);
 								return;
 							}
+							$newDiv.find("h5.deviceTitle").text(block.translatedIdentifier());
 							self.blocks.push(block);
 							self.blocksById[deviceName][blockName] = block;
 							block.start();

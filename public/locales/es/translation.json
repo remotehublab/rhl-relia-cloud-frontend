@@ -1,0 +1,93 @@
+{
+  "widgets": {
+    "auto-corr-sink": {
+      "name": "AutoCorr Salida"
+    },
+    "general": {
+      "grid": "Cuadrícula",
+      "axis-labels": "Etiquetas de Ejes",
+      "time": "Tiempo",
+      "time-milliseconds": "Tiempo (milisegundos)",
+      "amplitude": "Amplitud",
+      "point": "Punto",
+      "channel-abbreviation": "Ch {count}",
+      "channel-abbreviation_plural": "Ch {count}",
+      "device": "Dispositivo",
+      "pointTranslation": "{count} punto",
+      "pointTranslation_plural": "{count} puntos",
+      "data": "Datos {count}",
+      "data_plural": "Datos {count}",
+      "autoscale": "Escala Automática"
+    },
+    "constellation-sink": {
+      "quadrature": "Cuadratura",
+      "name": "Constelación Salida"
+    },
+    "eye-plot": {
+      "add-noise": "Añadir Ruido",
+      "name": "Gráfico Ojo"
+    },
+    "frequency-sink": {
+      "name": "Frecuencia Salida"
+    },
+    "histogram-sink": {
+      "name": "Histograma Salida"
+    },
+    "number-sink": {
+      "name": "Número Salida"
+    },
+    "time-sink": {
+      "name": "Tiempo Salida"
+    },
+    "variable-check-box": {
+      "name": "Casilla"
+    },
+    "variable-chooser": {
+      "name": "Selector"
+    },
+    "variable-push-button": {
+      "name": "Botón"
+    },
+    "variable-range": {
+      "name": "Rango"
+    },
+    "vector-sink": {
+      "name": "Vector Salida"
+    }
+  },
+  "loader": {
+    "upload": {
+      "upload-gnu-radio-files": "Subir archivos de GNU Radio",
+      "select-files-to-upload-for-either-the-transmitter-or-the-receiver": "Selecciona archivos para subir, ya sea para el transmisor o el receptor",
+      "transmitter-file": "Archivo transmisor",
+      "upload": "Subir",
+      "receiver-file": "Archivo receptor"
+    },
+    "select": {
+      "submit-tasks": "Seleccionar archivos existentes de GNU Radio",
+      "select-a-pair-of-previously-uploaded-transmitter-and-receiver-files-to-execute-for-observation": "Selecciona un par de archivos previamente subidos de transmisor y receptor para ejecutar",
+      "most-recent-transmitter-files": "Archivos de transmisor más recientes",
+      "most-recent-receiver-files": "Archivos de receptor más recientes",
+      "send-to-sdr-devices": "Enviar a dispositivos SDR"
+    }
+  },
+  "runner": {
+    "messages": {
+      "your-gnu-radio-code-is-now-running-in-both-remote-devices": "Tu código GNU Radio está en ejecución en ambos dispositivos remotos",
+      "waiting-for-a-remote-set-up-to-be-available": "Esperando que una configuración remota esté disponible",
+      "your-gnu-radio-code-has-stopped": "Tu código GNU Radio ha parado",
+      "there-was-an-error-running-your-gnu-radio-code": "Hubo un error al ejecutar tu código GNU Radio",
+      "remote-set-up-assigned-waiting-to-start-running-your-gnu-radio-code": "Configuración remota asignada. Esperando para empezar a ejecutar tu código GNU Radio",
+      "the-remote-set-up-is-processing-your-GNU-Radio-in-the-receiver-device": "La configuración remota está procesando tu GNU Radio en el dispositivo receptor",
+      "the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device": "La configuración remota está procesando tu GNU Radio en el dispositivo transmisor",
+      "starting-to-run-again-your-gnu-radio-code": "Comenzando a ejecutar nuevamente tu código GNU Radio",
+      "stopping": "Deteniendo",
+      "your-gnu-radio-files-are-being-processed-please-wait": "Tus archivos GNU Radio están siendo procesados. Por favor, espera..."
+    },
+    "buttons": {
+      "return-to-file-upload": "Volver a subida de archivos",
+      "stop": "Detener",
+      "run-again": "Ejecutar nuevamente"
+    }
+  }
+}

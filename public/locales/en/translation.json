@@ -1,0 +1,93 @@
+{
+  "widgets": {
+    "auto-corr-sink": {
+      "name": "AutoCorr Sink"
+    },
+    "general": {
+      "grid": "Grid",
+      "axis-labels": "Axis Labels",
+      "time": "Time",
+      "time-milliseconds": "Time (milliseconds)",
+      "amplitude": "Amplitude",
+      "point": "Point",
+      "channel-abbreviation": "Ch {count}",
+      "channel-abbreviation_plural": "Ch {count}",
+      "device": "Device",
+      "pointTranslation": "{count} point",
+      "pointTranslation_plural": "{count} points",
+      "data": "Data {count}",
+      "data_plural": "Data {count}",
+      "autoscale": "Autoscale"
+    },
+    "constellation-sink": {
+      "quadrature": "Quadrature",
+      "name": "Constellation Sink"
+    },
+    "eye-plot": {
+      "add-noise": "Add Noise",
+      "name": "Eye Plot"
+    },
+    "frequency-sink": {
+      "name": "Frequency Sink"
+    },
+    "histogram-sink": {
+      "name": "Histogram Sink"
+    },
+    "number-sink": {
+      "name": "Number Sink"
+    },
+    "time-sink": {
+      "name": "Time Sink"
+    },
+    "variable-check-box": {
+      "name": "CheckBox"
+    },
+    "variable-chooser": {
+      "name": "Chooser"
+    },
+    "variable-push-button": {
+      "name": "Push Button"
+    },
+    "variable-range": {
+      "name": "Range"
+    },
+    "vector-sink": {
+      "name": "Vector Sink"
+    }
+  },
+  "loader": {
+    "upload": {
+      "upload-gnu-radio-files": "Upload GNU Radio files",
+      "select-files-to-upload-for-either-the-transmitter-or-the-receiver": "Select files to upload for either the transmitter or the receiver",
+      "transmitter-file": "Transmitter file",
+      "upload": "Upload",
+      "receiver-file": "Receiver file"
+    },
+    "select": {
+      "submit-tasks": "Select existing GNU Radio files",
+      "select-a-pair-of-previously-uploaded-transmitter-and-receiver-files-to-execute-for-observation": "Select a pair of previously uploaded transmitter and receiver files to submit",
+      "most-recent-transmitter-files": "Most recent transmitter files",
+      "most-recent-receiver-files": "Most recent receiver files",
+      "send-to-sdr-devices": "Send to SDR devices"
+    }
+  },
+  "runner": {
+    "messages": {
+      "your-gnu-radio-code-is-now-running-in-both-remote-devices": "Your GNU Radio code is now running in both remote devices",
+      "waiting-for-a-remote-set-up-to-be-available": "Waiting for a remote setup to be available",
+      "your-gnu-radio-code-has-stopped": "Your GNU Radio code has stopped",
+      "there-was-an-error-running-your-gnu-radio-code": "There was an error running your GNU Radio code",
+      "remote-set-up-assigned-waiting-to-start-running-your-gnu-radio-code": "Remote setup assigned. Waiting to start running your GNU Radio code",
+      "the-remote-set-up-is-processing-your-GNU-Radio-in-the-receiver-device": "The remote setup is processing your GNU Radio in the receiver device",
+      "the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device": "The remote setup is processing your GNU Radio in the transmitter device",
+      "starting-to-run-again-your-gnu-radio-code": "Starting to run your GNU Radio code",
+      "stopping": "Stopping",
+      "your-gnu-radio-files-are-being-processed-please-wait": "Your GNU Radio files are being processed. Please wait..."
+    },
+    "buttons": {
+      "return-to-file-upload": "Return to file upload",
+      "stop": "Stop",
+      "run-again": "Run again"
+    }
+  }
+}

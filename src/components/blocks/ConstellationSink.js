@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 class ReliaConstellationSink extends ReliaWidget {
@@ -11,14 +12,14 @@ class ReliaConstellationSink extends ReliaWidget {
 			"<div class=\"const-chart\" style=\"width: 100%; height: 300px\"></div>\n" +
 			"<div class=\"Checkbox_TimeSink_OnOffSignal row\">" +
 			"<div class=\"col\">" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-grid-checkbox\" checked> Grid </label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-autoscale-checkbox\" checked> Autoscale </label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-grid-checkbox\" checked>" + t("widgets.general.grid") + "</label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-autoscale-checkbox\" checked>" + t("widgets.general.autoscale") + "</label>&nbsp;" +
 
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-1\" checked>&nbsp;<span class=\"const-sink-real-checkbox-1-label\" style=\"display: inline\">Data 1 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-2\" checked>&nbsp;<span class=\"const-sink-real-checkbox-2-label\" style=\"display: inline\">Data 2 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-3\" checked>&nbsp;<span class=\"const-sink-real-checkbox-3-label\" style=\"display: inline\">Data 3 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-4\" checked>&nbsp;<span class=\"const-sink-real-checkbox-4-label\" style=\"display: inline\">Data 4 </span></label>&nbsp;" +
-			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-5\" checked>&nbsp;<span class=\"const-sink-real-checkbox-5-label\" style=\"display: inline\">Data 5 </span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-1\" checked>&nbsp;<span class=\"const-sink-real-checkbox-1-label\" style=\"display: inline\">" + t("widgets.general.data", {count: 1}) + "</span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-2\" checked>&nbsp;<span class=\"const-sink-real-checkbox-2-label\" style=\"display: inline\">" + t("widgets.general.data", {count: 2}) + "</span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-3\" checked>&nbsp;<span class=\"const-sink-real-checkbox-3-label\" style=\"display: inline\">" + t("widgets.general.data", {count: 1}) + "</span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-4\" checked>&nbsp;<span class=\"const-sink-real-checkbox-4-label\" style=\"display: inline\">" + t("widgets.general.data", {count: 1}) + "</span></label>&nbsp;" +
+			"<label class=\"checkbox\"><input type=\"checkbox\" class=\"checkbox const-sink-real-checkbox-5\" checked>&nbsp;<span class=\"const-sink-real-checkbox-5-label\" style=\"display: inline\">" + t("widgets.general.data", {count: 1}) + "</span></label>&nbsp;" +
 
 
 			"</div>" +
@@ -111,7 +112,7 @@ class ReliaConstellationSink extends ReliaWidget {
 					max: self.ymaxConstSink * 1.0 - self.zoomFactor * self.zoomStep,
 
 				},/**/
-				title: 'Quadrature',
+				title: t('widgets.constellation-sink.quadrature'),
 				gridlines: {
 					color: GridColor,
 				}
@@ -285,6 +286,10 @@ class ReliaConstellationSink extends ReliaWidget {
 
 			}
 		}
+	}
+
+	translatedName() {
+		return t("widgets.constellation-sink.name");
 	}
 }
 

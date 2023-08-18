@@ -531,6 +531,8 @@ function startWidgets() {
 * Clean the intervals and change buttons for stopTask() when it is stopped on the server side.
 */
 function confirmTaskStopped() {
+  const t = TRANSLATIONS_FUNCTION;
+  
   if (TASK_RUNNING) {
     stopWidgets();
 

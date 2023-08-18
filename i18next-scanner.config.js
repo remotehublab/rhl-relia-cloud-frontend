@@ -8,7 +8,7 @@ module.exports = {
             list: ['t', 'i18n.t', 'props.t'],
             extensions: ['.js', '.jsx']
         },
-        lngs: ['en', 'es'],
+        lngs: ['en', 'es', 'pt'],
         defaultLng: 'en', 
         defaultNs: 'translation', 
         resource: {

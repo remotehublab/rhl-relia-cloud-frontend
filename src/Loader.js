@@ -172,21 +172,46 @@ class UploadButtons extends React.Component {
   }
 
 
+  /**
+   * Event handler for a form submission ( in this case from the upload button from the transmitter file)
+   * @param ev - event object
+   * @returns {Promise<void>}
+   */
   async handleUploadGRC_transmitter(ev) {
+    // This line prevents the default behavior of the form submission.
+    //, the function stops the page from refreshing
     ev.preventDefault();
 
+    // creates a new instance of the FormData object.
+    // FormData is a built-in JavaScript object that allows you to create a set of key/value pairs representing form fields and their values.
+    // In this case, it's being used to prepare data for the file upload.
     const data = new FormData();
+
+    // appends a file to the FormData object.
+    // It takes the first file selected in the this.uploadInput_transmitter input field,
+    // and adds it to the data object with the key 'file'.
     data.append('file', this.uploadInput_transmitter.files[0]);
 
+    // This line uses the fetch API to send an HTTP POST request to the server.
+    // It sends the data in the FormData object as the request body.
+    // The URL /user/upload/transmitter is the endpoint where the file upload is being handled on the server.
     await fetch('/user/upload/transmitter', {
       method: 'POST',
       body: data,
     }).then((response) => {
+      // handles the response from the server after the POST request. It chains together two .then() methods to handle the response asynchronously.
+      //
+      //     The first .then() receives the HTTP response from the server.
+      //     The second .then() parses the response body as JSON.
+      //
+      // Inside the second .then(), it extracts the file property from the JSON response and updates the component's state with it.
+      // It  sets the grcURL state variable to the URL of the uploaded file.
       response.json().then((body) => {
         this.setState({ grcURL: `/${body.file}` });
       });
     });
 
+    // forces a full page reload by calling window.location.reload(true);
     window.location.reload(true);
   }
 

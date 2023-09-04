@@ -1,87 +1,69 @@
-html {
-   position: relative;
-   min-height: 100%;
+/* Loader.css */
+.loader-button {
+  border-width: 1px ;
+  cursor: pointer;
+  margin: 10px;
+  padding: 5px;
 }
 
-div {
-   white-space: pre-wrap;
-   font-family: 'Manrope', sans-serif;
+/* Styling for the container that centers components */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0dcaf057;
+  height: 100vh;
+  width: 100vh;
 }
 
-div.invisible {
-   display: none;
+/* Styling for the container rectangle that hosts all other components */
+.component-container {
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-label {
-   float: left;
+/* Styling for Uploader Component */
+.uploader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-#checkbox1, #checkbox2 {
-   padding-block: 1px;
+/* Styling for Selector Component */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-span {
-   display: block;
-   overflow: hidden;
-   padding: 0px 4px 0px 6px;
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
 
-input.textInput {
-   width: 25%;
+/* Styling for Sender Component */
+.sender-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.heading {
-   left: 0;
-   width: 100%;
-   background-color: #9ed1fa;
-   color: #FFFFFF;
-   font-size: 30px;
-   padding: 4px 4px 4px 8px;
-}
 
-.footer {
-   position: absolute;
-   overflow-y: auto;
-   left: 0;
-   bottom: 0px;
-   width: 100%;
-   background-color: #9ed1fa;
-   color: #FFFFFF;
-   font-size: 30px;
-   padding: 4px 4px 4px 8px;
-}
 
-.column {
-   flex: 50%;
-}
-
-.centered {
-   margin: 0 25%;
-}
-
-.true-centered {
-   margin: 0 auto;
-   text-align: center;
-}
-
-.align-left {
-   text-align: left;
-   display: inline-block;
-}
-
-button {
-   border-radius: 8px;
-}
-
-[id^=space] {
-   white-space: nowrap;
-}
-
-[id^=body], #errorMessages, #currentTasks {
-   padding: 4px 4px 4px 8px;
-   background-color: #cee6fd;
-}
-
-[id^=inner] {
-   display: inline-block;
-}

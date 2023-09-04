@@ -6,6 +6,11 @@
  * - `Selector`: Displays a list of uploaded files and provides options to select which files are receivers and transmitters.
  * - `Sender`: Hosts a button that initiates the process of sending selected files to the SDR device.
  * - `Loader`: The top-level component that manages state, interactions between child components, and file upload and transmission logic.
+ *
+ *
+ * Known bugs:
+ *  = because we are using an index to set what file is currently selected in our table in the Selector component,
+ *     when we remove an element it messes up with the current indexing and changes which files are selected
  */
 import React, { useState } from 'react';
 
@@ -14,10 +19,11 @@ import './Loader.css';
  * Uploader Component
  * @param {Array} uploadedFiles - An array of uploaded files.
  * @param {Function} setUploadedFiles - A function to update the uploaded files.
+ * @param setTableIsVisible - A  function to update the flag to control table visibility.
  *
  * @returns {JSX.Element} The rendered Uploader component.
  */
-function Uploader({ uploadedFiles, setUploadedFiles ,tableIsVisible, setTableIsVisible }) {
+function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   /**
@@ -74,10 +80,12 @@ function Uploader({ uploadedFiles, setUploadedFiles ,tableIsVisible, setTableIsV
  *
  * @param {Array} uploadedFiles - An array of uploaded files.
  * @param {Function} handleSelect - A function to handle the selection of receivers and transmitters.
+ * @param {Function} handleRemove - A function to handle row removal.
+ * @param {boolean} tableIsVisible - A flag to control table visibility.
  *
  * @returns {JSX.Element} The rendered Selector component.
  */
-function Selector({ uploadedFiles, handleSelect, tableIsVisible }) {
+function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible }) {
   if (tableIsVisible) {
     return (
         <div>
@@ -88,6 +96,7 @@ function Selector({ uploadedFiles, handleSelect, tableIsVisible }) {
               <th>File</th>
               <th>Select Receiver</th>
               <th>Select Transmitter</th>
+              <th>Remove</th>
             </tr>
             </thead>
             <tbody>
@@ -110,6 +119,9 @@ function Selector({ uploadedFiles, handleSelect, tableIsVisible }) {
                         onChange={() => handleSelect(index, 'RX')}
                     />
                   </td>
+                  <td>
+                   <button  className={"loader-button"} onClick={() => handleRemove(index)}>x</button>
+                  </td>
                 </tr>
             ))}
             </tbody>
@@ -123,7 +135,6 @@ function Selector({ uploadedFiles, handleSelect, tableIsVisible }) {
  * Sender component that hosts a button that sends the files to Sdr Device
  * @param selectedFileColumnRX - RX file
  * @param selectedFileColumnTX - TX file
- * TODO: figure out type of the files
  * @param {Function} handleSendToSDR      - Function that does the upload process
  * @returns {JSX.Element} - The rendered Sender component.
  */
@@ -148,6 +159,13 @@ export default function Loader() {
   const [selectedFileColumnRX, setSelectedFileColumnTX] = useState(null);
   const [selectedFileColumnTX, setSelectedFileColumnRX] = useState(null);
   const [tableIsVisible, setTableIsVisible] = useState(false);
+
+  /**
+   * Handle the selection of receivers (RX) and transmitters (TX) for an uploaded file.
+   *
+   * @param {number} index - The index of the uploaded file in the array.
+   * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
+   */
   const handleSelect = (index, column) => {
     const updatedFiles = [...uploadedFiles];
     updatedFiles[index].selectedColumn = column;
@@ -159,11 +177,22 @@ export default function Loader() {
     }
   };
 
+  /**
+   * Handle the removal of an uploaded file from the table.
+   *
+   * @param {number} indexToRemove - The index of the file to be removed from the array.
+   */
+  const handleRemove = (indexToRemove) => {
+    // Create a new array without the selected row
+    const updatedFiles = uploadedFiles.filter((file, index) => index !== indexToRemove);
+    setUploadedFiles(updatedFiles);
+  };
+
   return (
     <div className="container">
       <div className="component-container">
         <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
-        <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} tableIsVisible={tableIsVisible} />
+        <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
         <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
       </div>
     </div>

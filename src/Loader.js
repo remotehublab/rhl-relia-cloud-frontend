@@ -13,8 +13,12 @@
  *     when we remove an element it messes up with the current indexing and changes which files are selected
  */
 import React, { useState } from 'react';
-
 import './Loader.css';
+
+// for  translations
+import i18n, {t} from './i18n';
+import { withTranslation } from 'react-i18next';
+
 /**
  * Uploader Component
  * @param {Array} uploadedFiles - An array of uploaded files.
@@ -70,7 +74,7 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       {/* I would like to maybe combine the buttons into one */}
       <input className={"loader-button"} type="file"  accept=".grc" onChange={handleFileChange}  multiple />
       <button className={"loader-button"} onClick={handleUpload}>
-        Upload
+        {t("loader.upload.upload-gnu-radio-files")}
       </button>
     </div>
   );
@@ -93,10 +97,10 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
           <table>
             <thead>
             <tr>
-              <th>File</th>
-              <th>Select Receiver</th>
-              <th>Select Transmitter</th>
-              <th>Remove</th>
+              <th>{t("loader.upload.remove")}</th>
+              <th>{t("loader.upload.receiver-file")}</th>
+              <th>{t("loader.upload.transmitter-file")}</th>
+              <th>{t("loader.upload.remove")}</th>
             </tr>
             </thead>
             <tbody>
@@ -144,7 +148,7 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
   }
   return (
     <div className={"sender-container"}>
-      <button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>Send to Sdr Device</button>
+      <button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</button>
     </div>
   );
 }
@@ -154,7 +158,7 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-export default function Loader() {
+function Loader() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedFileColumnRX, setSelectedFileColumnTX] = useState(null);
   const [selectedFileColumnTX, setSelectedFileColumnRX] = useState(null);
@@ -186,6 +190,7 @@ export default function Loader() {
     // Create a new array without the selected row
     const updatedFiles = uploadedFiles.filter((file, index) => index !== indexToRemove);
     setUploadedFiles(updatedFiles);
+
   };
 
   return (
@@ -198,4 +203,8 @@ export default function Loader() {
     </div>
   );
 }
+
+
+export default withTranslation()(Loader);
+
 

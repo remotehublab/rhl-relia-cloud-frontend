@@ -1,6 +1,6 @@
 /**
-  This code works as an outerlayer for the Relia frontend page,
-  enabling users to swtich from the diferent segments of the lab
+  This code works as an outer layer for the Relia frontend page,
+  enabling users to switch from the different segments of the lab
 
   Components:
   - Introduction: Displays introductory content.
@@ -29,11 +29,9 @@ import './Loader.css';
 import Loader from "./Loader";
 
 //images
-import LabsLand_logo from './components/images/LabsLand_logo.png';
-import Background_logo from './components/images/Background.png';
-import UW_logo from './components/images/uw_logo.png';
-import RHL_logo from './components/images/RHL_logo.png';
-import Clock from './components/images/clock.png';
+import LabsLand_logo from './components/images/LabsLand-logo.png';
+import UW_logo from './components/images/uw-logo.gif';
+import RHL_logo from './components/images/RHL-logo.png';
 
 
 /**
@@ -118,16 +116,13 @@ function Outerloader() {
         <Row >
             <Col>
                 <Row>
-                    <Col md={6} className={"timer-container"}>
-                        <Image src={Clock} fluid className={"image"}/>
-                    </Col>
-                    <Col md={6} className={"button-container"}>
+                    <Col  className={"button-container"}>
                         <Button>Go back</Button>
                     </Col>
                 </Row>
             </Col>
             <Col className={"header-container"}>
-                <h1 className={"relia-title"}>RELIA</h1>
+                <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
             </Col>
             <Col>
             </Col>
@@ -135,14 +130,14 @@ function Outerloader() {
         <Row  >
             <Col className={"pills-container"}>
                 <Nav variant="pills" defaultActiveKey="1. Introduction">
+                  <Nav.Item >
+                    <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')}>1. Introduction</Nav.Link>
+                  </Nav.Item >
                   <Nav.Item>
-                    <Nav.Link  eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')}>1. Introduction</Nav.Link>
+                    <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')}>2. Load Files</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')}>2. Load Files</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')}>3. Laboratory</Nav.Link>
+                    <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')}>3. Laboratory</Nav.Link>
                   </Nav.Item>
                 </Nav>
             </Col>

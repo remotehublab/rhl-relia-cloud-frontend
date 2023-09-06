@@ -12,6 +12,7 @@
      = Add comments explaining state of components
      = make it more responsive
      = files with log names overflow towards other columns of the table
+o0
 
 
   Known bugs:

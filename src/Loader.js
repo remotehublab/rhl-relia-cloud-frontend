@@ -82,7 +82,7 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       </Row>
       <Row>
         <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-          <Button variant="secondary" className={"loader-button"} onClick={handleUpload}>
+          <Button className={"loader-button"} onClick={handleUpload}>
             {t("loader.upload.upload-gnu-radio-files")}
           </Button>
         </Col>
@@ -104,25 +104,24 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
   if (tableIsVisible) {
     return (
       <Container>
-        {/* Using Bootstrap Grid System */}
         {uploadedFiles.map((file, index) => (
-          <Row key={index} className="mb-3">
-            <Col className={"file-name-col"}>
+          <Row key={index}>
+            <Col md={5} className={"file-name-col"}>
               {file.file.name}
             </Col>
-            <Col className={"radio-col"}>
+            <Col md={3} className={"radio-col"}>
               <Form.Check
                 name="receiver"
                 onChange={() => handleSelect(index, 'TX')}
               />
             </Col>
-            <Col className={"radio-col"}>
+            <Col md={3} className={"radio-col"}>
               <Form.Check
                 name="transmitter"
                 onChange={() => handleSelect(index, 'RX')}
               />
             </Col>
-            <Col  className={"remove-col"}>
+            <Col md={1}  className={"remove-col"}>
               <Button variant="danger" onClick={() => handleRemove(index)}>x</Button>
             </Col>
           </Row>
@@ -144,15 +143,21 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
   const handleSendToSDR = (rxFile, txFile) => {
     console.log("Sending RX(" + rxFile.file.name + ") and TX(" + txFile.file.name + ") to SDR!");
   }
-  return (
-    <Container className={"sender-container"}>
-      <Row>
-        <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-          <Button variant="secondary" className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
-        </Col>
-      </Row>
-    </Container>
-  );
+  if (selectedFileColumnRX != null && selectedFileColumnTX != null) {
+    return (
+      <Container className={"sender-container"}>
+        <Row>
+          <Col md={{span: 6, offset: 3}} className={"loader-col"}>
+            <Button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
+          </Col>
+        </Row>
+      </Container>
+    );
+  } else {
+    return (
+      <Container  className={"sender-container"}/>
+    );
+  }
 }
 
 /**
@@ -190,7 +195,7 @@ function Loader() {
   };
 
   return (
-      <Container>
+      <Container className={"loader-container"}>
         <Row>
           <Col>
             <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>

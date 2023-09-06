@@ -1,8 +1,18 @@
 
-/** {*/
-/*  border: 1px dotted red !important;*/
+* {
+  border: 1px dotted red !important;
 
-/*}*/
+}
+.outer-container {
+  /* display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
+  /*padding-top: 2%;*/
+  /*padding-bottom: 2%;*/
+}
+.loader-container {
+  width: 65% !important;
+}
 
 .loader-col{
   display: flex;
@@ -12,7 +22,41 @@
   padding-bottom: 2%;
 }
 
-.form-col{
+.images-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.relia-title {
+  font-size:3vw
+}
+.pills-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+.form-col {
   display: flex;
   justify-content: center;
   align-items: center;

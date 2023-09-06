@@ -1,4 +1,8 @@
 
+/** {*/
+/*  border: 1px dotted red !important;*/
+
+/*}*/
 
 .loader-col{
   display: flex;
@@ -9,6 +13,30 @@
 }
 
 .form-col{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.radio-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.remove-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.file-name-col {
   display: flex;
   justify-content: center;
   align-items: center;

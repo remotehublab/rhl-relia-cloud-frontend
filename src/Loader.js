@@ -19,7 +19,7 @@ import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
 //for design
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, InputGroup } from 'react-bootstrap';
 import './Loader.css';
 
 /**
@@ -82,9 +82,9 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       </Row>
       <Row>
         <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-          <button className={"loader-button"} onClick={handleUpload}>
+          <Button variant="secondary" className={"loader-button"} onClick={handleUpload}>
             {t("loader.upload.upload-gnu-radio-files")}
-          </button>
+          </Button>
         </Col>
       </Row>
     </Container>
@@ -107,25 +107,23 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
         {/* Using Bootstrap Grid System */}
         {uploadedFiles.map((file, index) => (
           <Row key={index} className="mb-3">
-            <Col>
+            <Col className={"file-name-col"}>
               {file.file.name}
             </Col>
-            <Col>
-              <input
-                type="radio"
+            <Col className={"radio-col"}>
+              <Form.Check
                 name="receiver"
                 onChange={() => handleSelect(index, 'TX')}
               />
             </Col>
-            <Col>
-              <input
-                type="radio"
+            <Col className={"radio-col"}>
+              <Form.Check
                 name="transmitter"
                 onChange={() => handleSelect(index, 'RX')}
               />
             </Col>
-            <Col>
-              <Button className="loader-button" onClick={() => handleRemove(index)}>x</Button>
+            <Col  className={"remove-col"}>
+              <Button variant="danger" onClick={() => handleRemove(index)}>x</Button>
             </Col>
           </Row>
         ))}
@@ -150,7 +148,7 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
     <Container className={"sender-container"}>
       <Row>
         <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-          <button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</button>
+          <Button variant="secondary" className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
         </Col>
       </Row>
     </Container>

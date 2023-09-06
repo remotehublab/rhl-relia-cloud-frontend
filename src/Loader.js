@@ -13,11 +13,14 @@
  *     when we remove an element it messes up with the current indexing and changes which files are selected
  */
 import React, { useState } from 'react';
-import './Loader.css';
 
 // for  translations
 import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
+
+//for design
+import 'react-bootstrap';
+import './Loader.css';
 
 /**
  * Uploader Component

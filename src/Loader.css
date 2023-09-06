@@ -1,69 +1,17 @@
-/* Loader.css */
-.loader-button {
-  border-width: 1px ;
-  cursor: pointer;
-  margin: 10px;
-  padding: 5px;
-}
 
-/* Styling for the container that centers components */
-.container {
+
+.loader-col{
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #0dcaf057;
-  height: 100vh;
-  width: 100vw;
+  padding-top: 2%;
+  padding-bottom: 2%;
 }
 
-/* Styling for the container rectangle that hosts all other components */
-.component-container {
-  width: 50%;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Styling for Uploader Component */
-.uploader-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Styling for Selector Component */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-/* Styling for Sender Component */
-.sender-container {
+.form-col{
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  padding-top: 2%;
+  padding-bottom: 2%;
 }
-
-
-

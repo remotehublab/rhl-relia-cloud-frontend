@@ -19,7 +19,7 @@ import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
 //for design
-import 'react-bootstrap';
+import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import './Loader.css';
 
 /**
@@ -73,13 +73,21 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
   };
 
   return (
-    <div className="uploader-container">
+    <Container>
       {/* I would like to maybe combine the buttons into one */}
-      <input className={"loader-button"} type="file"  accept=".grc" onChange={handleFileChange}  multiple />
-      <button className={"loader-button"} onClick={handleUpload}>
-        {t("loader.upload.upload-gnu-radio-files")}
-      </button>
-    </div>
+      <Row>
+        <Col md={{span: 6, offset: 3}} className={"form-col"}>
+          <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple  />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={{span: 6, offset: 3}} className={"loader-col"}>
+          <button className={"loader-button"} onClick={handleUpload}>
+            {t("loader.upload.upload-gnu-radio-files")}
+          </button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 /**
@@ -95,48 +103,37 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
 function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible }) {
   if (tableIsVisible) {
     return (
-        <div>
-          {/* Represents an HTML table to display the uploaded files and selection options. */}
-          <table>
-            <thead>
-            <tr>
-              <th>{t("loader.upload.remove")}</th>
-              <th>{t("loader.upload.receiver-file")}</th>
-              <th>{t("loader.upload.transmitter-file")}</th>
-              <th>{t("loader.upload.remove")}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {/* This is a JavaScript expression inside curly braces {}
-          that maps over the uploadedFiles array to generate table rows for each uploaded file. */}
-            {uploadedFiles.map((file, index) => (
-                <tr key={index}>
-                  <td>{file.file.name}</td>
-                  <td>
-                    <input
-                        type="radio"
-                        name="receiver"
-                        onChange={() => handleSelect(index, 'TX')}
-                    />
-                  </td>
-                  <td>
-                    <input
-                        type="radio"
-                        name="transmiter"
-                        onChange={() => handleSelect(index, 'RX')}
-                    />
-                  </td>
-                  <td>
-                   <button  className={"loader-button"} onClick={() => handleRemove(index)}>x</button>
-                  </td>
-                </tr>
-            ))}
-            </tbody>
-          </table>
-        </div>
+      <Container>
+        {/* Using Bootstrap Grid System */}
+        {uploadedFiles.map((file, index) => (
+          <Row key={index} className="mb-3">
+            <Col>
+              {file.file.name}
+            </Col>
+            <Col>
+              <input
+                type="radio"
+                name="receiver"
+                onChange={() => handleSelect(index, 'TX')}
+              />
+            </Col>
+            <Col>
+              <input
+                type="radio"
+                name="transmitter"
+                onChange={() => handleSelect(index, 'RX')}
+              />
+            </Col>
+            <Col>
+              <Button className="loader-button" onClick={() => handleRemove(index)}>x</Button>
+            </Col>
+          </Row>
+        ))}
+      </Container>
     );
   }
 }
+
 
 /**
  * Sender component that hosts a button that sends the files to Sdr Device
@@ -150,9 +147,13 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
     console.log("Sending RX(" + rxFile.file.name + ") and TX(" + txFile.file.name + ") to SDR!");
   }
   return (
-    <div className={"sender-container"}>
-      <button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</button>
-    </div>
+    <Container className={"sender-container"}>
+      <Row>
+        <Col md={{span: 6, offset: 3}} className={"loader-col"}>
+          <button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
@@ -184,26 +185,30 @@ function Loader() {
     }
   };
 
-  /**
-   * Handle the removal of an uploaded file from the table.
-   *
-   * @param {number} indexToRemove - The index of the file to be removed from the array.
-   */
   const handleRemove = (indexToRemove) => {
     // Create a new array without the selected row
     const updatedFiles = uploadedFiles.filter((file, index) => index !== indexToRemove);
     setUploadedFiles(updatedFiles);
-
   };
 
   return (
-    <div className="container">
-      <div className="component-container">
-        <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
-        <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
-        <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
-      </div>
-    </div>
+      <Container>
+        <Row>
+          <Col>
+            <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
+          </Col>
+        </Row>
+      </Container>
   );
 }
 

@@ -1,17 +1,24 @@
 
-* {
-  border: 1px dotted red !important;
+/** {*/
+/*  border: 1px dotted red !important;*/
 
-}
+/*}*/
+
 .outer-container {
-  /* display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
-  /*padding-top: 2%;*/
-  /*padding-bottom: 2%;*/
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+
 .loader-container {
   width: 65% !important;
+}
+
+.introduction-container {
+  width: 65% !important;
+  margin-top: 2.5%;
+  margin-bottom: 5%;
 }
 
 .loader-col{
@@ -23,6 +30,17 @@
 }
 
 .images-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  border-bottom: 1px solid #646464;
+}
+.image {
+  width: 50%;
+}
+.timer-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,9 +64,14 @@
   padding-bottom: 2%;
 }
 
+.sender-container {
+  margin-top: 3%;
+}
+
 .relia-title {
   font-size:3vw
 }
+
 .pills-container {
   display: flex;
   justify-content: center;
@@ -56,6 +79,7 @@
   padding-top: 2%;
   padding-bottom: 2%;
 }
+
 .form-col {
   display: flex;
   justify-content: center;
@@ -81,6 +105,14 @@
 }
 
 .file-name-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.image-col {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,16 +1,22 @@
 /**
- * This React component file defines a set of components and functionality for uploading, selecting,
- * and sending gnr files to an SDR device. It consists of the following components:
- *
- * - `Uploader`: Handles file upload functionality, allowing users to select files for transmission.
- * - `Selector`: Displays a list of uploaded files and provides options to select which files are receivers and transmitters.
- * - `Sender`: Hosts a button that initiates the process of sending selected files to the SDR device.
- * - `Loader`: The top-level component that manages state, interactions between child components, and file upload and transmission logic.
- *
- *
- * Known bugs:
- *  = because we are using an index to set what file is currently selected in our table in the Selector component,
- *     when we remove an element it messes up with the current indexing and changes which files are selected
+  This React component file defines a set of components and functionality for uploading, selecting,
+  and sending gnr files to an SDR device. It consists of the following components:
+
+  - `Uploader`: Handles file upload functionality, allowing users to select files for transmission.
+  - `Selector`: Displays a list of uploaded files and provides options to select which files are receivers and transmitters.
+  - `Sender`: Hosts a button that initiates the process of sending selected files to the SDR device.
+  - `Loader`: The top-level component that manages state, interactions between child components, and file upload and transmission logic.
+
+   Todo:
+     = Add missing translations
+     = Add comments explaining state of components
+     = make it more responsive
+     = files with log names overflow towards other columns of the table
+
+
+  Known bugs:
+   = because we are using an index to set what file is currently selected in our table in the Selector component,
+      when we remove an element it messes up with the current indexing and changes which files are selected
  */
 import React, { useState } from 'react';
 
@@ -103,7 +109,22 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
 function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible }) {
   if (tableIsVisible) {
     return (
+        // TODO: add translations to the first row elements
       <Container>
+          <Row>
+            <Col md={5} className={"file-name-col"}>
+              File Name
+            </Col>
+            <Col md={3} className={"radio-col"}>
+              Select Tx
+            </Col>
+            <Col md={3} className={"radio-col"}>
+              Select Rx
+            </Col>
+            <Col md={1}  className={"remove-col"}>
+              Delete
+            </Col>
+          </Row>
         {uploadedFiles.map((file, index) => (
           <Row key={index}>
             <Col md={5} className={"file-name-col"}>
@@ -155,7 +176,7 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
     );
   } else {
     return (
-      <Container  className={"sender-container"}/>
+      <Container/>
     );
   }
 }

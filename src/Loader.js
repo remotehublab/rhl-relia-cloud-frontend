@@ -144,7 +144,7 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
               />
             </Col>
             <Col md={1}  className={"remove-col"}>
-              <Button variant="danger" onClick={() => handleRemove(index)}>x</Button>
+              <Button variant="danger" size="sm" onClick={() => handleRemove(index)}><i className="bi bi-x-lg"></i></Button>
             </Col>
           </Row>
         ))}

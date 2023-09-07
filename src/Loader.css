@@ -15,6 +15,12 @@
   width: 65% !important;
 }
 
+.footer-container {
+  position: sticky;
+  bottom: 0;
+  background-color: red;
+}
+
 .introduction-container {
   width: 65% !important;
   margin-top: 2.5%;
@@ -36,10 +42,12 @@
   padding-top: 2%;
   padding-bottom: 2%;
   border-bottom: 1px solid #646464;
+  height: 30%;
 }
 .image {
-  width: 50%;
+  width: 68%;
 }
+
 .timer-container {
   display: flex;
   justify-content: center;

@@ -11,8 +11,9 @@
   Todo:
     = eventually separate Introduction and Laboratory into their on files
     = add a footer
-    = add a real clock and go back button
+      '-> problem is that would require making a new outer container
     = make it more responsive
+      '-> table is the main issue right know, would probably require going for another selection appraoch on mobile
     = make top images smaller ( should not be hard but I can't figure it out)
 
 */
@@ -24,7 +25,7 @@ import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
 //for design
-import { Container, Row, Col, Button, Form, InputGroup, Image, Nav  } from 'react-bootstrap';
+import { Container, Row, Col, Button, Image, Nav  } from 'react-bootstrap';
 import './Loader.css';
 import Loader from "./Loader";
 
@@ -101,52 +102,50 @@ function Outerloader() {
   };
 
     return (
-      <Container className={"outer-container"}>
-        <Row  className={"images-container"}>
-            <Col className={"image-col"}>
-                <Image src={UW_logo} fluid  className={"image"}/>
-            </Col>
-            <Col className={"image-col"}>
-                 <Image src={RHL_logo} fluid className={"image"}/>
-            </Col>
-            <Col className={"image-col"}>
-                <Image src={LabsLand_logo} fluid className={"image"}/>
-            </Col>
-        </Row>
-        <Row >
-            <Col>
-                <Row>
-                    <Col  className={"button-container"}>
-                        <Button>Go back</Button>
-                    </Col>
-                </Row>
-            </Col>
-            <Col className={"header-container"}>
-                <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
-            </Col>
-            <Col>
-            </Col>
-        </Row>
-        <Row  >
-            <Col className={"pills-container"}>
-                <Nav variant="pills" defaultActiveKey="1. Introduction">
-                  <Nav.Item >
-                    <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')}>1. Introduction</Nav.Link>
-                  </Nav.Item >
-                  <Nav.Item>
-                    <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')}>2. Load Files</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')}>3. Laboratory</Nav.Link>
-                  </Nav.Item>
-                </Nav>
-            </Col>
-        </Row>
-        <Row >
-            <Col >
-              {renderContent()}
-            </Col>
-        </Row>
+      <Container>
+          <Container className={"outer-container"}>
+            <Row  className={"images-container"}>
+                <Col className={"image-col"}>
+                    <Image src={UW_logo} fluid  className={"image"}/>
+                </Col>
+                <Col className={"image-col"}>
+                     <Image src={RHL_logo} fluid className={"image"}/>
+                </Col>
+                <Col className={"image-col"}>
+                    <Image src={LabsLand_logo} fluid className={"image"}/>
+                </Col>
+            </Row>
+            <Row >
+                <Col  className={"button-container"}>
+                    <Button>Go back</Button>
+                </Col>
+                <Col className={"header-container"}>
+                    <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
+                </Col>
+                <Col>
+                </Col>
+            </Row>
+            <Row  >
+                <Col className={"pills-container"}>
+                    <Nav variant="pills" defaultActiveKey="1. Introduction">
+                      <Nav.Item >
+                        <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. Introduction</Nav.Link>
+                      </Nav.Item >
+                      <Nav.Item>
+                        <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. Load Files</Nav.Link>
+                      </Nav.Item>
+                      <Nav.Item>
+                        <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. Laboratory</Nav.Link>
+                      </Nav.Item>
+                    </Nav>
+                </Col>
+            </Row>
+            <Row >
+                <Col >
+                  {renderContent()}
+                </Col>
+            </Row>
+          </Container>
       </Container>
   );
 }

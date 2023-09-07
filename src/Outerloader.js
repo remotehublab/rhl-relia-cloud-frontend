@@ -106,14 +106,14 @@ function Outerloader() {
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"ece.uw.edu"}><Image src={UW_logo} fluid  className={"image"}/></a>
+                    <a className={"image-col"} href={"https://ece.uw.edu"}><Image src={UW_logo} fluid  className={"image"}/></a>
                 </Col>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"rhlab.ece.uw.edu"}><Image  src={RHL_logo} fluid className={"image"}/></a>
+                    <a className={"image-col"} href={"https://rhlab.ece.uw.edu"}><Image  src={RHL_logo} fluid className={"image"}/></a>
 
                 </Col>
                 <Col className={"image-col"}>
-                    <a  className={"image-col"} href={"labsland.com"}><Image src={LabsLand_logo} fluid className={"image"}/></a>
+                    <a  className={"image-col"} href={"https://labsland.com"}><Image src={LabsLand_logo} fluid className={"image"}/></a>
                 </Col>
             </Row>
             <Row >

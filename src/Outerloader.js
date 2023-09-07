@@ -80,6 +80,26 @@ function Laboratory() {
  */
 function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
+    const [userData, setUserData] = useState({
+      "locale": "en",
+      "redirect_to": null,
+      "session_id": null,
+      "success": null,
+      "user_id": null
+    });
+
+    // TODO: move fetch, remove this "if"
+    if (userData.success != null) {
+      fetch('/user/poll', {
+        method: 'GET'
+      }).then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        }
+      }).then((data) => {
+        setUserData(data);
+      });
+    }
 
     /**
      * Renders content based on the selected tab.
@@ -106,19 +126,19 @@ function Outerloader() {
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"https://ece.uw.edu"}><Image src={UW_logo} fluid  className={"image"}/></a>
+                    <a className={"image-col"} href={"https://ece.uw.edu"} target="_blank"><Image src={UW_logo} fluid  className={"image"}/></a>
                 </Col>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"https://rhlab.ece.uw.edu"}><Image  src={RHL_logo} fluid className={"image"}/></a>
+                    <a className={"image-col"} href={"https://rhlab.ece.uw.edu"} target="_blank"><Image  src={RHL_logo} fluid className={"image"}/></a>
 
                 </Col>
                 <Col className={"image-col"}>
-                    <a  className={"image-col"} href={"https://labsland.com"}><Image src={LabsLand_logo} fluid className={"image"}/></a>
+                    <a className={"image-col"} href={"https://labsland.com"} target="_blank"><Image src={LabsLand_logo} fluid className={"image"}/></a>
                 </Col>
             </Row>
             <Row >
                 <Col  className={"button-container"}>
-                    <Button>{t("loader.upload.go-back")}</Button>
+                    <a className={"btn btn-primary"} href={userData.redirect_to}>{t("loader.upload.go-back")}</a>
                 </Col>
                 <Col className={"header-container"}>
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
@@ -130,13 +150,13 @@ function Outerloader() {
                 <Col className={"pills-container"}>
                     <Nav variant="pills" defaultActiveKey="1. Introduction">
                       <Nav.Item >
-                        <Nav.Link   eventKey={t("loader.upload.introduction")} onClick={() => setSelectedTab('introduction')} className={"pill"}>1. Introduction</Nav.Link>
+                        <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. { t("loader.upload.introduction") }</Nav.Link>
                       </Nav.Item >
                       <Nav.Item>
-                        <Nav.Link  eventKey={t("loader.upload.load-files")} onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. Load Files</Nav.Link>
+                        <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. {t("loader.upload.load-files")}</Nav.Link>
                       </Nav.Item>
                       <Nav.Item>
-                        <Nav.Link  eventKey={t("loader.upload.go-back")} onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. Laboratory</Nav.Link>
+                        <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. {t("loader.upload.laboratory")}</Nav.Link>
                       </Nav.Item>
                     </Nav>
                 </Col>

@@ -49,6 +49,8 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
   const handleFileChange = (event) => {
     // Update the selectedFiles state with the chosen files
     setSelectedFiles([...selectedFiles, ...event.target.files]);
+
+    console.log('Selected files:', selectedFiles, event.target.files);
   };
 
   /**
@@ -113,37 +115,39 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
         // TODO: add translations to the first row elements
       <Container>
           <Row>
-            <Col md={5} className={"file-name-col"}>
+            <Col xs={7} md={5} className={"file-name-col"}>
               File Name
             </Col>
-            <Col md={3} className={"radio-col"}>
-              Select Tx
+            <Col xs={2} md={3} className={"radio-col"}>
+              Tx
             </Col>
-            <Col md={3} className={"radio-col"}>
-              Select Rx
+            <Col xs={2} md={3} className={"radio-col"}>
+              Rx
             </Col>
-            <Col md={1}  className={"remove-col"}>
+            <Col xs={1}  className={"remove-col"}>
               Delete
             </Col>
           </Row>
         {uploadedFiles.map((file, index) => (
           <Row key={index}>
-            <Col md={5} className={"file-name-col"}>
-              {file.file.name}
+            <Col xs={7} md={5}>
+              <span  className={"file-name-col"}>
+                {file.file.name}
+              </span>
             </Col>
-            <Col md={3} className={"radio-col"}>
+            <Col xs={2} md={3} className={"radio-col"}>
               <Form.Check
                 name="receiver"
                 onChange={() => handleSelect(index, 'TX')}
               />
             </Col>
-            <Col md={3} className={"radio-col"}>
+            <Col xs={2} md={3} className={"radio-col"}>
               <Form.Check
                 name="transmitter"
                 onChange={() => handleSelect(index, 'RX')}
               />
             </Col>
-            <Col md={1}  className={"remove-col"}>
+            <Col xs={1}  className={"remove-col"}>
               <Button variant="danger" size="sm" onClick={() => handleRemove(index)}><i className="bi bi-x-lg"></i></Button>
             </Col>
           </Row>
@@ -217,22 +221,24 @@ function Loader() {
   };
 
   return (
-      <Container className={"loader-container"}>
-        <Row>
-          <Col>
-            <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
-          </Col>
-        </Row>
+      <Container>
+        <Col md={{span: 8, offset: 2}}>
+          <Row>
+            <Col>
+              <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
+            </Col>
+          </Row>
+        </Col>
       </Container>
   );
 }

@@ -64,9 +64,9 @@
       "receiver-file": "Receiver file",
       "file": "File",
       "remove" : "Remove",
-      "introduction": "1. Introduction",
-      "load-files": "2. Load Files",
-      "laboratory": "3. Laboratory",
+      "introduction": "Introduction",
+      "load-files": "Load Files",
+      "laboratory": "Laboratory",
       "go-back": "Go back"
     },
     "select": {

@@ -13,7 +13,7 @@
     = add a footer
       '-> problem is that would require making a new outer container
     = make it more responsive
-      '-> table is the main issue right know, would probably require going for another selection appraoch on mobile
+      '-> table is the main issue right know, would probably require going for another selection approach on mobile
     = make top images smaller ( should not be hard but I can't figure it out)
 
 */
@@ -47,7 +47,7 @@ function Introduction() {
     return (
         <Container className={"introduction-container"}>
             <Col md={{span: 6, offset: 3}}>
-                {'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ips'}
+                {'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of getset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ips'}
             </Col>
         </Container>
     );
@@ -106,18 +106,19 @@ function Outerloader() {
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>
-                    <Image src={UW_logo} fluid  className={"image"}/>
+                    <a className={"image-col"} href={"ece.uw.edu"}><Image src={UW_logo} fluid  className={"image"}/></a>
                 </Col>
                 <Col className={"image-col"}>
-                     <Image src={RHL_logo} fluid className={"image"}/>
+                    <a className={"image-col"} href={"rhlab.ece.uw.edu"}><Image  src={RHL_logo} fluid className={"image"}/></a>
+
                 </Col>
                 <Col className={"image-col"}>
-                    <Image src={LabsLand_logo} fluid className={"image"}/>
+                    <a  className={"image-col"} href={"labsland.com"}><Image src={LabsLand_logo} fluid className={"image"}/></a>
                 </Col>
             </Row>
             <Row >
                 <Col  className={"button-container"}>
-                    <Button>Go back</Button>
+                    <Button>{t("loader.upload.go-back")}</Button>
                 </Col>
                 <Col className={"header-container"}>
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
@@ -129,13 +130,13 @@ function Outerloader() {
                 <Col className={"pills-container"}>
                     <Nav variant="pills" defaultActiveKey="1. Introduction">
                       <Nav.Item >
-                        <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. Introduction</Nav.Link>
+                        <Nav.Link   eventKey={t("loader.upload.introduction")} onClick={() => setSelectedTab('introduction')} className={"pill"}>1. Introduction</Nav.Link>
                       </Nav.Item >
                       <Nav.Item>
-                        <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. Load Files</Nav.Link>
+                        <Nav.Link  eventKey={t("loader.upload.load-files")} onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. Load Files</Nav.Link>
                       </Nav.Item>
                       <Nav.Item>
-                        <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. Laboratory</Nav.Link>
+                        <Nav.Link  eventKey={t("loader.upload.go-back")} onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. Laboratory</Nav.Link>
                       </Nav.Item>
                     </Nav>
                 </Col>

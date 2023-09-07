@@ -63,7 +63,11 @@
       "upload": "Upload",
       "receiver-file": "Receiver file",
       "file": "File",
-      "remove" : "Remove"
+      "remove" : "Remove",
+      "introduction": "1. Introduction",
+      "load-files": "2. Load Files",
+      "laboratory": "3. Laboratory",
+      "go-back": "Go back"
     },
     "select": {
       "submit-tasks": "Select existing GNU Radio files",

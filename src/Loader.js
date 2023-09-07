@@ -26,7 +26,7 @@ import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
 //for design
-import { Container, Row, Col, Button, Form, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import './Loader.css';
 
 /**

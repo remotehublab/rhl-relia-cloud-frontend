@@ -118,6 +118,9 @@
   align-items: center;
   padding-top: 2%;
   padding-bottom: 2%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .image-col {

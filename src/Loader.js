@@ -130,7 +130,7 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
           </Row>
         {uploadedFiles.map((file, index) => (
           <Row key={index}>
-            <Col xs={7} md={5}>
+            <Col xs={7} md={5} className={"file-col"}>
               <span  className={"file-name-col"}>
                 {file.file.name}
               </span>

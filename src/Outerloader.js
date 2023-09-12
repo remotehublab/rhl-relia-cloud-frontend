@@ -12,13 +12,11 @@
     = eventually separate Introduction and Laboratory into their on files
     = add a footer
       '-> problem is that would require making a new outer container
-    = make it more responsive
-      '-> table is the main issue right know, would probably require going for another selection approach on mobile
-    = make top images smaller ( should not be hard but I can't figure it out)
+
 
 */
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 // for  translations
 import i18n, {t} from './i18n';
@@ -88,18 +86,22 @@ function Outerloader() {
       "user_id": null
     });
 
-    // TODO: move fetch, remove this "if"
-    if (userData.success != null) {
-      fetch('/user/poll', {
-        method: 'GET'
-      }).then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        }
-      }).then((data) => {
-        setUserData(data);
-      });
-    }
+    // Define a useEffect hook to make the fetch call when the component mounts
+    useEffect(() => {
+        // Make the fetch call to retrieve user data
+        fetch('/user/poll', {
+            method: 'GET'
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        })
+        .then((data) => {
+            // Update the userData state with the retrieved data
+            setUserData(data);
+        });
+    }, []); // The empty array [] ensures that this effect runs only once
 
     /**
      * Renders content based on the selected tab.

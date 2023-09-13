@@ -26,44 +26,13 @@ import { withTranslation } from 'react-i18next';
 import { Container, Row, Col, Button, Image, Nav  } from 'react-bootstrap';
 import './Loader.css';
 import Loader from "./Loader";
+import Laboratory from "./Laboratory";
+import Introduction from "./Introduction";
 
 //images
 import LabsLand_logo from './components/images/LabsLand-logo.png';
 import UW_logo from './components/images/uw-logo.gif';
 import RHL_logo from './components/images/RHL-logo.png';
-
-
-/**
- * Renders the Introduction component.
- *
- * This component displays introductory text that explain how to use the lab
- * Currently placeholder
- *
- * @returns {JSX.Element} The rendered Introduction component.
- */
-function Introduction() {
-    return (
-        <Container className={"introduction-container"}>
-            <Col md={{span: 6, offset: 3}}>
-                {'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of getset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ips'}
-            </Col>
-        </Container>
-    );
-}
-
-/**
- * Renders the Introduction component.
- *
- * This component will display the lab
- *
- * @returns {JSX.Element} The rendered Introduction component.
- */
-function Laboratory() {
-    return (
-        <Container className={"loader-container"}>
-        </Container>
-    );
-}
 
 
 /**
@@ -84,6 +53,9 @@ function Outerloader() {
       "session_id": null,
       "success": null,
       "user_id": null
+    });
+    const [currentSession, setCurrentSession] = useState({
+      "status": "not_started"
     });
 
     // Define a useEffect hook to make the fetch call when the component mounts
@@ -115,9 +87,9 @@ function Outerloader() {
           case 'introduction':
             return <Introduction />;
           case 'loadFiles':
-            return <Loader />;
+            return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} />;
           case 'laboratory':
-            return <Laboratory />;
+            return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} />;
           default:
             return null;
         }

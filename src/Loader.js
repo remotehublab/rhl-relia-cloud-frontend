@@ -51,6 +51,28 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
     setSelectedFiles([...selectedFiles, ...event.target.files]);
 
     console.log('Selected files:', selectedFiles, event.target.files);
+
+    const files = event.target.files;
+    const formData = new FormData();
+    
+    // Add each file to the form data.
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+
+    // Now, send the formData using Fetch.
+    console.log("Calling /files/");
+    fetch("/files/", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        setSelectedFiles(data.files);
+    })
+    .catch(error => {
+        console.error('Error uploading files:', error);
+    });
   };
 
   /**
@@ -131,7 +153,7 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
         {uploadedFiles.map((file, index) => (
           <Row key={index}>
             <Col xs={7} md={5} className={"file-col"}>
-              <span  className={"file-name-col"}>
+              <span  className={"file-name-col"} title={file.file.name}>
                 {file.file.name}
               </span>
             </Col>
@@ -191,7 +213,7 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader() {
+function Loader({currentSession, setCurrentSession}) {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedFileColumnRX, setSelectedFileColumnTX] = useState(null);
   const [selectedFileColumnTX, setSelectedFileColumnRX] = useState(null);

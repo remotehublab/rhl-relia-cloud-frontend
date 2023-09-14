@@ -87,9 +87,9 @@ function Outerloader() {
           case 'introduction':
             return <Introduction />;
           case 'loadFiles':
-            return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} />;
+            return <Loader setSelectedTab={setSelectedTab}/>;
           case 'laboratory':
-            return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} />;
+            return <Laboratory />;
           default:
             return null;
         }

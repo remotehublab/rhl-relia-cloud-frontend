@@ -73,8 +73,7 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
         });
         setUploadedFiles(uniqueFiles);
         setTableIsVisible(true);
-      })
-      .catch(error => {
+      }).catch(error => {
           console.error('Error uploading files:', error);
       });
 
@@ -161,21 +160,43 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
  * @param {Function} handleSendToSDR      - Function that does the upload process
  * @returns {JSX.Element} - The rendered Sender component.
  */
-function Sender({ selectedFilesColumnRX, selectedFilesColumnTX }) {
+function Sender({ selectedFilesColumnRX, selectedFilesColumnTX , setSelectedTab}) {
   const handleSendToSDR = ( ) => {
-    console.log("Sending RX files:");
-    console.log(selectedFilesColumnRX);
+    const successFlag = true;
+    const formData = new FormData();
 
-    selectedFilesColumnRX.forEach(function(entry) {
-      console.log("Sent " + entry.name);
-
+    const receiverFileNames = [];
+    const transmitterFileNames = [];
+    selectedFilesColumnRX.forEach(function(file) {
+        receiverFileNames.push(file.name);
     });
-    console.log("Sending TX files:");
-    console.log(selectedFilesColumnRX);
 
-    selectedFilesColumnTX.forEach(function(entry) {
-      console.log("Sent " + entry.name);
+    // Iterate through selectedFilesColumnTX and append each file to the "transmitter" key
+    selectedFilesColumnTX.forEach(function(file) {
+        transmitterFileNames.push(file.name);
     });
+
+
+    formData.append("receiver", receiverFileNames);
+    formData.append("transmitter", transmitterFileNames);
+
+    console.log(formData);
+    // Now, send the formData using Fetch.
+      fetch('/files/metadata', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        //setSelectedTab('laboratory');
+        console.log("data sent!")
+      }).catch(error => {
+          console.error('Error uploading files:', error);
+      });
+    // idk why this crashes the program
+    // if (successFlag) {
+    //   setSelectedTab("laboratory");
+    // }
   }
 
 
@@ -202,7 +223,7 @@ function Sender({ selectedFilesColumnRX, selectedFilesColumnTX }) {
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader() {
+function Loader(setSelectedTab) {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
   const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
@@ -274,7 +295,7 @@ function Loader() {
           </Row>
           <Row>
             <Col>
-              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX} />
+              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX} setSelectedTab={setSelectedTab}/>
             </Col>
           </Row>
         </Col>

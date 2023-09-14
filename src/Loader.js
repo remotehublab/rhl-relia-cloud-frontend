@@ -56,11 +56,7 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
     // Update the selectedFiles state with the chosen files
     if (event.target.files.length > 0) {
       // Add the selected files to the uploadedFiles state with initial selectedColumn values of null.
-      const newUploadedFiles = Array.from(event.target.files).map((file) => ({
-        file,
-        selectedColumn: null,
-      }));
-
+      const newUploadedFiles = Array.from(event.target.files);
       const formData = new FormData();
 
       const files = event.target.files;
@@ -80,9 +76,20 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       })
       .then(response => response.json())
       .then(data => {
-          setUploadedFiles([...uploadedFiles, ...newUploadedFiles]);
+        console.log("DEBUG");
+        const uniqueNames = new Set();
+        const uniqueFiles = [...uploadedFiles, ...newUploadedFiles].filter(file => {
+          if (!uniqueNames.has(file.name)) {
+              uniqueNames.add(file.name);
+              return true; // Include the file in the result
+          }
+          return false; // Exclude duplicates
+        });
+        console.log(uniqueFiles);
+        setUploadedFiles(uniqueFiles);
+
           setTableIsVisible(true);
-          console.log("Got response from post request!")
+          console.log("Got response from post request!");
       })
       .catch(error => {
           console.error('Error uploading files:', error);
@@ -138,7 +145,7 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
           <Row key={index}>
             <Col xs={7} md={5} className={"file-col"}>
               <span  className={"file-name-col"}>
-                {file.file.name}
+                {file.name}
               </span>
             </Col>
             <Col xs={2} md={3} className={"radio-col"}>
@@ -287,5 +294,3 @@ function Loader() {
 
 
 export default withTranslation()(Loader);
-
-

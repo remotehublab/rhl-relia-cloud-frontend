@@ -70,6 +70,7 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       console.log("Calling /files/");
       console.log(files);
       console.log(formData);
+
       fetch('/files/', {
           method: 'POST',
           body: formData
@@ -184,14 +185,14 @@ function Sender({ selectedFilesColumnRX, selectedFilesColumnTX }) {
     console.log(selectedFilesColumnRX);
 
     selectedFilesColumnRX.forEach(function(entry) {
-      console.log("Sent " + entry.file);
+      console.log("Sent " + entry.name);
 
     });
     console.log("Sending TX files:");
     console.log(selectedFilesColumnRX);
 
     selectedFilesColumnTX.forEach(function(entry) {
-      console.log("Sent " + entry.file);
+      console.log("Sent " + entry.name);
 
 
     });

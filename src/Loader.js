@@ -38,22 +38,13 @@ import './Loader.css';
  * @returns {JSX.Element} The rendered Uploader component.
  */
 function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
-  const [selectedFiles, setSelectedFiles] = useState([]);
+
 
   /**
    * handleFileChange function is responsible for updating the selectedFiles state
    * when one or more files are chosen using the file input.
    * It extracts the selected files from the event object and sets them as the new value
    * of the selectedFiles state variable, allowing them to be used for further processing, such as file upload.
-   */
-  const handleFileChange = (event) => {
-    // Update the selectedFiles state with the chosen files
-    setSelectedFiles([...selectedFiles, ...event.target.files]);
-
-    console.log('Selected files:', selectedFiles, event.target.files);
-  };
-
-  /**
    * handleUpload Function
    *
    * This function handles the file upload logic when the "Upload" button is clicked.
@@ -61,24 +52,24 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
    * and adds them to the uploadedFiles state with an initial selectedColumn value of null.
    * If no files are selected, it logs a message to indicate that no files were selected.
    */
-  const handleUpload = () => {
-    if (selectedFiles.length > 0) {
+  const handleFileChange = (event) => {
+    // Update the selectedFiles state with the chosen files
+    if (event.target.files.length > 0) {
       // Add the selected files to the uploadedFiles state with initial selectedColumn values of null.
-      const newUploadedFiles = selectedFiles.map((file) => ({
+      const newUploadedFiles = Array.from(event.target.files).map((file) => ({
         file,
         selectedColumn: null,
       }));
       setUploadedFiles([...uploadedFiles, ...newUploadedFiles]);
       console.log('Uploading files:', newUploadedFiles);
+      console.log('Current files ', uploadedFiles);
+      console.log(" ")
       setTableIsVisible(true);
-      // TODO: Additional file upload logic probably here.
     } else {
       // Log a message if no files are selected.
       console.log('No files selected.');
+      console.log(" ")
     }
-
-    // Clear the selectedFiles state after uploading
-    setSelectedFiles([]);
   };
 
   return (
@@ -87,13 +78,6 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
       <Row>
         <Col md={{span: 6, offset: 3}} className={"form-col"}>
           <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple  />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-          <Button className={"loader-button"} onClick={handleUpload}>
-            {t("loader.upload.upload-gnu-radio-files")}
-          </Button>
         </Col>
       </Row>
     </Container>
@@ -160,21 +144,39 @@ function Selector({ uploadedFiles, handleSelect, handleRemove, tableIsVisible })
 
 /**
  * Sender component that hosts a button that sends the files to Sdr Device
- * @param selectedFileColumnRX - RX file
- * @param selectedFileColumnTX - TX file
+ * @param selectedFilesColumnRX - RX files
+ * @param selectedFilesColumnTX - TX files
  * @param {Function} handleSendToSDR      - Function that does the upload process
  * @returns {JSX.Element} - The rendered Sender component.
  */
-function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
-  const handleSendToSDR = (rxFile, txFile) => {
-    console.log("Sending RX(" + rxFile.file.name + ") and TX(" + txFile.file.name + ") to SDR!");
+function Sender({ selectedFilesColumnRX, selectedFilesColumnTX }) {
+  const handleSendToSDR = ( ) => {
+    console.log("Sending RX files:");
+    console.log(selectedFilesColumnRX);
+
+    selectedFilesColumnRX.forEach(function(entry) {
+      console.log("Sent " + entry.file);
+
+    });
+    console.log("Sending TX files:");
+    console.log(selectedFilesColumnRX);
+
+    selectedFilesColumnTX.forEach(function(entry) {
+      console.log("Sent " + entry.file);
+
+
+    });
+
   }
-  if (selectedFileColumnRX != null && selectedFileColumnTX != null) {
+
+
+
+  if ( selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
     return (
       <Container className={"sender-container"}>
         <Row>
           <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-            <Button className={"loader-button"} onClick={() => handleSendToSDR(selectedFileColumnRX, selectedFileColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
+            <Button className={"loader-button"} onClick={() => handleSendToSDR(selectedFilesColumnRX, selectedFilesColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
           </Col>
         </Row>
       </Container>
@@ -193,8 +195,8 @@ function Sender({ selectedFileColumnRX, selectedFileColumnTX }) {
  */
 function Loader() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [selectedFileColumnRX, setSelectedFileColumnTX] = useState(null);
-  const [selectedFileColumnTX, setSelectedFileColumnRX] = useState(null);
+  const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
+  const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
   const [tableIsVisible, setTableIsVisible] = useState(false);
 
   /**
@@ -204,20 +206,38 @@ function Loader() {
    * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
    */
   const handleSelect = (index, column) => {
-    const updatedFiles = [...uploadedFiles];
-    updatedFiles[index].selectedColumn = column;
-    setUploadedFiles(updatedFiles);
+    console.log("Current updated files ", uploadedFiles);
+
     if (column === 'RX') {
-      setSelectedFileColumnRX(updatedFiles[index]);
+      console.log("In RX column");
+      console.log(selectedFilesColumnRX.includes(uploadedFiles[index]));
+      console.log(selectedFilesColumnRX);
+      console.log(uploadedFiles[index]);
+      if (selectedFilesColumnRX.includes(uploadedFiles[index])) {
+        console.log("selectedFilesColumnRX.includes(updatedFiles[index])");
+        setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[index]));
+        console.log("Removed selected file from rx");
+      } else {
+        console.log("Added file to Rx");
+        console.log([...selectedFilesColumnRX,uploadedFiles[index]]);
+        setSelectedFilesColumnRX([...selectedFilesColumnRX,uploadedFiles[index]]);
+      }
+
     } else if (column === 'TX') {
-      setSelectedFileColumnTX(updatedFiles[index]);
+      if (selectedFilesColumnTX.includes(uploadedFiles[index])) {
+        setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== uploadedFiles[index]))
+      } else {
+        setSelectedFilesColumnTX([...selectedFilesColumnTX,uploadedFiles[index]]);
+      }
     }
+    console.log(" ")
+    console.log(" ")
   };
 
   const handleRemove = (indexToRemove) => {
-    // Create a new array without the selected row
-    const updatedFiles = uploadedFiles.filter((file, index) => index !== indexToRemove);
-    setUploadedFiles(updatedFiles);
+    setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[indexToRemove]))
+    setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== uploadedFiles[indexToRemove]))
+    setUploadedFiles(uploadedFiles.filter((file, index) => index !== indexToRemove));
   };
 
   return (
@@ -235,7 +255,7 @@ function Loader() {
           </Row>
           <Row>
             <Col>
-              <Sender selectedFileColumnTX={selectedFileColumnTX} selectedFileColumnRX={selectedFileColumnRX} />
+              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX} />
             </Col>
           </Row>
         </Col>

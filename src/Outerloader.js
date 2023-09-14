@@ -101,7 +101,7 @@ function Outerloader() {
             // Update the userData state with the retrieved data
             setUserData(data);
         });
-    }, []); // The empty array [] ensures that this effect runs only once
+        }, []); // The empty array [] ensures that this effect runs only once
 
     /**
      * Renders content based on the selected tab.
@@ -122,6 +122,39 @@ function Outerloader() {
             return null;
         }
   };
+
+    const showLibrary = () => {
+        // Make a GET request to '/files/' to fetch the list of files
+        fetch('/files/', {
+            method: 'GET'
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        })
+        .then((data) => {
+            if (data.success) {
+
+                const { files, metadata } = data;
+                console.log(files);
+                console.log(metadata);
+                console.log('Current receiver:', metadata['receiver']);
+
+                // Show files from metadata['transmitter']
+                console.log('Current trasmitter:', metadata['transmitter']);
+
+                // Print every file in the files array
+                files.forEach((file) => {
+                    console.log('File:', file);
+                });
+
+            } else {
+
+                console.error('Failed to fetch files:', data.message);
+            }
+        });
+    };
 
     return (
       <Container>
@@ -145,7 +178,8 @@ function Outerloader() {
                 <Col className={"header-container"}>
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
                 </Col>
-                <Col>
+                <Col className={"button-container"} >
+                     <a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library></a>
                 </Col>
             </Row>
             <Row  >

@@ -9,10 +9,7 @@
 
    Todo:
      = Add missing translations
-     = Add comments explaining state of components
-     = make it more responsive
-     = files with log names overflow towards other columns of the table
-o0
+
 
 
   Known bugs:
@@ -39,45 +36,33 @@ import './Loader.css';
  */
 function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
 
-
   /**
    * handleFileChange function is responsible for updating the selectedFiles state
    * when one or more files are chosen using the file input.
-   * It extracts the selected files from the event object and sets them as the new value
-   * of the selectedFiles state variable, allowing them to be used for further processing, such as file upload.
-   * handleUpload Function
-   *
-   * This function handles the file upload logic when the "Upload" button is clicked.
    * It checks if any files are selected, updates the state with the chosen files,
-   * and adds them to the uploadedFiles state with an initial selectedColumn value of null.
+   * and adds them to the uploadedFiles state
    * If no files are selected, it logs a message to indicate that no files were selected.
+   * TODO: this function is quite big and its handling both the frontend and backend part of file handling,
+   *       it would be best to separate it
    */
   const handleFileChange = (event) => {
-    // Update the selectedFiles state with the chosen files
     if (event.target.files.length > 0) {
-      // Add the selected files to the uploadedFiles state with initial selectedColumn values of null.
       const newUploadedFiles = Array.from(event.target.files);
       const formData = new FormData();
-
       const files = event.target.files;
+
       // Add each file to the form data.
       for (let i = 0; i < files.length; i++) {
           formData.append('file-' + i  , files[i]);
-          console.log(files[i]);
       }
 
       // Now, send the formData using Fetch.
-      console.log("Calling /files/");
-      console.log(files);
-      console.log(formData);
-
       fetch('/files/', {
           method: 'POST',
           body: formData
       })
       .then(response => response.json())
       .then(data => {
-        console.log("DEBUG");
         const uniqueNames = new Set();
         const uniqueFiles = [...uploadedFiles, ...newUploadedFiles].filter(file => {
           if (!uniqueNames.has(file.name)) {
@@ -86,11 +71,8 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
           }
           return false; // Exclude duplicates
         });
-        console.log(uniqueFiles);
         setUploadedFiles(uniqueFiles);
-
-          setTableIsVisible(true);
-          console.log("Got response from post request!");
+        setTableIsVisible(true);
       })
       .catch(error => {
           console.error('Error uploading files:', error);
@@ -99,7 +81,6 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
     } else {
       // Log a message if no files are selected.
       console.log('No files selected.');
-      console.log(" ")
     }
   };
 
@@ -107,12 +88,13 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
     <Container>
       <Row>
         <Col md={{span: 6, offset: 3}} className={"form-col"}>
-          <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple  />
+          <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple />
         </Col>
       </Row>
     </Container>
   );
 }
+
 /**
  * Selector Component
  *
@@ -193,10 +175,7 @@ function Sender({ selectedFilesColumnRX, selectedFilesColumnTX }) {
 
     selectedFilesColumnTX.forEach(function(entry) {
       console.log("Sent " + entry.name);
-
-
     });
-
   }
 
 
@@ -236,20 +215,10 @@ function Loader() {
    * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
    */
   const handleSelect = (index, column) => {
-    console.log("Current updated files ", uploadedFiles);
-
     if (column === 'RX') {
-      console.log("In RX column");
-      console.log(selectedFilesColumnRX.includes(uploadedFiles[index]));
-      console.log(selectedFilesColumnRX);
-      console.log(uploadedFiles[index]);
       if (selectedFilesColumnRX.includes(uploadedFiles[index])) {
-        console.log("selectedFilesColumnRX.includes(updatedFiles[index])");
         setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[index]));
-        console.log("Removed selected file from rx");
       } else {
-        console.log("Added file to Rx");
-        console.log([...selectedFilesColumnRX,uploadedFiles[index]]);
         setSelectedFilesColumnRX([...selectedFilesColumnRX,uploadedFiles[index]]);
       }
 
@@ -260,14 +229,34 @@ function Loader() {
         setSelectedFilesColumnTX([...selectedFilesColumnTX,uploadedFiles[index]]);
       }
     }
-    console.log(" ")
-    console.log(" ")
   };
 
   const handleRemove = (indexToRemove) => {
+    fetch('/files/' + uploadedFiles[indexToRemove].name, {
+        method: 'DELETE'
+    })
+    .then((response) => {
+        if (response.status === 200) {
+            return response.json();
+        }
+    })
+    .then((data) => {
+        // Update the userData state with the retrieved data
+        if(data.success) {
+          console.log("removed file from server");
+        } else {
+          console.log("failed to remove file");
+        }
+    });
     setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[indexToRemove]))
     setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== uploadedFiles[indexToRemove]))
     setUploadedFiles(uploadedFiles.filter((file, index) => index !== indexToRemove));
+
+    // make call to delete file
+
+
+
+
   };
 
   return (

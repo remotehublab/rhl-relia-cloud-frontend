@@ -49,7 +49,7 @@ function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
     const [userData, setUserData] = useState({
       "locale": "en",
-      "redirect_to": null,
+      "redirect_to": "",
       "session_id": null,
       "success": null,
       "user_id": null

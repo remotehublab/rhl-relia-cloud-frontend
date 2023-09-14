@@ -60,11 +60,34 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
         file,
         selectedColumn: null,
       }));
-      setUploadedFiles([...uploadedFiles, ...newUploadedFiles]);
-      console.log('Uploading files:', newUploadedFiles);
-      console.log('Current files ', uploadedFiles);
-      console.log(" ")
-      setTableIsVisible(true);
+
+      const formData = new FormData();
+
+      const files = event.target.files;
+      // Add each file to the form data.
+      for (let i = 0; i < files.length; i++) {
+          formData.append('file-' + i  , files[i]);
+          console.log(files[i]);
+      }
+
+      // Now, send the formData using Fetch.
+      console.log("Calling /files/");
+      console.log(files);
+      console.log(formData);
+      fetch('/files/', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          setUploadedFiles([...uploadedFiles, ...newUploadedFiles]);
+          setTableIsVisible(true);
+          console.log("Got response from post request!")
+      })
+      .catch(error => {
+          console.error('Error uploading files:', error);
+      });
+
     } else {
       // Log a message if no files are selected.
       console.log('No files selected.');
@@ -74,7 +97,6 @@ function Uploader({ uploadedFiles, setUploadedFiles, setTableIsVisible }) {
 
   return (
     <Container>
-      {/* I would like to maybe combine the buttons into one */}
       <Row>
         <Col md={{span: 6, offset: 3}} className={"form-col"}>
           <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple  />

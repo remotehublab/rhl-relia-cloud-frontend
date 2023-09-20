@@ -15,15 +15,28 @@
 
 
 */
-
-import React, {useEffect, useState} from 'react';
+import React, {
+    useEffect,
+    useState
+} from 'react';
 
 // for  translations
-import i18n, {t} from './i18n';
-import { withTranslation } from 'react-i18next';
+import i18n, {
+    t
+} from './i18n';
+import {
+    withTranslation
+} from 'react-i18next';
 
 //for design
-import { Container, Row, Col, Button, Image, Nav  } from 'react-bootstrap';
+import {
+    Container,
+    Row,
+    Col,
+    Button,
+    Image,
+    Nav
+} from 'react-bootstrap';
 import './Loader.css';
 import Loader from "./Loader";
 import Laboratory from "./Laboratory";
@@ -48,32 +61,32 @@ import RHL_logo from './components/images/RHL-logo.png';
 function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
     const [userData, setUserData] = useState({
-      "locale": "en",
-      "redirect_to": "",
-      "session_id": null,
-      "success": null,
-      "user_id": null
+        "locale": "en",
+        "redirect_to": "",
+        "session_id": null,
+        "success": null,
+        "user_id": null
     });
     const [currentSession, setCurrentSession] = useState({
-      "status": "not_started"
+        "status": "not_started"
     });
 
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
         // Make the fetch call to retrieve user data
         fetch('/user/poll', {
-            method: 'GET'
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-        })
-        .then((data) => {
-            // Update the userData state with the retrieved data
-            setUserData(data);
-        });
-        }, []); // The empty array [] ensures that this effect runs only once
+                method: 'GET'
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                // Update the userData state with the retrieved data
+                setUserData(data);
+            });
+    }, []); // The empty array [] ensures that this effect runs only once
 
     /**
      * Renders content based on the selected tab.
@@ -84,52 +97,55 @@ function Outerloader() {
      * */
     const renderContent = () => {
         switch (selectedTab) {
-          case 'introduction':
-            return <Introduction />;
-          case 'loadFiles':
-            return <Loader setSelectedTab={setSelectedTab}/>;
-          case 'laboratory':
-            return <Laboratory />;
-          default:
-            return null;
+            case 'introduction':
+                return <Introduction/> ;
+            case 'loadFiles':
+                return <Loader setSelectedTab = {setSelectedTab}/>;
+            case 'laboratory':
+                return <Laboratory/> ;
+            default:
+                return null;
         }
-  };
+    };
 
     const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
         fetch('/files/', {
-            method: 'GET'
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-        })
-        .then((data) => {
-            if (data.success) {
+                method: 'GET'
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                if (data.success) {
 
-                const { files, metadata } = data;
-                console.log(files);
-                console.log(metadata);
-                console.log('Current receiver:', metadata['receiver']);
+                    const {
+                        files,
+                        metadata
+                    } = data;
+                    console.log(files);
+                    console.log(metadata);
+                    console.log('Current receiver:', metadata['receiver']);
 
-                // Show files from metadata['transmitter']
-                console.log('Current trasmitter:', metadata['transmitter']);
+                    // Show files from metadata['transmitter']
+                    console.log('Current trasmitter:', metadata['transmitter']);
 
-                // Print every file in the files array
-                files.forEach((file) => {
-                    console.log('File:', file);
-                });
+                    // Print every file in the files array
+                    files.forEach((file) => {
+                        console.log('File:', file);
+                    });
 
-            } else {
+                } else {
 
-                console.error('Failed to fetch files:', data.message);
-            }
-        });
+                    console.error('Failed to fetch files:', data.message);
+                }
+            });
     };
 
     return (
-      <Container>
+        <Container>
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>

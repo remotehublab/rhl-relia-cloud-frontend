@@ -185,6 +185,11 @@ function Sender({
     selectedFilesColumnTX,
     setSelectedTab
 }) {
+
+    const handleChangeTab = () => {
+        setSelectedTab('laboratory');
+    }
+
     const handleSendToSDR = () => {
         const receiverFileNames = [];
         const transmitterFileNames = [];
@@ -212,7 +217,6 @@ function Sender({
             })
             .then(response => response.json())
             .then(data => {
-                // setSelectedTab('laboratory');
                 console.log("data sent!")
             })
             .catch(error => {
@@ -225,7 +229,7 @@ function Sender({
       <Container className={"sender-container"}>
         <Row>
           <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-            <Button className={"loader-button"} onClick={() => handleSendToSDR(selectedFilesColumnRX, selectedFilesColumnTX)}>{t("loader.select.send-to-sdr-devices")}</Button>
+            <Button className={"loader-button"} onClick={() => handleChangeTab()}>{t("loader.select.send-to-sdr-devices")}</Button>
           </Col>
         </Row>
       </Container>

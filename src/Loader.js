@@ -183,12 +183,12 @@ function Selector({
 function Sender({
     selectedFilesColumnRX,
     selectedFilesColumnTX,
-    setSelectedTab
+    currentSession,
+    setCurrentSession,
+    setSelectedTab,
 }) {
 
-    const handleChangeTab = () => {
-        setSelectedTab('laboratory');
-    }
+
 
     const handleSendToSDR = () => {
         const receiverFileNames = [];
@@ -214,22 +214,59 @@ function Sender({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(jsonData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("data sent!")
-            })
-            .catch(error => {
-                console.error('Error sending metadata:', error);
-            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("data sent!")
+        })
+        .catch(error => {
+            console.error('Error sending metadata:', error);
+        });
     };
+
+    // When clicked on the button below the file list,
+    // call the new task method explained above, and redirect the user to the “Laboratory” tab.
+    const manageTask = () => {
+        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+                method: 'GET'
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                if (data.success) {
+
+                    const {
+                        status,
+                        receiver,
+                        transmitter
+                    } = data;
+
+                    const newSession = {
+                        "taskIdentifier": "todo",
+                        "status": data.status
+                    }
+
+                    setCurrentSession(newSession);
+                    setSelectedTab("laboratory")
+                } else {
+
+                    console.error('Failed to fetch files:', data.message);
+                }
+            });
+
+
+    };
+
 
     if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
         return (
       <Container className={"sender-container"}>
         <Row>
           <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-            <Button className={"loader-button"} onClick={() => handleChangeTab()}>{t("loader.select.send-to-sdr-devices")}</Button>
+            <Button className={"loader-button"} onClick={() => (manageTask())}>{t("loader.select.send-to-sdr-devices")}</Button>
           </Col>
         </Row>
       </Container>
@@ -246,7 +283,7 @@ function Sender({
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader(setSelectedTab) {
+function Loader(currentSession, setCurrentSession, setSelectedTab) {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
@@ -312,7 +349,9 @@ function Loader(setSelectedTab) {
           </Row>
           <Row>
             <Col>
-              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX} setSelectedTab={setSelectedTab}/>
+              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX}
+                      currentSession={currentSession} setCurrentSession={setCurrentSession}
+                      setSelectedTab ={setSelectedTab}/>
             </Col>
           </Row>
         </Col>

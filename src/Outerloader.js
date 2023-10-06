@@ -67,7 +67,10 @@ function Outerloader() {
         "success": null,
         "user_id": null
     });
+
+    // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
+        "taskIdentifier": "todo",
         "status": "not_started"
     });
 
@@ -88,6 +91,46 @@ function Outerloader() {
             });
     }, []); // The empty array [] ensures that this effect runs only once
 
+     useEffect(() => {
+        // This function will be called when the component is mounted
+        const interval = setInterval(() => {
+          // Code inside this block will be executed every certain amount of time (in milliseconds)
+          // fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+          //           method: 'GET'
+          //       })
+          //       .then((response) => {
+          //           if (response.status === 200) {
+          //               return response.json();
+          //           }
+          //       })
+          //       .then((data) => {
+          //           if (data.success) {
+          //
+          //               const {
+          //                   status,
+          //                   receiver,
+          //                   transmitter
+          //               } = data;
+          //
+          //               const newSession = {
+          //                   "taskIdentifier": "todo",
+          //                   "status": data.status
+          //               }
+          //
+          //               setCurrentSession(newSession);
+          //           } else {
+          //
+          //               console.error('Failed to fetch files:', data.message);
+          //           }
+          //       });
+        }, 5000); // Interval is set to 1000 milliseconds (1 second)
+
+        // Clear the interval when the component is unmounted or when the dependency array changes
+        return () => {
+          clearInterval(interval);
+        };
+    }, []);
+
     /**
      * Renders content based on the selected tab.
      *
@@ -98,16 +141,36 @@ function Outerloader() {
     const renderContent = () => {
         switch (selectedTab) {
             case 'introduction':
-                return <Introduction/> ;
+                return <Introduction currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             case 'loadFiles':
-                return <Loader setSelectedTab = {setSelectedTab}/>;
+                return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}/>;
             case 'laboratory':
-                return <Laboratory/> ;
+                return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             default:
                 return null;
         }
     };
 
+    const cancelTask = () => {
+        const jsonData = {
+            action: delete,
+        };
+
+        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData),
+        })
+        .then(response => response.json())
+        .then(data => {
+
+        })
+        .catch(error => {
+            console.error('Error canceling task', error);
+        });
+    }
     const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
         fetch('/files/', {
@@ -171,7 +234,7 @@ function Outerloader() {
                 </Col>
             </Row>
             <Row  >
-                <Col className={"pills-container"}>
+                <Col className={"pills-container"} md={{span: 6, offset: 3}}  >
                     <Nav variant="pills" defaultActiveKey="1. Introduction">
                       <Nav.Item >
                         <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. { t("loader.upload.introduction") }</Nav.Link>
@@ -183,6 +246,9 @@ function Outerloader() {
                         <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. {t("loader.upload.laboratory")}</Nav.Link>
                       </Nav.Item>
                     </Nav>
+                </Col>
+                <Col>
+                     {"Current Task Status: " + currentSession.status}
                 </Col>
             </Row>
             <Row >

@@ -188,77 +188,114 @@ function Sender({
     setSelectedTab,
 }) {
 
-
-
-    const handleSendToSDR = () => {
-        const receiverFileNames = [];
-        const transmitterFileNames = [];
-
-        selectedFilesColumnRX.forEach(function(file) {
-            receiverFileNames.push(file.name);
-        });
-
-        selectedFilesColumnTX.forEach(function(file) {
-            transmitterFileNames.push(file.name);
-        });
-
-        const jsonData = {
-            receiver: receiverFileNames,
-            transmitter: transmitterFileNames,
-        };
-        console.log(jsonData);
-
-        fetch('/files/metadata', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(jsonData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("data sent!")
-        })
-        .catch(error => {
-            console.error('Error sending metadata:', error);
-        });
-    };
-
-    // When clicked on the button below the file list,
-    // call the new task method explained above, and redirect the user to the “Laboratory” tab.
-    const manageTask = () => {
-        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
-                method: 'GET'
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                if (data.success) {
-
-                    const {
-                        status,
-                        receiver,
-                        transmitter
-                    } = data;
-
-                    const newSession = {
-                        "taskIdentifier": "todo",
-                        "status": data.status
+     const checkStatus = () => {
+         fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+                    method: 'GET'
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
                     }
+                })
+                .then((data) => {
+                    if (data.success) {
+                        const newSession = {
+                            "taskIdentifier": currentSession.taskIdentifier,
+                            "status": data.status,
+                            "message": data.message,
+                            "renderingWidgets": currentSession.renderingWidgets,
+                        }
+                        setCurrentSession(newSession);
+                        Object.assign(currentSession, newSession);
+                        console.log(currentSession);
 
-                    setCurrentSession(newSession);
-                    setSelectedTab("laboratory")
-                } else {
+                        // TODO: reorder to be the same as keys.py
+                        if (
+                            // skip completed
+                               data.status === "queued"
+                            //  skip deleted
+                            || data.status === "receiver-assigned"
+                            || data.status === "fully-assigned"
+                            || data.status === 'receiver-still-processing'
+                            || data.status === "transmitter-still-processing"
+                            || data.status === 'receiver-assigned' ) {
+                            setTimeout(checkStatus, 1000 );
+                        }
 
-                    console.error('Failed to fetch files:', data.message);
-                }
+                    } else {
+
+                        console.error('Failed to check status:', data.message);
+                    }
+                });
+     };
+
+        const sendMetaData = () => {
+            const receiverFileNames = [];
+            const transmitterFileNames = [];
+
+            selectedFilesColumnRX.forEach(function(file) {
+                receiverFileNames.push(file.name);
             });
 
+            selectedFilesColumnTX.forEach(function(file) {
+                transmitterFileNames.push(file.name);
+            });
 
-    };
+            const jsonData = {
+                receiver: receiverFileNames,
+                transmitter: transmitterFileNames,
+            };
+            console.log(jsonData);
+
+            fetch('/files/metadata', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jsonData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data sent!")
+                manageTask();
+            })
+            .catch(error => {
+                console.error('Error sending metadata:', error);
+            });
+        };
+
+        // When clicked on the button below the file list,
+        // call the new task method explained above, and redirect the user to the “Laboratory” tab.
+        const manageTask = () => {
+
+            fetch('/user/tasks/' ,{
+                        method: 'POST'
+                    })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            return response.json();
+                        }
+                    })
+                    .then((data) => {
+                        if (data.success) {
+
+                            const newSession = {
+                                "taskIdentifier": data.taskIdentifier,
+                                "status": data.status,
+                                "message": data.message,
+                                "renderingWidgets": currentSession.renderingWidgets,
+                            }
+                            setCurrentSession(newSession);
+                            Object.assign(currentSession, newSession);
+                            console.log(currentSession);
+                            setTimeout(checkStatus, 1000 );
+
+                        } else {
+
+                            console.error('Failed to create task:', data.message);
+                        }
+                    });
+        };
 
 
     if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
@@ -266,7 +303,7 @@ function Sender({
       <Container className={"sender-container"}>
         <Row>
           <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-            <Button className={"loader-button"} onClick={() => (manageTask())}>{t("loader.select.send-to-sdr-devices")}</Button>
+            <Button className={"loader-button"} onClick={() => (sendMetaData())}>{t("loader.select.send-to-sdr-devices")}</Button>
           </Col>
         </Row>
       </Container>
@@ -283,7 +320,7 @@ function Sender({
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader(currentSession, setCurrentSession, setSelectedTab) {
+function Loader({currentSession, setCurrentSession, setSelectedTab}) {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);

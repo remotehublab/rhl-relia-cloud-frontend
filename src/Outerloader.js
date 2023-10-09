@@ -70,8 +70,10 @@ function Outerloader() {
 
     // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
-        "taskIdentifier": "todo",
-        "status": "not_started"
+        "taskIdentifier": null,
+        "status": "not_started",
+        "message": "",
+        "renderingWidgets": false,
     });
 
     // Define a useEffect hook to make the fetch call when the component mounts
@@ -91,45 +93,7 @@ function Outerloader() {
             });
     }, []); // The empty array [] ensures that this effect runs only once
 
-     useEffect(() => {
-        // This function will be called when the component is mounted
-        const interval = setInterval(() => {
-          // Code inside this block will be executed every certain amount of time (in milliseconds)
-          // fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
-          //           method: 'GET'
-          //       })
-          //       .then((response) => {
-          //           if (response.status === 200) {
-          //               return response.json();
-          //           }
-          //       })
-          //       .then((data) => {
-          //           if (data.success) {
-          //
-          //               const {
-          //                   status,
-          //                   receiver,
-          //                   transmitter
-          //               } = data;
-          //
-          //               const newSession = {
-          //                   "taskIdentifier": "todo",
-          //                   "status": data.status
-          //               }
-          //
-          //               setCurrentSession(newSession);
-          //           } else {
-          //
-          //               console.error('Failed to fetch files:', data.message);
-          //           }
-          //       });
-        }, 5000); // Interval is set to 1000 milliseconds (1 second)
 
-        // Clear the interval when the component is unmounted or when the dependency array changes
-        return () => {
-          clearInterval(interval);
-        };
-    }, []);
 
     /**
      * Renders content based on the selected tab.
@@ -153,7 +117,7 @@ function Outerloader() {
 
     const cancelTask = () => {
         const jsonData = {
-            action: delete,
+            action: "delete",
         };
 
         fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {

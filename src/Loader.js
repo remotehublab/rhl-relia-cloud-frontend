@@ -124,11 +124,14 @@ function Selector({
     uploadedFiles,
     handleSelect,
     handleRemove,
-    tableIsVisible
+    tableIsVisible,
+    storedFiles,
 }) {
-    if (tableIsVisible) {
-        return (
-                // TODO: add translations to the first row elements handleSendToSDR(selectedFilesColumnRX, selectedFilesColumnTX)
+
+    const combinedFileNames = [...new Set([...uploadedFiles.map(file => file.name), ...storedFiles])];
+
+    return (
+            // TODO: add translations to the first row elements handleSendToSDR(selectedFilesColumnRX, selectedFilesColumnTX)
       <Container>
           <Row>
             <Col xs={7} md={5} className={"file-name-col"}>
@@ -144,11 +147,11 @@ function Selector({
               Delete
             </Col>
           </Row>
-            {uploadedFiles.map((file, index) => (
+            {combinedFileNames.map((fileName, index)=> (
           <Row key={index}>
             <Col xs={7} md={5} className={"file-col"}>
               <span  className={"file-name-col"}>
-                {file.name}
+                {fileName}
               </span>
             </Col>
             <Col xs={2} md={3} className={"radio-col"}>
@@ -170,7 +173,7 @@ function Selector({
         ))}
       </Container>
     );
-  }
+
 }
 
 /**
@@ -229,7 +232,7 @@ function Sender({
                 });
      };
 
-        const sendMetaData = () => {
+     const sendMetaData = () => {
             const receiverFileNames = [];
             const transmitterFileNames = [];
 
@@ -264,38 +267,38 @@ function Sender({
             });
         };
 
-        // When clicked on the button below the file list,
-        // call the new task method explained above, and redirect the user to the “Laboratory” tab.
-        const manageTask = () => {
+    // When clicked on the button below the file list,
+    // call the new task method explained above, and redirect the user to the “Laboratory” tab.
+    const manageTask = () => {
 
-            fetch('/user/tasks/' ,{
-                        method: 'POST'
-                    })
-                    .then((response) => {
-                        if (response.status === 200) {
-                            return response.json();
+        fetch('/user/tasks/' ,{
+                    method: 'POST'
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                })
+                .then((data) => {
+                    if (data.success) {
+
+                        const newSession = {
+                            "taskIdentifier": data.taskIdentifier,
+                            "status": data.status,
+                            "message": data.message,
+                            "renderingWidgets": currentSession.renderingWidgets,
                         }
-                    })
-                    .then((data) => {
-                        if (data.success) {
+                        setCurrentSession(newSession);
+                        Object.assign(currentSession, newSession);
+                        console.log(currentSession);
+                        setTimeout(checkStatus, 1000 );
 
-                            const newSession = {
-                                "taskIdentifier": data.taskIdentifier,
-                                "status": data.status,
-                                "message": data.message,
-                                "renderingWidgets": currentSession.renderingWidgets,
-                            }
-                            setCurrentSession(newSession);
-                            Object.assign(currentSession, newSession);
-                            console.log(currentSession);
-                            setTimeout(checkStatus, 1000 );
+                    } else {
 
-                        } else {
-
-                            console.error('Failed to create task:', data.message);
-                        }
-                    });
-        };
+                        console.error('Failed to create task:', data.message);
+                    }
+                });
+    };
 
 
     if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
@@ -320,11 +323,51 @@ function Sender({
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader({currentSession, setCurrentSession, setSelectedTab}) {
+function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles}) {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
     const [tableIsVisible, setTableIsVisible] = useState(false);
+
+
+    const handleSendToSDR = ( ) => {
+    const successFlag = true;
+    const formData = new FormData();
+
+    const receiverFileNames = [];
+    const transmitterFileNames = [];
+    selectedFilesColumnRX.forEach(function(file) {
+        receiverFileNames.push(file.name);
+    });
+
+    // Iterate through selectedFilesColumnTX and append each file to the "transmitter" key
+    selectedFilesColumnTX.forEach(function(file) {
+        transmitterFileNames.push(file.name);
+    });
+
+
+    formData.append("receiver", receiverFileNames);
+    formData.append("transmitter", transmitterFileNames);
+
+    console.log(formData);
+    // Now, send the formData using Fetch.
+      fetch('/files/metadata', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        //setSelectedTab('laboratory');
+        console.log("data sent!")
+      }).catch(error => {
+          console.error('Error uploading files:', error);
+      });
+    // idk why this crashes the program
+    if (successFlag) {
+      setSelectedTab("laboratory");
+    }
+  }
+
 
     /**
      * Handle the selection of receivers (RX) and transmitters (TX) for an uploaded file.
@@ -381,7 +424,7 @@ function Loader({currentSession, setCurrentSession, setSelectedTab}) {
           </Row>
           <Row>
             <Col>
-              <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} />
+              <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} storedFiles={storedFiles} />
             </Col>
           </Row>
           <Row>

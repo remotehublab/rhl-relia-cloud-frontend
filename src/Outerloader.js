@@ -68,6 +68,8 @@ function Outerloader() {
         "user_id": null
     });
 
+    const [storedFiles, setStoredFiles] = useState([]);
+
     // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
         "taskIdentifier": null,
@@ -91,6 +93,28 @@ function Outerloader() {
                 // Update the userData state with the retrieved data
                 setUserData(data);
             });
+
+        fetch('/files/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+                // Add any additional headers if needed
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Access the list of files from the response
+                const files = data.files;
+                setStoredFiles(files);
+                // Process the list of files as needed
+            } else {
+                console.error('Error fetching files:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }, []); // The empty array [] ensures that this effect runs only once
 
 
@@ -107,7 +131,8 @@ function Outerloader() {
             case 'introduction':
                 return <Introduction currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             case 'loadFiles':
-                return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}/>;
+                return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
+                               storedFiles={storedFiles} setStoredFiles={setStoredFiles}/>;
             case 'laboratory':
                 return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             default:

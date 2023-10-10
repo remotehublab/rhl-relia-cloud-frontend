@@ -27,7 +27,7 @@ function Laboratory({currentSession, setCurrentSession}) {
             currentSession.status === 'fully-assigned'
             || currentSession.status === 'receiver-still-processing'
             || currentSession.status === "transmitter-still-processing")) {
-            var widgets = new ReliaWidgets($("#relia-widgets"));
+            const widgets = new ReliaWidgets($("#relia-widgets"));
             widgets.start();
             const newSession = {
                             "taskIdentifier": currentSession.taskIdentifier,

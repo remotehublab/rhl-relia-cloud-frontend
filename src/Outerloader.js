@@ -70,6 +70,7 @@ function Outerloader() {
 
     const [storedFiles, setStoredFiles] = useState([]);
 
+
     // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
         "taskIdentifier": null,

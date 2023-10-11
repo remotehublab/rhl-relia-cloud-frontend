@@ -17,6 +17,7 @@
       when we remove an element it messes up with the current indexing and changes which files are selected
  */
 import React, {
+    useEffect,
     useState
 } from 'react';
 
@@ -38,19 +39,36 @@ import {
 } from 'react-bootstrap';
 import './Loader.css';
 
+
+
 /**
- * Uploader Component
- * @param {Array} uploadedFiles - An array of uploaded files.
- * @param {Function} setUploadedFiles - A function to update the uploaded files.
- * @param setTableIsVisible - A  function to update the flag to control table visibility.
+ * Loader Component
  *
- * @returns {JSX.Element} The rendered Uploader component.
+ * @returns {JSX.Element} The rendered Loader component.
  */
-function Uploader({
-    uploadedFiles,
-    setUploadedFiles,
-    setTableIsVisible
-}) {
+function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles}) {
+    const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
+    const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
+    const [senderComponent, setSenderComponent] = useState(<Container />);
+
+    useEffect(() => {
+    if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
+      setSenderComponent(
+        <Container className={"sender-container"}>
+          <Row>
+            <Col md={{ span: 6, offset: 3 }} className={"loader-col"}>
+              <Button className={"loader-button"} onClick={() => sendMetaData()}>
+                {t("loader.select.send-to-sdr-devices")}
+              </Button>
+            </Col>
+          </Row>
+        </Container>
+      );
+    } else {
+      setSenderComponent(<Container />);
+    }
+  }, [selectedFilesColumnTX, selectedFilesColumnRX]);
+
 
     /**
      * handleFileChange function is responsible for updating the selectedFiles state
@@ -58,8 +76,6 @@ function Uploader({
      * It checks if any files are selected, updates the state with the chosen files,
      * and adds them to the uploadedFiles state
      * If no files are selected, it logs a message to indicate that no files were selected.
-     * TODO: this function is quite big and its handling both the frontend and backend part of file handling,
-     *       it would be best to separate it
      */
     const handleFileChange = (event) => {
         if (event.target.files.length > 0) {
@@ -79,16 +95,12 @@ function Uploader({
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const uniqueNames = new Set();
-                    const uniqueFiles = [...uploadedFiles, ...newUploadedFiles].filter(file => {
-                        if (!uniqueNames.has(file.name)) {
-                            uniqueNames.add(file.name);
-                            return true; // Include the file in the result
-                        }
-                        return false; // Exclude duplicates
-                    });
-                    setUploadedFiles(uniqueFiles);
-                    setTableIsVisible(true);
+                    const newFileNames = [];
+                    for (const newFile of newUploadedFiles) {
+                        // TODO: add check for unique files
+                        newFileNames.push(newFile.name);
+                    }
+                    setStoredFiles([...storedFiles, ...newFileNames]);
                 }).catch(error => {
                     console.error('Error uploading files:', error);
                 });
@@ -99,99 +111,67 @@ function Uploader({
         }
     };
 
-    return (
-    <Container>
-      <Row>
-        <Col md={{span: 6, offset: 3}} className={"form-col"}>
-          <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple />
-        </Col>
-      </Row>
-    </Container>
-  );
-}
 
-/**
- * Selector Component
- *
- * @param {Array} uploadedFiles - An array of uploaded files.
- * @param {Function} handleSelect - A function to handle the selection of receivers and transmitters.
- * @param {Function} handleRemove - A function to handle row removal.
- * @param {boolean} tableIsVisible - A flag to control table visibility.
- *
- * @returns {JSX.Element} The rendered Selector component.
- */
-function Selector({
-    uploadedFiles,
-    handleSelect,
-    handleRemove,
-    tableIsVisible,
-    storedFiles,
-}) {
+    /**
+     * Handle the selection of receivers (RX) and transmitters (TX) for an uploaded file.
+     *
+     * @param {number} index - The index of the uploaded file in the array.
+     * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
+     */
+    const handleSelect = (index, column) => {
+        if (column === 'RX') {
+            if (selectedFilesColumnRX.includes(storedFiles[index])) {
+                setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== storedFiles[index]));
+                Object.assign(selectedFilesColumnRX, selectedFilesColumnRX.filter(item => item !== storedFiles[index]));
+            } else {
+                setSelectedFilesColumnRX([...selectedFilesColumnRX, storedFiles[index]]);
+                Object.assign(selectedFilesColumnRX, [...selectedFilesColumnRX, storedFiles[index]]);
 
-    const combinedFileNames = [...new Set([...uploadedFiles.map(file => file.name), ...storedFiles])];
+            }
 
-    return (
-            // TODO: add translations to the first row elements handleSendToSDR(selectedFilesColumnRX, selectedFilesColumnTX)
-      <Container>
-          <Row>
-            <Col xs={7} md={5} className={"file-name-col"}>
-              File Name
-            </Col>
-            <Col xs={2} md={3} className={"radio-col"}>
-              Tx
-            </Col>
-            <Col xs={2} md={3} className={"radio-col"}>
-              Rx
-            </Col>
-            <Col xs={1}  className={"remove-col"}>
-              Delete
-            </Col>
-          </Row>
-            {combinedFileNames.map((fileName, index)=> (
-          <Row key={index}>
-            <Col xs={7} md={5} className={"file-col"}>
-              <span  className={"file-name-col"}>
-                {fileName}
-              </span>
-            </Col>
-            <Col xs={2} md={3} className={"radio-col"}>
-              <Form.Check
-                name="receiver"
-                onChange={() => handleSelect(index, 'TX')}
-              />
-            </Col>
-            <Col xs={2} md={3} className={"radio-col"}>
-              <Form.Check
-                name="transmitter"
-                onChange={() => handleSelect(index, 'RX')}
-              />
-            </Col>
-            <Col xs={1}  className={"remove-col"}>
-              <Button variant="danger" size="sm" onClick={() => handleRemove(index)}><i className="bi bi-x-lg"></i></Button>
-            </Col>
-          </Row>
-        ))}
-      </Container>
-    );
+        } else if (column === 'TX') {
+            if (selectedFilesColumnTX.includes(storedFiles[index])) {
+                setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== storedFiles[index]));
+                Object.assign(selectedFilesColumnTX, selectedFilesColumnTX.filter(item => item !== storedFiles[index]));
+            } else {
+                setSelectedFilesColumnTX([...selectedFilesColumnTX, storedFiles[index]]);
+                Object.assign(selectedFilesColumnTX, [...selectedFilesColumnTX, storedFiles[index]]);
+            }
+        }
 
-}
+        sendMetaData();
+    };
 
-/**
- * Sender component that hosts a button that sends the files to Sdr Device
- * @param selectedFilesColumnRX - RX files
- * @param selectedFilesColumnTX - TX files
- * @param {Function} handleSendToSDR      - Function that does the upload process
- * @returns {JSX.Element} - The rendered Sender component.
- */
-function Sender({
-    selectedFilesColumnRX,
-    selectedFilesColumnTX,
-    currentSession,
-    setCurrentSession,
-    setSelectedTab,
-}) {
+    const handleRemove = (indexToRemove) => {
+        fetch('/files/' + storedFiles[indexToRemove], {
+                method: 'DELETE'
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                // Update the userData state with the retrieved data
+                if (data.success) {
+                    console.log("removed file from server");
+                    setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== storedFiles[indexToRemove]))
+                    Object.assign(selectedFilesColumnRX, selectedFilesColumnRX.filter(item => item !== storedFiles[indexToRemove]));
+                    setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== storedFiles[indexToRemove]));
+                    Object.assign(selectedFilesColumnTX, selectedFilesColumnTX.filter(item => item !== storedFiles[indexToRemove]));
+                    setStoredFiles(storedFiles.filter((file, index) => index !== indexToRemove));
+                    sendMetaData();
+                } else {
+                    console.log("failed to remove file");
+                }
+            });
 
-     const checkStatus = () => {
+
+
+    };
+
+
+    const checkStatus = () => {
          fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
                     method: 'GET'
                 })
@@ -237,11 +217,11 @@ function Sender({
             const transmitterFileNames = [];
 
             selectedFilesColumnRX.forEach(function(file) {
-                receiverFileNames.push(file.name);
+                receiverFileNames.push(file);
             });
 
             selectedFilesColumnTX.forEach(function(file) {
-                transmitterFileNames.push(file.name);
+                transmitterFileNames.push(file);
             });
 
             const jsonData = {
@@ -260,13 +240,11 @@ function Sender({
             .then(response => response.json())
             .then(data => {
                 console.log("data sent!")
-                manageTask();
             })
             .catch(error => {
                 console.error('Error sending metadata:', error);
             });
         };
-
     // When clicked on the button below the file list,
     // call the new task method explained above, and redirect the user to the “Laboratory” tab.
     const manageTask = () => {
@@ -301,137 +279,69 @@ function Sender({
     };
 
 
-    if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
-        return (
-      <Container className={"sender-container"}>
-        <Row>
-          <Col md={{span: 6, offset: 3}} className={"loader-col"}>
-            <Button className={"loader-button"} onClick={() => (sendMetaData())}>{t("loader.select.send-to-sdr-devices")}</Button>
-          </Col>
-        </Row>
-      </Container>
-    );
-  } else {
-    return (
-      <Container/>
-    );
-  }
-}
 
-/**
- * Loader Component
- *
- * @returns {JSX.Element} The rendered Loader component.
- */
-function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles}) {
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
-    const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
-    const [tableIsVisible, setTableIsVisible] = useState(false);
-
-
-    const handleSendToSDR = ( ) => {
-    const successFlag = true;
-    const formData = new FormData();
-
-    const receiverFileNames = [];
-    const transmitterFileNames = [];
-    selectedFilesColumnRX.forEach(function(file) {
-        receiverFileNames.push(file.name);
-    });
-
-    // Iterate through selectedFilesColumnTX and append each file to the "transmitter" key
-    selectedFilesColumnTX.forEach(function(file) {
-        transmitterFileNames.push(file.name);
-    });
-
-
-    formData.append("receiver", receiverFileNames);
-    formData.append("transmitter", transmitterFileNames);
-
-    console.log(formData);
-    // Now, send the formData using Fetch.
-      fetch('/files/metadata', {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        //setSelectedTab('laboratory');
-        console.log("data sent!")
-      }).catch(error => {
-          console.error('Error uploading files:', error);
-      });
-    // idk why this crashes the program
-    if (successFlag) {
-      setSelectedTab("laboratory");
-    }
-  }
-
-
-    /**
-     * Handle the selection of receivers (RX) and transmitters (TX) for an uploaded file.
-     *
-     * @param {number} index - The index of the uploaded file in the array.
-     * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
-     */
-    const handleSelect = (index, column) => {
-        if (column === 'RX') {
-            if (selectedFilesColumnRX.includes(uploadedFiles[index])) {
-                setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[index]));
-            } else {
-                setSelectedFilesColumnRX([...selectedFilesColumnRX, uploadedFiles[index]]);
-            }
-
-        } else if (column === 'TX') {
-            if (selectedFilesColumnTX.includes(uploadedFiles[index])) {
-                setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== uploadedFiles[index]))
-            } else {
-                setSelectedFilesColumnTX([...selectedFilesColumnTX, uploadedFiles[index]]);
-            }
-        }
-    };
-
-    const handleRemove = (indexToRemove) => {
-        fetch('/files/' + uploadedFiles[indexToRemove].name, {
-                method: 'DELETE'
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                // Update the userData state with the retrieved data
-                if (data.success) {
-                    console.log("removed file from server");
-                } else {
-                    console.log("failed to remove file");
-                }
-            });
-        setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== uploadedFiles[indexToRemove]))
-        setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== uploadedFiles[indexToRemove]))
-        setUploadedFiles(uploadedFiles.filter((file, index) => index !== indexToRemove));
-    };
 
     return (
       <Container>
         <Col md={{span: 8, offset: 2}}>
           <Row>
             <Col>
-              <Uploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} tableIsVisible={tableIsVisible} setTableIsVisible={setTableIsVisible}/>
+              <Container>
+                  <Row>
+                    <Col md={{span: 6, offset: 3}} className={"form-col"}>
+                      <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple />
+                    </Col>
+                  </Row>
+              </Container>
             </Col>
           </Row>
           <Row>
             <Col>
-              <Selector uploadedFiles={uploadedFiles} handleSelect={handleSelect} handleRemove={handleRemove} tableIsVisible={tableIsVisible} storedFiles={storedFiles} />
+              <Container>
+                  <Row>
+                    <Col xs={7} md={5} className={"file-name-col"}>
+                      File Name
+                    </Col>
+                    <Col xs={2} md={3} className={"radio-col"}>
+                      Tx
+                    </Col>
+                    <Col xs={2} md={3} className={"radio-col"}>
+                      Rx
+                    </Col>
+                    <Col xs={1}  className={"remove-col"}>
+                      Delete
+                    </Col>
+                  </Row>
+                    {storedFiles.map((fileName, index)=> (
+                  <Row key={index}>
+                    <Col xs={7} md={5} className={"file-col"}>
+                      <span  className={"file-name-col"}>
+                        {fileName}
+                      </span>
+                    </Col>
+                    <Col xs={2} md={3} className={"radio-col"}>
+                      <Form.Check
+                        name="receiver"
+                        onChange={() => handleSelect(index, 'TX')}
+                      />
+                    </Col>
+                    <Col xs={2} md={3} className={"radio-col"}>
+                      <Form.Check
+                        name="transmitter"
+                        onChange={() => handleSelect(index, 'RX')}
+                      />
+                    </Col>
+                    <Col xs={1}  className={"remove-col"}>
+                      <Button variant="danger" size="sm" onClick={() => handleRemove(index)}><i className="bi bi-x-lg"></i></Button>
+                    </Col>
+                  </Row>
+                ))}
+              </Container>
             </Col>
           </Row>
           <Row>
             <Col>
-              <Sender selectedFilesColumnTX={selectedFilesColumnTX} selectedFilesColumnRX={selectedFilesColumnRX}
-                      currentSession={currentSession} setCurrentSession={setCurrentSession}
-                      setSelectedTab ={setSelectedTab}/>
+                {senderComponent}
             </Col>
           </Row>
         </Col>

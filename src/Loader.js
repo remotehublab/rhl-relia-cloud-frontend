@@ -57,7 +57,7 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
         <Container className={"sender-container"}>
           <Row>
             <Col md={{ span: 6, offset: 3 }} className={"loader-col"}>
-              <Button className={"loader-button"} onClick={() => sendMetaData()}>
+              <Button className={"loader-button"} onClick={() => manageTask()}>
                 {t("loader.select.send-to-sdr-devices")}
               </Button>
             </Col>
@@ -69,7 +69,11 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
     }
   }, [selectedFilesColumnTX, selectedFilesColumnRX]);
 
-
+    useEffect(() => {
+        if (currentSession.status == "completed") {
+            setSelectedTab("laboratory");
+        }
+    }, [currentSession]);
     /**
      * handleFileChange function is responsible for updating the selectedFiles state
      * when one or more files are chosen using the file input.
@@ -190,7 +194,7 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                         }
                         setCurrentSession(newSession);
                         Object.assign(currentSession, newSession);
-                        console.log(currentSession);
+                        console.log("checked status " + currentSession);
 
                         // TODO: reorder to be the same as keys.py
                         if (

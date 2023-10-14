@@ -225,15 +225,15 @@ function Outerloader() {
             </Row>
             <Row  >
                 <Col className={"pills-container"} md={{span: 6, offset: 3}}  >
-                    <Nav variant="pills" defaultActiveKey="1. Introduction">
+                    <Nav variant="pills" defaultActiveKey="introduction" activeKey={selectedTab}>
                       <Nav.Item >
-                        <Nav.Link   eventKey="1. Introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. { t("loader.upload.introduction") }</Nav.Link>
+                        <Nav.Link   eventKey="introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. { t("loader.upload.introduction") }</Nav.Link>
                       </Nav.Item >
                       <Nav.Item>
-                        <Nav.Link  eventKey="2. Load Files" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. {t("loader.upload.load-files")}</Nav.Link>
+                        <Nav.Link  eventKey="loadFiles" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. {t("loader.upload.load-files")}</Nav.Link>
                       </Nav.Item>
                       <Nav.Item>
-                        <Nav.Link  eventKey="3. Laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. {t("loader.upload.laboratory")}</Nav.Link>
+                        <Nav.Link  eventKey="laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. {t("loader.upload.laboratory")}</Nav.Link>
                       </Nav.Item>
                     </Nav>
                 </Col>

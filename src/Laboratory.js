@@ -6,9 +6,7 @@ import { withTranslation } from 'react-i18next';
 
 import { Container } from 'react-bootstrap';
 
-
 import  { ReliaWidgets} from "./components/blocks/loaderDevelopment";
-
 import $ from 'jquery';
 
 
@@ -19,12 +17,13 @@ import $ from 'jquery';
  *
  * @returns {JSX.Element} The rendered Introduction component.
  */
-function Laboratory({currentSession, setCurrentSession}) {
+function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
+    useEffect(() => {
+        var newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
+        setReliaWidgets(newReliaWidgets);
+        newReliaWidgets.start();
+    }, []);
 
-    window.API_BASE_URL = "/api/";
-    console.log(" im here");
-    const widgets = new ReliaWidgets($("#relia-widgets"));
-    widgets.start();
     // if (!currentSession.renderingWidgets && (
     //     currentSession.status === 'fully-assigned'
     //     || currentSession.status === 'receiver-still-processing'

@@ -69,11 +69,6 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
     }
   }, [selectedFilesColumnTX, selectedFilesColumnRX]);
 
-    useEffect(() => {
-        if (currentSession.status == "completed") {
-            setSelectedTab("laboratory");
-        }
-    }, [currentSession]);
     /**
      * handleFileChange function is responsible for updating the selectedFiles state
      * when one or more files are chosen using the file input.
@@ -274,6 +269,8 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                         Object.assign(currentSession, newSession);
                         console.log(currentSession);
                         setTimeout(checkStatus, 1000 );
+
+                        setSelectedTab("laboratory");
 
                     } else {
 

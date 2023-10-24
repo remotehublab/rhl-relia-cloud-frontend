@@ -45,6 +45,7 @@ export class ReliaWidgets {
 	* stop()
 	*/
 	stop() {
+		console.log("STOPPING RELIAWIDGETS");
 		if (this.running) {
 			this.running = false;
 

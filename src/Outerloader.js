@@ -47,7 +47,6 @@ import LabsLand_logo from './components/images/LabsLand-logo.png';
 import UW_logo from './components/images/uw-logo.gif';
 import RHL_logo from './components/images/RHL-logo.png';
 
-
 /**
  * Renders the Outerloader component.
  *
@@ -68,8 +67,9 @@ function Outerloader() {
         "user_id": null
     });
 
-    const [storedFiles, setStoredFiles] = useState([]);
+    const [reliaWidgets, setReliaWidgets] = useState(null);
 
+    const [storedFiles, setStoredFiles] = useState([]);
 
     // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
@@ -78,6 +78,9 @@ function Outerloader() {
         "message": "",
         "renderingWidgets": false,
     });
+
+    window.API_BASE_URL = "/api/";
+
 
     useEffect(() => {
 
@@ -148,12 +151,18 @@ function Outerloader() {
     const renderContent = () => {
         switch (selectedTab) {
             case 'introduction':
+                if (reliaWidgets != null) {
+                    reliaWidgets.stop();
+                }
                 return <Introduction currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             case 'loadFiles':
+                if (reliaWidgets != null) {
+                    reliaWidgets.stop();
+                }
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
                                storedFiles={storedFiles} setStoredFiles={setStoredFiles}/>;
             case 'laboratory':
-                return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
+                return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}/> ;
             default:
                 return null;
         }

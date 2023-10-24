@@ -79,6 +79,24 @@ function Outerloader() {
         "renderingWidgets": false,
     });
 
+    useEffect(() => {
+
+      const head = document.head;
+      let script = document.getElementById('googleChartsScript');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = "https://www.gstatic.com/charts/loader.js";
+        script.id = 'googleChartsScript';
+        script.onload = () => {
+          if (window.google && window.google.charts) {
+            window.google.charts.load('current', { 'packages': ['corechart'] });
+
+          }
+        };
+        head.appendChild(script);
+      }
+  }, []);
+
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
         // Make the fetch call to retrieve user data
@@ -199,6 +217,7 @@ function Outerloader() {
 
     return (
         <Container>
+
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>

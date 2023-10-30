@@ -1,21 +1,12 @@
 /**
-  This React component file defines a set of components and functionality for uploading, selecting,
-  and sending gnr files to an SDR device. It consists of the following components:
-
-  - `Uploader`: Handles file upload functionality, allowing users to select files for transmission.
-  - `Selector`: Displays a list of uploaded files and provides options to select which files are receivers and transmitters.
-  - `Sender`: Hosts a button that initiates the process of sending selected files to the SDR device.
-  - `Loader`: The top-level component that manages state, interactions between child components, and file upload and transmission logic.
-
+  Inner component for the relia webapp, part of the loadFiles tab
+   defines a set of components and functionality for uploading, selecting,
+   and sending gnr files to the SDR device.
    Todo:
      = Add missing translations
-
-
-
-  Known bugs:
-   = because we are using an index to set what file is currently selected in our table in the Selector component,
-      when we remove an element it messes up with the current indexing and changes which files are selected
  */
+
+// react stuff
 import React, {
     useEffect,
     useState
@@ -43,14 +34,35 @@ import './Loader.css';
 
 /**
  * Loader Component
+ * @param {Object} currentSession - Holds the data for the current user session
+ * @param {Function} setCurrentSession - Function to set the current user session.
+ * @param {Function} setSelectedTab - Function to set the selected tab (intro/files/lab).
+ * @param {Object[]} storedFiles - Array with the stored files.
+ * @param {Function} setStoredFiles - Function to set the stored files.
+ * @param {Object[]} selectedFilesColumnRX - Array with the stored files that are selected as RX files.
+ * @param {Function} setSelectedFilesColumnRX - Function to set the selected files for the RX array.
+ * @param {Object} selectedFilesColumnTX - Array with the stored files that are selected as TX files.
+ * @param {Function} setSelectedFilesColumnTX - Function to set the selected files for the TX array.
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles,
-                    selectedFilesColumnRX, setSelectedFilesColumnRX, selectedFilesColumnTX, setSelectedFilesColumnTX}) {
+function Loader({
+    currentSession,
+    setCurrentSession,
+    setSelectedTab,
+    storedFiles,
+    setStoredFiles,
+    selectedFilesColumnRX,
+    setSelectedFilesColumnRX,
+    selectedFilesColumnTX,
+    setSelectedFilesColumnTX
+}) {
+
+
+    // inner container that hold the send to device button, implemented separately, so it can be dynamically rendered
     const [senderComponent, setSenderComponent] = useState(<Container />);
 
-    // If we have files, load send to sdr button
+    // effect hook that updates the container object  if we ever have more then one file
     useEffect(() => {
     if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
       setSenderComponent(
@@ -74,8 +86,9 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
      * handleFileChange function is responsible for updating the selectedFiles state
      * when one or more files are chosen using the file input.
      * It checks if any files are selected, updates the state with the chosen files,
-     * and adds them to the uploadedFiles state
+     * and adds them to the storedFiles state
      * If no files are selected, it logs a message to indicate that no files were selected.
+     * It also makes a call to the backend to send the new files to the server
      */
     const handleFileChange = (event) => {
         if (event.target.files.length > 0) {
@@ -115,8 +128,8 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
     /**
      * Handle the selection of receivers (RX) and transmitters (TX) for an uploaded file.
      *
-     * @param {number} index - The index of the uploaded file in the array.
-     * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
+     * @param {string} column - The type of the file (RX/TX).
+     * @param {string} fileName - name of the file
      */
     const handleSelect = ( column, fileName) => {
         if (column === 'RX') {
@@ -125,7 +138,6 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                 setSelectedFilesColumnRX(newColumnRX);
             } else {
                 setSelectedFilesColumnRX([...selectedFilesColumnRX, fileName]);
-
             }
 
         } else if (column === 'TX') {
@@ -134,82 +146,122 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
             } else {
                 setSelectedFilesColumnTX([...selectedFilesColumnTX, fileName]);
             }
+        } else {
+            console.log(column + " is not a valid column");
         }
 
     };
 
+    /**
+     * Removes a selected file from both the server and the client-side state.
+     *
+     * This function sends a DELETE request to the server for the specified file.
+     * Upon successful deletion from the server, it updates the client-side state to reflect
+     * the removal. This includes removing the file from the lists of selected files for
+     * both RX (receiver) and TX (transmitter) and from the overall stored files.
+     *
+     * @param {string} fileName - The name of the file to be removed.
+     *
+     * Usage:
+     * This function is triggered when the delete button next to a file is clicked.
+     * It is crucial for maintaining the synchronization between the server's and client's
+     * perception of which files are available and selected for the operations of the SDR (Software Defined Radio) device.
+     *
+     */
     const handleRemove = (fileName) => {
+        // update backend
         fetch('/files/' + fileName, {
                 method: 'DELETE'
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                // Update the userData state with the retrieved data
-                if (data.success) {
-                    console.log("removed file from server");
-                    setSelectedFilesColumnRX(selectedFilesColumnRX.filter(file => file !== fileName));
-                    setSelectedFilesColumnTX(selectedFilesColumnTX.filter(file => file !== fileName));
-                    setStoredFiles(storedFiles.filter(file => file !== fileName));
-
-                } else {
-                    console.log("failed to remove file");
-                }
-            });
-
-
-
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then((data) => {
+            // Update the userData state with the retrieved data
+            if (data.success) {
+                console.log("removed file from server");
+                setSelectedFilesColumnRX(selectedFilesColumnRX.filter(file => file !== fileName));
+                setSelectedFilesColumnTX(selectedFilesColumnTX.filter(file => file !== fileName));
+                setStoredFiles(storedFiles.filter(file => file !== fileName));
+            } else {
+                console.log("failed to remove file");
+            }
+        });
     };
 
-
+    /**
+     * Periodically checks the status of the current user task on the server.
+     *
+     * This function makes GET requests to the server to retrieve the current status of a task
+     * identified by `currentSession.taskIdentifier`. It updates the `currentSession` state with
+     * the new status, message, and any additional data received from the server.
+     *
+     * If the task status is one of the intermediate states (like "queued", "receiver-assigned",
+     * "fully-assigned", etc.), the function sets a timeout to call itself again, effectively
+     * creating a polling mechanism to regularly check for updates until the task reaches a
+     * final state (like "completed" or "deleted").
+     *
+     * @requires currentSession - The current user session object, which contains the taskIdentifier.
+     * @modifies currentSession - Updates the currentSession state with the latest task status and message.
+     *
+     * Usage:
+     * This function is used to continuously monitor the progress of a task related to SDR (Software Defined Radio) operations.
+     * It is important for keeping the user interface in sync with the task's progress on the server.
+     */
     const checkStatus = () => {
          fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
-                    method: 'GET'
-                })
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                })
-                .then((data) => {
-                    if (data.success) {
-                        const newSession = {
-                            "taskIdentifier": currentSession.taskIdentifier,
-                            "status": data.status,
-                            "message": data.message,
-                            "renderingWidgets": currentSession.renderingWidgets,
-                        }
-                        setCurrentSession(newSession);
-                        Object.assign(currentSession, newSession);
-                        console.log("checked status " + currentSession);
-
-                        // TODO: reorder to be the same as keys.py
-                        if (
-                            // skip completed
-                               data.status === "queued"
-                            //  skip deleted
-                            || data.status === "receiver-assigned"
-                            || data.status === "fully-assigned"
-                            || data.status === 'receiver-still-processing'
-                            || data.status === "transmitter-still-processing"
-                            || data.status === 'receiver-assigned' ) {
-                            setTimeout(checkStatus, 1000 );
-                        }
-
-                    } else {
-
-                        console.error('Failed to check status:', data.message);
-                    }
-                });
+            method: 'GET'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then((data) => {
+            if (data.success) {
+                const newSession = {
+                    "taskIdentifier": currentSession.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log("checked status " + currentSession);
+                if (// skip completed
+                    data.status === "queued"
+                    //  skip deleted
+                    || data.status === "receiver-assigned"
+                    || data.status === "fully-assigned"
+                    || data.status === 'receiver-still-processing'
+                    || data.status === "transmitter-still-processing"
+                    || data.status === 'receiver-assigned' ) {
+                    setTimeout(checkStatus, 1000 );
+                }
+            } else {
+                console.error('Failed to check status:', data.message);
+            }
+        });
      };
 
+     /**
+     * Sends metadata about selected transmitter and receiver files to the server.
+     *
+     * This function gathers the names of the files selected as transmitters (TX) and receivers (RX),
+     * and sends this information as JSON data to the server. It's part of the process of setting up
+     * tasks for SDR (Software Defined Radio) operations, where the server needs to know which files
+     * are intended for transmission and which for reception.
+     *
+     * The function iterates over `selectedFilesColumnRX` and `selectedFilesColumnTX` arrays,
+     * populating `receiverFileNames` and `transmitterFileNames` respectively. These arrays are then
+     * used to form a JSON object which is sent to the server via a POST request to the '/files/metadata' endpoint.
+     *
+     * @requires selectedFilesColumnRX - Array of file names selected as receivers (RX).
+     * @requires selectedFilesColumnTX - Array of file names selected as transmitters (TX).
+     *
+     */
      const sendMetaData = () => {
             const receiverFileNames = [];
             const transmitterFileNames = [];
-            console.log(" in metadata, selectedFilesColumnRX = " + selectedFilesColumnRX  );
+
             selectedFilesColumnRX.forEach(function(file) {
                 receiverFileNames.push(file);
             });
@@ -222,7 +274,6 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                 receiver: receiverFileNames,
                 transmitter: transmitterFileNames,
             };
-            console.log(jsonData);
 
             fetch('/files/metadata', {
                     method: 'POST',
@@ -230,48 +281,40 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(jsonData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("data sent!")
-            })
-            .catch(error => {
+            }).then(response => response.json()).then(data => {
+                console.log("data sent! (" + jsonData +")");
+            }).catch(error => {
                 console.error('Error sending metadata:', error);
             });
         };
+
     // When clicked on the button below the file list,
     // call the new task method explained above, and redirect the user to the “Laboratory” tab.
     const manageTask = () => {
 
         fetch('/user/tasks/' ,{
                     method: 'POST'
-                })
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                })
-                .then((data) => {
-                    if (data.success) {
-
-                        const newSession = {
-                            "taskIdentifier": data.taskIdentifier,
-                            "status": data.status,
-                            "message": data.message,
-                            "renderingWidgets": currentSession.renderingWidgets,
-                        }
-                        setCurrentSession(newSession);
-                        Object.assign(currentSession, newSession);
-                        console.log(currentSession);
-                        setTimeout(checkStatus, 1000 );
-
-                        setSelectedTab("laboratory");
-
-                    } else {
-
-                        console.error('Failed to create task:', data.message);
-                    }
-                });
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then((data) => {
+            if (data.success) {
+                const newSession = {
+                    "taskIdentifier": data.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log(currentSession);
+                setTimeout(checkStatus, 1000 );
+                setSelectedTab("laboratory");
+            } else {
+                console.error('Failed to create task:', data.message);
+            }
+        });
     };
 
 

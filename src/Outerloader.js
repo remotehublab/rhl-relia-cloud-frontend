@@ -79,6 +79,9 @@ function Outerloader() {
         "renderingWidgets": false,
     });
 
+    const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
+    const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
+
     window.API_BASE_URL = "/api/";
 
 
@@ -120,7 +123,6 @@ function Outerloader() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-                // Add any additional headers if needed
             }
         })
         .then(response => response.json())
@@ -129,7 +131,10 @@ function Outerloader() {
                 // Access the list of files from the response
                 const files = data.files;
                 setStoredFiles(files);
-                // Process the list of files as needed
+                const selectedRXFiles = data.metadata['receiver'];
+                setSelectedFilesColumnRX(selectedRXFiles);
+                const selectedTXFiles = data.metadata['transmitter'];
+                setSelectedFilesColumnTX(selectedTXFiles);
             } else {
                 console.error('Error fetching files:', data.message);
             }
@@ -160,7 +165,8 @@ function Outerloader() {
                     reliaWidgets.stop();
                 }
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
-                               storedFiles={storedFiles} setStoredFiles={setStoredFiles}/>;
+                               storedFiles={storedFiles} setStoredFiles={setStoredFiles} setSelectedFilesColumnRX={setSelectedFilesColumnRX}
+                                selectedFilesColumnRX={selectedFilesColumnRX} selectedFilesColumnTX={selectedFilesColumnTX} setSelectedFilesColumnTX={setSelectedFilesColumnTX}/>;
             case 'laboratory':
                 return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}/> ;
             default:

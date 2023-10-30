@@ -46,11 +46,11 @@ import './Loader.css';
  *
  * @returns {JSX.Element} The rendered Loader component.
  */
-function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles}) {
-    const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
-    const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
+function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles, setStoredFiles,
+                    selectedFilesColumnRX, setSelectedFilesColumnRX, selectedFilesColumnTX, setSelectedFilesColumnTX}) {
     const [senderComponent, setSenderComponent] = useState(<Container />);
 
+    // If we have files, load send to sdr button
     useEffect(() => {
     if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
       setSenderComponent(
@@ -67,6 +67,7 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
     } else {
       setSenderComponent(<Container />);
     }
+    sendMetaData();
   }, [selectedFilesColumnTX, selectedFilesColumnRX]);
 
     /**
@@ -117,32 +118,28 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
      * @param {number} index - The index of the uploaded file in the array.
      * @param {string} column - The column to which the file should be assigned ('RX' or 'TX').
      */
-    const handleSelect = (index, column) => {
+    const handleSelect = ( column, fileName) => {
         if (column === 'RX') {
-            if (selectedFilesColumnRX.includes(storedFiles[index])) {
-                setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== storedFiles[index]));
-                Object.assign(selectedFilesColumnRX, selectedFilesColumnRX.filter(item => item !== storedFiles[index]));
+            if (selectedFilesColumnRX.includes(fileName)) {
+                const newColumnRX = selectedFilesColumnRX.filter(file => file !== fileName);
+                setSelectedFilesColumnRX(newColumnRX);
             } else {
-                setSelectedFilesColumnRX([...selectedFilesColumnRX, storedFiles[index]]);
-                Object.assign(selectedFilesColumnRX, [...selectedFilesColumnRX, storedFiles[index]]);
+                setSelectedFilesColumnRX([...selectedFilesColumnRX, fileName]);
 
             }
 
         } else if (column === 'TX') {
-            if (selectedFilesColumnTX.includes(storedFiles[index])) {
-                setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== storedFiles[index]));
-                Object.assign(selectedFilesColumnTX, selectedFilesColumnTX.filter(item => item !== storedFiles[index]));
+            if (selectedFilesColumnTX.includes(fileName)) {
+                setSelectedFilesColumnTX(selectedFilesColumnTX.filter(file => file !== fileName));
             } else {
-                setSelectedFilesColumnTX([...selectedFilesColumnTX, storedFiles[index]]);
-                Object.assign(selectedFilesColumnTX, [...selectedFilesColumnTX, storedFiles[index]]);
+                setSelectedFilesColumnTX([...selectedFilesColumnTX, fileName]);
             }
         }
 
-        sendMetaData();
     };
 
-    const handleRemove = (indexToRemove) => {
-        fetch('/files/' + storedFiles[indexToRemove], {
+    const handleRemove = (fileName) => {
+        fetch('/files/' + fileName, {
                 method: 'DELETE'
             })
             .then((response) => {
@@ -154,12 +151,10 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                 // Update the userData state with the retrieved data
                 if (data.success) {
                     console.log("removed file from server");
-                    setSelectedFilesColumnRX(selectedFilesColumnRX.filter(item => item !== storedFiles[indexToRemove]))
-                    Object.assign(selectedFilesColumnRX, selectedFilesColumnRX.filter(item => item !== storedFiles[indexToRemove]));
-                    setSelectedFilesColumnTX(selectedFilesColumnTX.filter(item => item !== storedFiles[indexToRemove]));
-                    Object.assign(selectedFilesColumnTX, selectedFilesColumnTX.filter(item => item !== storedFiles[indexToRemove]));
-                    setStoredFiles(storedFiles.filter((file, index) => index !== indexToRemove));
-                    sendMetaData();
+                    setSelectedFilesColumnRX(selectedFilesColumnRX.filter(file => file !== fileName));
+                    setSelectedFilesColumnTX(selectedFilesColumnTX.filter(file => file !== fileName));
+                    setStoredFiles(storedFiles.filter(file => file !== fileName));
+
                 } else {
                     console.log("failed to remove file");
                 }
@@ -214,7 +209,7 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
      const sendMetaData = () => {
             const receiverFileNames = [];
             const transmitterFileNames = [];
-
+            console.log(" in metadata, selectedFilesColumnRX = " + selectedFilesColumnRX  );
             selectedFilesColumnRX.forEach(function(file) {
                 receiverFileNames.push(file);
             });
@@ -313,8 +308,8 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                       Delete
                     </Col>
                   </Row>
-                    {storedFiles.map((fileName, index)=> (
-                  <Row key={index}>
+                    {storedFiles.map((fileName)=> (
+                  <Row key={fileName}>
                     <Col xs={7} md={5} className={"file-col"}>
                       <span  className={"file-name-col"}>
                         {fileName}
@@ -322,18 +317,20 @@ function Loader({currentSession, setCurrentSession, setSelectedTab, storedFiles,
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
-                        name="receiver"
-                        onChange={() => handleSelect(index, 'TX')}
+                        name="transmitter"
+                        onChange={() => handleSelect('TX', fileName)}
+                        checked={selectedFilesColumnTX.includes(fileName)}
                       />
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
-                        name="transmitter"
-                        onChange={() => handleSelect(index, 'RX')}
+                        name="receiver"
+                        onChange={() => handleSelect('RX',fileName)}
+                        checked={selectedFilesColumnRX.includes(fileName)}
                       />
                     </Col>
                     <Col xs={1}  className={"remove-col"}>
-                      <Button variant="danger" size="sm" onClick={() => handleRemove(index)}><i className="bi bi-x-lg"></i></Button>
+                      <Button variant="danger" size="sm" onClick={() => handleRemove(fileName)}><i className="bi bi-x-lg"></i></Button>
                     </Col>
                   </Row>
                 ))}

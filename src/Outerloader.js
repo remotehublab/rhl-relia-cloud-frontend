@@ -271,7 +271,7 @@ function Outerloader() {
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
                 </Col>
                 <Col className={"button-container"} >
-                     <a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library></a>
+                     <a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library</a>
                 </Col>
             </Row>
             <Row  >

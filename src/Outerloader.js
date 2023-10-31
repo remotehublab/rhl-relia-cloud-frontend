@@ -86,7 +86,6 @@ function Outerloader() {
 
 
     useEffect(() => {
-
       const head = document.head;
       let script = document.getElementById('googleChartsScript');
       if (!script) {
@@ -105,46 +104,22 @@ function Outerloader() {
 
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
-        // Make the fetch call to retrieve user data
-        fetch('/user/poll', {
-                method: 'GET'
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                // Update the userData state with the retrieved data
-                setUserData(data);
-            });
+        getUserData();
+    }, []);
 
-        fetch('/files/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                // Access the list of files from the response
-                const files = data.files;
-                setStoredFiles(files);
-                const selectedRXFiles = data.metadata['receiver'];
-                setSelectedFilesColumnRX(selectedRXFiles);
-                const selectedTXFiles = data.metadata['transmitter'];
-                setSelectedFilesColumnTX(selectedTXFiles);
-            } else {
-                console.error('Error fetching files:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }, []); // The empty array [] ensures that this effect runs only once
-
-
+    useEffect(() => {
+        if ((selectedTab === "introduction" || selectedTab === "loadFiles") && (
+            // skip completed
+            currentSession.status === "queued"
+            //  skip deleted
+            || currentSession.status === "receiver-assigned"
+            || currentSession.status === "fully-assigned"
+            || currentSession.status === 'receiver-still-processing'
+            || currentSession.status === "transmitter-still-processing"
+            || currentSession.status === 'receiver-assigned' )) {
+                cancelTask();
+        }
+    }, [selectedTab]);
 
     /**
      * Renders content based on the selected tab.
@@ -174,26 +149,68 @@ function Outerloader() {
         }
     };
 
-    const cancelTask = () => {
-        const jsonData = {
-            action: "delete",
-        };
+    const getUserData = () => {
+        fetch('/user/poll', {
+                method: 'GET'
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                // Update the userData state with the retrieved data
+                setUserData(data);
+            });
 
-        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(jsonData),
-        })
-        .then(response => response.json())
-        .then(data => {
-
-        })
-        .catch(error => {
-            console.error('Error canceling task', error);
+        fetch('/files/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json()).then(data => {
+            if(data.success) {
+                // Access the list of files from the response
+                const files = data.files;
+                setStoredFiles(files);
+                const selectedRXFiles = data.metadata['receiver'];
+                setSelectedFilesColumnRX(selectedRXFiles);
+                const selectedTXFiles = data.metadata['transmitter'];
+                setSelectedFilesColumnTX(selectedTXFiles);
+            } else {
+                console.error('Error fetching files:', data.message);
+            }
+        }).catch(error => {
+            console.error('Error:', error);
         });
     }
+    const cancelTask = () => {
+    const jsonData = {
+        action: "delete",
+    };
+
+    fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Task cancellation successful', data);
+        getUserData();
+        // Additional logic here if needed, e.g., updating state or UI
+    })
+    .catch(error => {
+        console.error('Error canceling task', error);
+    });
+}
     const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
         fetch('/files/', {
@@ -258,17 +275,24 @@ function Outerloader() {
                 </Col>
             </Row>
             <Row  >
-                <Col className={"pills-container"} md={{span: 6, offset: 3}}  >
+                <Col className={"pills-container"} md={{span: 6, offset: 3}} >
                     <Nav variant="pills" defaultActiveKey="introduction" activeKey={selectedTab}>
-                      <Nav.Item >
-                        <Nav.Link   eventKey="introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>1. { t("loader.upload.introduction") }</Nav.Link>
-                      </Nav.Item >
-                      <Nav.Item>
-                        <Nav.Link  eventKey="loadFiles" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>2. {t("loader.upload.load-files")}</Nav.Link>
-                      </Nav.Item>
-                      <Nav.Item>
-                        <Nav.Link  eventKey="laboratory" onClick={() => setSelectedTab('laboratory')} className={"pill"}>3. {t("loader.upload.laboratory")}</Nav.Link>
-                      </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="introduction" onClick={() => setSelectedTab('introduction')} className={"pill"}>
+                                1. { t("loader.upload.introduction") }
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="loadFiles" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>
+                                2. {t("loader.upload.load-files")}
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            {/* Laboratory tab is disabled and cannot be clicked. It can only be activated programmatically */}
+                            <Nav.Link eventKey="laboratory" disabled className={"pill"}>
+                                3. {t("loader.upload.laboratory")}
+                            </Nav.Link>
+                        </Nav.Item>
                     </Nav>
                 </Col>
                 <Col>

@@ -1,19 +1,6 @@
 /**
   This code works as an outer layer for the Relia frontend page,
   enabling users to switch from the different segments of the lab
-
-  Components:
-  - Introduction: Displays introductory content.
-  - Loader:       Enables user to upload their GRC files
-  - Laboratory:   Displays output of the sent GRC files
-  - Outerloader: Manages tab navigation and content rendering based on the selected tab.
-
-  Todo:
-    = eventually separate Introduction and Laboratory into their on files
-    = add a footer
-      '-> problem is that would require making a new outer container
-
-
 */
 import React, {
     useEffect,
@@ -50,8 +37,10 @@ import RHL_logo from './components/images/RHL-logo.png';
 /**
  * Renders the Outerloader component.
  *
- * Displays the outer components of the webpage (timer, links, info, images, etc.)
- * This component also manages tab navigation and content rendering based on the selected tab.
+ *   The {@code Outerloader} component acts as the main interface for the Relia educational lab environment.
+ *   It offers navigational controls to switch between various segments of the lab such as Introduction, File Loading,
+ *   and Laboratory. This component is responsible for managing user sessions, handling file uploads,
+ *   and rendering content dynamically based on the user's interaction and current state.
  *
  * State:
  *  selectedTab: currently selected tab of the lab
@@ -59,6 +48,7 @@ import RHL_logo from './components/images/RHL-logo.png';
  */
 function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
+
     const [userData, setUserData] = useState({
         "locale": "en",
         "redirect_to": "",
@@ -71,7 +61,6 @@ function Outerloader() {
 
     const [storedFiles, setStoredFiles] = useState([]);
 
-    // this is the state variable for the status right?
     const [currentSession, setCurrentSession] = useState({
         "taskIdentifier": null,
         "status": "not_started",
@@ -82,25 +71,38 @@ function Outerloader() {
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
 
-    window.API_BASE_URL = "/api/";
+    // Set a global variable for the base API URL.
+window.API_BASE_URL = "/api/";
 
-
+    // Using useEffect to execute code after the component mounts.
     useEffect(() => {
+      // Accessing the document's head element.
       const head = document.head;
+
+      // Check if the Google Charts script is already loaded.
       let script = document.getElementById('googleChartsScript');
       if (!script) {
+        // If the script isn't loaded, create a new script element.
         script = document.createElement('script');
+        // Set the source of the script to load Google Charts.
         script.src = "https://www.gstatic.com/charts/loader.js";
+        // Assign an ID to the script for future reference.
         script.id = 'googleChartsScript';
-        script.onload = () => {
-          if (window.google && window.google.charts) {
-            window.google.charts.load('current', { 'packages': ['corechart'] });
 
+        // Define what happens once the script is loaded.
+        script.onload = () => {
+          // Check if the Google Charts library is available.
+          if (window.google && window.google.charts) {
+            // Load the 'corechart' package from Google Charts.
+            window.google.charts.load('current', { 'packages': ['corechart'] });
           }
         };
+
+        // Append the script element to the document's head.
         head.appendChild(script);
       }
-  }, []);
+    }, []); // The empty dependency array ensures this effect runs once after initial render.
+
 
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
@@ -115,30 +117,29 @@ function Outerloader() {
             || currentSession.status === "receiver-assigned"
             || currentSession.status === "fully-assigned"
             || currentSession.status === 'receiver-still-processing'
-            || currentSession.status === "transmitter-still-processing"
-            || currentSession.status === 'receiver-assigned' )) {
+            || currentSession.status === "transmitter-still-processing")) {
                 cancelTask();
+                if (reliaWidgets != null) {
+                    reliaWidgets.stop();
+                }
         }
     }, [selectedTab]);
 
     /**
-     * Renders content based on the selected tab.
+     * Renders the appropriate content based on the current tab selection.
      *
-     * This function is responsible for determining which component to render based on the value of the `selectedTab` state.
+     * This function determines which component to display in the UI based on the current value
+     * of the 'selectedTab' state.
      *
-     * @returns {JSX.Element | null} The rendered content for the selected tab as a JSX element, or null if no tab matches.
-     * */
+     * @returns {JSX.Element | null} - The content to be rendered for the selected tab. Returns a JSX
+     *                                 Element corresponding to the selected tab ('introduction',
+     *                                 'loadFiles', or 'laboratory'). Returns null if no tab matches.
+     */
     const renderContent = () => {
         switch (selectedTab) {
             case 'introduction':
-                if (reliaWidgets != null) {
-                    reliaWidgets.stop();
-                }
                 return <Introduction currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             case 'loadFiles':
-                if (reliaWidgets != null) {
-                    reliaWidgets.stop();
-                }
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
                                storedFiles={storedFiles} setStoredFiles={setStoredFiles} setSelectedFilesColumnRX={setSelectedFilesColumnRX}
                                 selectedFilesColumnRX={selectedFilesColumnRX} selectedFilesColumnTX={selectedFilesColumnTX} setSelectedFilesColumnTX={setSelectedFilesColumnTX}/>;
@@ -149,6 +150,17 @@ function Outerloader() {
         }
     };
 
+    /**
+     * Fetches and updates user-specific data and stored files information.
+     *
+     * This function performs two primary tasks:
+     * 1. It makes an HTTP GET request to the '/user/poll' endpoint to retrieve current user data,
+     *    such as locale, redirection URL, session ID, and user ID. This data is then used to update
+     *    the component's state.
+     * 2. It makes a second GET request to the '/files/' endpoint to fetch a list of files stored
+     *    for the current user session. It updates the component's state with the list of files,
+     *    and extracts receiver and transmitter-specific files to manage their respective states.
+     */
     const getUserData = () => {
         fetch('/user/poll', {
                 method: 'GET'
@@ -184,34 +196,59 @@ function Outerloader() {
             console.error('Error:', error);
         });
     }
-    const cancelTask = () => {
-    const jsonData = {
-        action: "delete",
-    };
 
-    fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(jsonData),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+
+    /**
+     * Cancels the current lab task based on the task identifier.
+     *
+     * This function is responsible for sending a POST request to the '/scheduler/user/tasks/{taskIdentifier}'
+     * endpoint with the action 'delete' to cancel the task that is currently associated with the user's session.
+     * It is typically invoked when a change in the user's interaction flow necessitates the cancellation of
+     * an ongoing or queued task in the lab environment.
+     *
+     * After the cancellation request is successfully processed, the function retrieves updated user data
+     * and potentially updates the UI or internal state to reflect the cancellation.
+     *
+     */
+    const cancelTask = () => {
+        const jsonData = {
+            action: "delete",
+        };
+
+        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Task cancellation successful', data);
+            getUserData();
+            // Additional logic here if needed, e.g., updating state or UI
+        })
+        .catch(error => {
+            console.error('Error canceling task', error);
+        });
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Task cancellation successful', data);
-        getUserData();
-        // Additional logic here if needed, e.g., updating state or UI
-    })
-    .catch(error => {
-        console.error('Error canceling task', error);
-    });
-}
-    const showLibrary = () => {
+
+        /**
+         * Fetches and displays the library of files for the user.
+         *
+         * This function makes an HTTP GET request to the '/files/' endpoint to retrieve a list of files
+         * available in the user's library. Upon a successful response, it processes the data to extract
+         * and log the files, along with metadata related to 'receiver' and 'transmitter'.
+         *
+         * Note: This function is primarily used for debugging.
+         */
+
+        const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
         fetch('/files/', {
                 method: 'GET'

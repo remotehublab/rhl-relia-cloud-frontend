@@ -64,7 +64,7 @@ function Loader({
 
     // effect hook that updates the container object  if we ever have more then one file
     useEffect(() => {
-    if (selectedFilesColumnTX.length > 0 || selectedFilesColumnRX.length > 0) {
+    if (selectedFilesColumnTX.length > 0 && selectedFilesColumnRX.length > 0) {
       setSenderComponent(
         <Container className={"sender-container"}>
           <Row>
@@ -288,8 +288,27 @@ function Loader({
             });
         };
 
-    // When clicked on the button below the file list,
-    // call the new task method explained above, and redirect the user to the “Laboratory” tab.
+    /**
+     * Initiates a new task for processing and switches the user to the "Laboratory" tab.
+     *
+     * This function is responsible for starting a new processing task with the server.
+     * It sends a POST request to the '/user/tasks/' endpoint to create a new task.
+     * Upon successful creation, the task's details are updated in the current session,
+     * and the user interface is redirected to the "Laboratory" tab where the task progress
+     * can be monitored. This function is an essential part of the workflow in the SDR (Software Defined Radio)
+     * operation setup, where it marks the transition from file selection and setup to the actual
+     * processing and observation phase in the "Laboratory" tab.
+     *
+     * On a successful server response, the current session state is updated with the new task's
+     * identifier, status, and message. This function also initiates a status check loop by calling
+     * `checkStatus` function, which repeatedly checks the status of the newly created task.
+     *
+     * Usage:
+     * This function is typically called when a user has finished setting up files for transmission
+     * and reception and is ready to start the processing task. It represents a key action in the
+     * workflow of submitting and monitoring tasks in the application.
+     *
+    */
     const manageTask = () => {
 
         fetch('/user/tasks/' ,{
@@ -316,8 +335,6 @@ function Loader({
             }
         });
     };
-
-
 
 
     return (

@@ -19,10 +19,20 @@ import $ from 'jquery';
  */
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
     useEffect(() => {
+        if (reliaWidgets !== null)
+            reliaWidgets.stop();
+        
         var newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
-        setReliaWidgets(newReliaWidgets);
         newReliaWidgets.start();
+        setReliaWidgets(newReliaWidgets);
     }, []);
+
+    useEffect(() => {
+        if (currentSession.status == "completed" || currentSession.status == "error" || currentSession.status == "deleted") {
+            if (reliaWidgets !== null)
+                reliaWidgets.stop();
+        }
+    }, [ currentSession ]);
 
     return (
         <Container className={"loader-container"}>

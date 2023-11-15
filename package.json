@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
+    "env-cmd": "^10.1.0",
     "http-proxy-middleware": "^2.0.6",
     "i18next": "^23.4.4",
     "i18next-http-backend": "^2.2.1",
@@ -24,10 +25,19 @@
     "react-scripts": "^2.1.3",
     "react-slugify": "^2.1.0",
     "slugify": "^1.6.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "env-cmd": "^10.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:pluto:prod": "env-cmd -f .env.pluto.production react-scripts start",
+    "start:pluto:test": "env-cmd -f .env.pluto.test react-scripts start",
+    "start:redpitaya:prod": "env-cmd -f .env.redpitaya.production react-scripts start",
+    "start:redpitaya:test": "env-cmd -f .env.redpitaya.test react-scripts start",
+    "build:pluto:prod": "env-cmd -f .env.pluto.production react-scripts build",
+    "build:pluto:test": "env-cmd -f .env.pluto.test react-scripts build",
+    "build:redpitaya:prod": "env-cmd -f .env.redpitaya.production react-scripts build",
+    "build:redpitaya:test": "env-cmd -f .env.redpitaya.test react-scripts build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

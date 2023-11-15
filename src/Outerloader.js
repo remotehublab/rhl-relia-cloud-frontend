@@ -100,6 +100,7 @@ window.API_BASE_URL = "/api/";
 
         // Append the script element to the document's head.
         head.appendChild(script);
+        console.log(process.env.REACT_APP_API_BASE_URL);
       }
     }, []); // The empty dependency array ensures this effect runs once after initial render.
 

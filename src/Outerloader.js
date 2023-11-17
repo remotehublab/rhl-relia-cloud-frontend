@@ -72,7 +72,7 @@ function Outerloader() {
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
 
     // Set a global variable for the base API URL.
-window.API_BASE_URL = "/api/";
+    window.API_BASE_URL = "/api/";
 
     // Using useEffect to execute code after the component mounts.
     useEffect(() => {
@@ -100,7 +100,7 @@ window.API_BASE_URL = "/api/";
 
         // Append the script element to the document's head.
         head.appendChild(script);
-        console.log(process.env.REACT_APP_API_BASE_URL);
+        // console.log(process.env.REACT_APP_API_BASE_URL);
       }
     }, []); // The empty dependency array ensures this effect runs once after initial render.
 
@@ -163,40 +163,55 @@ window.API_BASE_URL = "/api/";
      *    and extracts receiver and transmitter-specific files to manage their respective states.
      */
     const getUserData = () => {
-        fetch('/user/poll', {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/user/poll`, {
                 method: 'GET'
             })
             .then((response) => {
-                if (response.status === 200) {
+                if (response.ok) {  // Check if response is ok
                     return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
                 }
             })
             .then((data) => {
                 // Update the userData state with the retrieved data
                 setUserData(data);
+            })
+            .catch((error) => {
+                console.error('Fetch error:', error.message);
             });
 
-        fetch('/files/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json()).then(data => {
-            if(data.success) {
-                // Access the list of files from the response
-                const files = data.files;
-                setStoredFiles(files);
-                const selectedRXFiles = data.metadata['receiver'];
-                setSelectedFilesColumnRX(selectedRXFiles);
-                const selectedTXFiles = data.metadata['transmitter'];
-                setSelectedFilesColumnTX(selectedTXFiles);
-            } else {
-                console.error('Error fetching files:', data.message);
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    }
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                if (data.success) {
+                    // Access the list of files from the response
+                    const files = data.files;
+                    setStoredFiles(files);
+                    const selectedRXFiles = data.metadata['receiver'];
+                    setSelectedFilesColumnRX(selectedRXFiles);
+                    const selectedTXFiles = data.metadata['transmitter'];
+                    setSelectedFilesColumnTX(selectedTXFiles);
+                } else {
+                    console.error('Error fetching files:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+            });
+        }
+
 
 
     /**
@@ -216,7 +231,7 @@ window.API_BASE_URL = "/api/";
             action: "delete",
         };
 
-        fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/scheduler/user/tasks/${currentSession.taskIdentifier}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,7 +266,7 @@ window.API_BASE_URL = "/api/";
 
         const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
-        fetch('/files/', {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
                 method: 'GET'
             })
             .then((response) => {
@@ -309,7 +324,7 @@ window.API_BASE_URL = "/api/";
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>
                 </Col>
                 <Col className={"button-container"} >
-                     <a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library</a>
+                     {/*<a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library</a>*/}
                 </Col>
             </Row>
             <Row  >
@@ -334,7 +349,6 @@ window.API_BASE_URL = "/api/";
                     </Nav>
                 </Col>
                 <Col>
-                     {"Current Task Status: " + currentSession.status}
                 </Col>
             </Row>
             <Row >

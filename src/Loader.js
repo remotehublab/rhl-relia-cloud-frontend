@@ -102,7 +102,7 @@ function Loader({
             }
 
             // Now, send the formData using Fetch.
-            fetch('/files/', {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
                     method: 'POST',
                     body: formData
                 })
@@ -170,7 +170,7 @@ function Loader({
      */
     const handleRemove = (fileName) => {
         // update backend
-        fetch('/files/' + fileName, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/files/${fileName}`, {
                 method: 'DELETE'
         }).then((response) => {
             if (response.status === 200) {
@@ -209,7 +209,7 @@ function Loader({
      * It is important for keeping the user interface in sync with the task's progress on the server.
      */
     const checkStatus = () => {
-         fetch('/scheduler/user/tasks/' + currentSession.taskIdentifier, {
+         fetch(`${process.env.REACT_APP_API_BASE_URL}/scheduler/user/tasks/${currentSession.taskIdentifier}`, {
             method: 'GET'
         }).then((response) => {
             if (response.status === 200) {
@@ -275,7 +275,7 @@ function Loader({
                 transmitter: transmitterFileNames,
             };
 
-            fetch('/files/metadata', {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/metadata`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ function Loader({
     */
     const manageTask = () => {
 
-        fetch('/user/tasks/' ,{
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/user/tasks/` ,{
                     method: 'POST'
         }).then((response) => {
             if (response.status === 200) {

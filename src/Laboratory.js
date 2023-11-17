@@ -4,7 +4,7 @@ import React, {useEffect} from 'react';
 import i18n, {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
-import { Container } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import  { ReliaWidgets} from "./components/blocks/loaderDevelopment";
 import $ from 'jquery';
@@ -21,8 +21,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     useEffect(() => {
         if (reliaWidgets !== null)
             reliaWidgets.stop();
-        
-        var newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
+
+        const newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
         newReliaWidgets.start();
         setReliaWidgets(newReliaWidgets);
     }, []);
@@ -36,6 +36,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
     return (
         <Container className={"loader-container"}>
+            <Row>
+                <Col> {"Current Task Status: " + currentSession.status}</Col>
+            </Row>
             <div id={"relia-widgets"}> </div>
         </Container>
     );

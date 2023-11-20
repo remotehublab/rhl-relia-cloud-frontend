@@ -19,12 +19,39 @@ import $ from 'jquery';
  */
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
 
-    function formatString(input) {
-        return input
-            .split('-') // Split the string by hyphens
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
-            .join(' '); // Join the words back into a string with spaces
-    }
+    // function formatString(input) {
+    //     return input
+    //         .split('-') // Split the string by hyphens
+    //         .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
+    //         .join(' '); // Join the words back into a string with spaces
+    // }
+    function convertStatusMessage(status) {
+        switch (status) {
+            case 'error':
+                return "runner.messages.there-was-an-error-running-your-gnu-radio-code";
+            case 'stopped':
+                return "runner.messages.your-gnu-radio-code-has-stopped";
+            case 'deleted':
+                return "runner.messages.your-gnu-radio-code-is-not-running-anymore-feel-free-to-run-it-again";
+            case 'receiver-assigned':
+                return "runner.messages.remote-set-up-assigned-waiting-to-start-running-your-gnu-radio-code";
+            case 'fully-assigned':
+                return "runner.messages.your-gnu-radio-code-is-now-running-in-both-remote-devices";
+            case 'receiver-still-processing':
+                return "runner.messages.the-remote-set-up-is-processing-your-GNU-Radio-in-the-receiver-device";
+            case 'transmitter-still-processing':
+                return "runner.messages.the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device";
+            case 'starting':
+                return "runner.messages.runner.messages.starting-to-run-again-your-gnu-radio-code";
+            case 'stopping':
+                return "stopping";
+            case 'queued' :
+            case 'processing':
+                return "runner.messages.your-gnu-radio-files-are-being-processed-please-wait";
+            default:
+                return "Status not recognized";
+        }
+}
 
     useEffect(() => {
         if (reliaWidgets !== null)
@@ -44,8 +71,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
     return (
         <Container className={"loader-container"}>
-            <Row>
-                <Col md={{ span: 4, offset: 4 }}> {"Current Task Status: " + formatString(currentSession.status)}</Col>
+            <Row >
+                <Col md={{ span: 6, offset: 3 }}> {"Current Task Status: " + t(convertStatusMessage(currentSession.status))}</Col>
             </Row>
             <div id={"relia-widgets"}> </div>
         </Container>

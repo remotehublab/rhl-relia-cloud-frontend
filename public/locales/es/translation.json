@@ -61,7 +61,8 @@
       "select-files-to-upload-for-either-the-transmitter-or-the-receiver": "Selecciona archivos para subir, ya sea para el transmisor o el receptor",
       "transmitter-file": "Archivo transmisor",
       "upload": "Subir",
-      "receiver-file": "Archivo receptor"
+      "receiver-file": "Archivo receptor",
+      "go-back": "Volver atrás"
     },
     "select": {
       "submit-tasks": "Seleccionar archivos existentes de GNU Radio",

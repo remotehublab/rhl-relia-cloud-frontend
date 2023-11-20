@@ -72,7 +72,7 @@ function Outerloader() {
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
 
     // Set a global variable for the base API URL.
-    window.API_BASE_URL = "/api/";
+    window.API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/api/`;
 
     // Using useEffect to execute code after the component mounts.
     useEffect(() => {
@@ -174,6 +174,10 @@ function Outerloader() {
                 }
             })
             .then((data) => {
+                if (data.locale && data.locale != i18n.language) {
+                    i18n.changeLanguage(data.locale);
+                }
+                
                 // Update the userData state with the retrieved data
                 setUserData(data);
             })

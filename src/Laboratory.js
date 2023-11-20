@@ -18,6 +18,14 @@ import $ from 'jquery';
  * @returns {JSX.Element} The rendered Introduction component.
  */
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
+
+    function formatString(input) {
+        return input
+            .split('-') // Split the string by hyphens
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
+            .join(' '); // Join the words back into a string with spaces
+    }
+
     useEffect(() => {
         if (reliaWidgets !== null)
             reliaWidgets.stop();
@@ -37,7 +45,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     return (
         <Container className={"loader-container"}>
             <Row>
-                <Col> {"Current Task Status: " + currentSession.status}</Col>
+                <Col md={{ span: 4, offset: 4 }}> {"Current Task Status: " + formatString(currentSession.status)}</Col>
             </Row>
             <div id={"relia-widgets"}> </div>
         </Container>

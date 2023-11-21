@@ -15,6 +15,7 @@ import { Container, Col  } from 'react-bootstrap';
  * @returns {JSX.Element} The rendered Introduction component.
  */
 function Introduction() {
+    // https://docs.google.com/document/d/16H62F51Ynf_HsBIZ2qxP61v17Bd0wKZkbd78jplX0Lo/edit
     return (
         <Container className={"introduction-container"}>
             <Col md={{span: 6, offset: 3}}>

@@ -355,16 +355,16 @@ function Loader({
             <Col>
               <Container>
                   <Row>
-                    <Col xs={7} md={5} className={"file-name-col"}>
+                    <Col xs={7} md={5} className={"file-name-col fw-bold"}>
                         {t("loader.upload.file-name")}
                     </Col>
-                    <Col xs={2} md={3} className={"radio-col"}>
+                    <Col xs={2} md={3} className={"radio-col fw-bold"}>
                       Tx
                     </Col>
-                    <Col xs={2} md={3} className={"radio-col"}>
+                    <Col xs={2} md={3} className={"radio-col fw-bold"}>
                       Rx
                     </Col>
-                    <Col xs={1}  className={"remove-col"}>
+                    <Col xs={1}  className={"remove-col fw-bold"}>
                       {t("loader.upload.delete")}
                     </Col>
                   </Row>

@@ -11,8 +11,12 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.loader-container {
-  width: 65% !important;
+.laboratory-container {
+}
+
+.laboratory-status-message {
+  padding-top: 2em;
+  padding-bottom: 2em;
 }
 
 .footer-container {

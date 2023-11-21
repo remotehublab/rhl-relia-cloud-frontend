@@ -70,9 +70,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     }, [ currentSession ]);
 
     return (
-        <Container className={"loader-container"}>
+        <Container className={"laboratory-container text-center"}>
             <Row >
-                <Col md={{ span: 6, offset: 3 }}> {"Current Task Status: " + t(convertStatusMessage(currentSession.status))}</Col>
+                <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> {t(convertStatusMessage(currentSession.status))}</Col>
             </Row>
             <div id={"relia-widgets"}> </div>
         </Container>

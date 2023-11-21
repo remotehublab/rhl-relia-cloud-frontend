@@ -322,7 +322,7 @@ function Outerloader() {
             </Row>
             <Row >
                 <Col  className={"button-container"}>
-                    <a className={"btn btn-primary"} href={userData.redirect_to}>{t("loader.upload.go-back")}</a>
+                    <a className={"btn btn-primary"} href={userData.redirect_to}><i className="bi bi-arrow-left"></i>&nbsp;{t("loader.upload.go-back")}</a>
                 </Col>
                 <Col className={"header-container"}>
                     <h1 className={"relia-title"}>SDR Lab (RELIA)</h1>

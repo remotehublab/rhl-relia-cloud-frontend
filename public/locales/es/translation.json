@@ -62,7 +62,12 @@
       "transmitter-file": "Archivo transmisor",
       "upload": "Subir",
       "receiver-file": "Archivo receptor",
-      "go-back": "Volver atrás"
+      "go-back": "Volver atrás",
+      "introduction": "Introducción",
+      "load-files": "Cargar ficheros",
+      "laboratory": "Laboratorio",
+      "file-name": "Nombre de fichero",
+      "delete": "Borrar"
     },
     "select": {
       "submit-tasks": "Seleccionar archivos existentes de GNU Radio",

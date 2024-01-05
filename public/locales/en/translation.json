@@ -61,7 +61,15 @@
       "select-files-to-upload-for-either-the-transmitter-or-the-receiver": "Select files to upload for either the transmitter or the receiver",
       "transmitter-file": "Transmitter file",
       "upload": "Upload",
-      "receiver-file": "Receiver file"
+      "receiver-file": "Receiver file",
+      "file": "File",
+      "remove" : "Remove",
+      "introduction": "Introduction",
+      "load-files": "Load Files",
+      "laboratory": "Laboratory",
+      "go-back": "Go back",
+      "file-name": "File Name",
+      "delete": "Delete"
     },
     "select": {
       "submit-tasks": "Select existing GNU Radio files",

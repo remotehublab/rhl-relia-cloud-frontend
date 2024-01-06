@@ -6,7 +6,7 @@ import MainIndex from "./MainIndex.js";
 import Development from "./Development.js";
 import Loader from "./Loader.js";
 import Login from "./login.js";
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
 import Outerloader from "./Outerloader";
 
 function App() {
@@ -18,9 +18,23 @@ function App() {
           <Route exact path='/loader' exact element={<Loader />} />
           <Route path='/dev' element={<Development/>} />
           <Route path='/outerloader' element={<Outerloader/>} />
+          <Route path='*' element={<NotFoundComponent/>} />
       </Routes>
     </Router>
   );
 }
+
+// For debugging purposes
+const NotFoundComponent = () => {
+  const location = useLocation();
+  console.log("Current path:", location.pathname);
+
+  return (
+    <div>
+      <h2>Page Not Found</h2>
+      <p>Sorry, the page you're looking for <code>{location.pathname}</code> does not exist.</p>
+    </div>
+  );
+};
 
 export default App;

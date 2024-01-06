@@ -13,11 +13,12 @@ function App() {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Routes>
+          <Route path='/' element={<Outerloader/>} />
+          <Route path='/outerloader' element={<Outerloader/>} />
           <Route exact path='/login' exact element={<Login />} />
-          <Route exact path='/' exact element={<MainIndex />} />
+          <Route exact path='/old-index' exact element={<MainIndex />} />
           <Route exact path='/loader' exact element={<Loader />} />
           <Route path='/dev' element={<Development/>} />
-          <Route path='/outerloader' element={<Outerloader/>} />
           <Route path='*' element={<NotFoundComponent/>} />
       </Routes>
     </Router>

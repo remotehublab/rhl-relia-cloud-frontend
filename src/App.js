@@ -11,7 +11,7 @@ import Outerloader from "./Outerloader";
 
 function App() {
   return (
-    <Router basename={process.env.REACT_APP_BASE_URL}>
+    <Router basename={process.env.PUBLIC_URL}>
       <Routes>
           <Route exact path='/login' exact element={<Login />} />
           <Route exact path='/' exact element={<MainIndex />} />

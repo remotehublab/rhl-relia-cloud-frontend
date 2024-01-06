@@ -274,7 +274,7 @@ function Loader({
                 transmitter: transmitterFileNames,
             };
 
-            fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/metadata`, {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/metadata/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

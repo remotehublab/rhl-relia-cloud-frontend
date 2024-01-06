@@ -102,7 +102,7 @@ function Loader({
             }
 
             // Now, send the formData using Fetch.
-            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
                     method: 'POST',
                     body: formData
                 })
@@ -169,7 +169,7 @@ function Loader({
      */
     const handleRemove = (fileName) => {
         // update backend
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/files/${fileName}`, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/${fileName}`, {
                 method: 'DELETE'
         }).then((response) => {
             if (response.status === 200) {
@@ -274,7 +274,7 @@ function Loader({
                 transmitter: transmitterFileNames,
             };
 
-            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/metadata`, {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/metadata`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ function Loader({
     */
     const manageTask = () => {
 
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/user/tasks/` ,{
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
                     method: 'POST'
         }).then((response) => {
             if (response.status === 200) {

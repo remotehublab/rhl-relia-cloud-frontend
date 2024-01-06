@@ -163,7 +163,7 @@ function Outerloader() {
      *    and extracts receiver and transmitter-specific files to manage their respective states.
      */
     const getUserData = () => {
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/user/poll`, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/poll`, {
                 method: 'GET'
             })
             .then((response) => {
@@ -185,7 +185,7 @@ function Outerloader() {
                 console.error('Fetch error:', error.message);
             });
 
-            fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -270,7 +270,7 @@ function Outerloader() {
 
         const showLibrary = () => {
         // Make a GET request to '/files/' to fetch the list of files
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/files/`, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
                 method: 'GET'
             })
             .then((response) => {

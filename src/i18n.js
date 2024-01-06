@@ -8,7 +8,7 @@ i18n
   .init({
     backend: {
         // for when using Flask, make sure Flask serves your translation files under this path
-        loadPath: '/locales/{{lng}}/{{ns}}.json',
+        loadPath: `${process.env.REACT_APP_API_BASE_URL}/locales/{{lng}}/{{ns}}.json`
     },
     lng: "en",
     fallbackLng: 'en',

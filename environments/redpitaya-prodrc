@@ -1,4 +1,4 @@
-DEVICE_NAME="Red Pitaya"
+REACT_APP_DEVICE_NAME="Red Pitaya"
 REACT_APP_API_BASE_URL=/redpitaya
 PUBLIC_URL=/redpitaya
 ENV=production

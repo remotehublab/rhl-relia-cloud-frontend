@@ -325,7 +325,7 @@ function Outerloader() {
                     <a className={"btn btn-primary"} href={userData.redirect_to}><i className="bi bi-arrow-left"></i>&nbsp;{t("loader.upload.go-back")}</a>
                 </Col>
                 <Col className={"header-container"}>
-                    <h1 className={"relia-title"}>SDR Lab (RELIA) - {process.env.DEVICE_NAME}</h1>
+                    <h1 className={"relia-title"}>SDR Lab (RELIA) - {process.env.REACT_APP_DEVICE_NAME}</h1>
                 </Col>
                 <Col className={"button-container"} >
                      {/*<a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library</a>*/}

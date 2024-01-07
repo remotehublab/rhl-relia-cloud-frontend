@@ -1,2 +1,4 @@
+DEVICE_NAME="ADALM Pluto"
 REACT_APP_API_BASE_URL=""
+PUBLIC_URL=""
 ENV=development

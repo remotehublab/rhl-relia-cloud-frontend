@@ -42,12 +42,15 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             case 'transmitter-still-processing':
                 return "runner.messages.the-remote-set-up-is-processing-your-GNU-Radio-in-the-transmitter-device";
             case 'starting':
-                return "runner.messages.runner.messages.starting-to-run-again-your-gnu-radio-code";
+                return "runner.messages.starting-to-run-again-your-gnu-radio-code";
             case 'stopping':
-                return "stopping";
-            case 'queued' :
+                return "runner.messages.stopping";
+            case 'queued':
+                return "runner.messages.waiting-for-a-remote-set-up-to-be-available";
             case 'processing':
                 return "runner.messages.your-gnu-radio-files-are-being-processed-please-wait";
+            case 'completed':
+                return "runner.messages.your-gnu-radio-code-is-not-running-anymore-feel-free-to-run-it-again";
             default:
                 return "Status not recognized";
         }

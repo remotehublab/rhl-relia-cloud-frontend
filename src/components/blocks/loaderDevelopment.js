@@ -158,7 +158,7 @@ export class ReliaWidgets {
 						} else {
 							if (self.blocksById[deviceName]) {
 								var block = self.blocksById[deviceName][blockName];
-								if (block)
+								if (block && !block.running)
 									block.start();
 							}
 						}

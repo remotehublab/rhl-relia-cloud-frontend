@@ -43,6 +43,14 @@ class ReliaWidget {
             });
 
             self.handleResponseData(response.data);
+        }).fail(function () {
+            // failing is not stopping (unless they tell us to stop)
+            if (!self.running) {
+                return;
+            }
+            setTimeout(function () {
+                self.performRequest();
+            });
         });
     }
 

@@ -68,6 +68,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
         return () => {
             newReliaWidgets.stop();
+            newReliaWidgets.clean();
         }
     }, []);
 

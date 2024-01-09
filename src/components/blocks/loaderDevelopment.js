@@ -33,7 +33,14 @@ export class ReliaWidgets {
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
-		console.log("CREATING RELIAWIDGETS: ", this.identifier, "length:", $divElement.length);
+		console.log("new ReliaWidgets() with identifier ", this.identifier, "length:", $divElement.length);
+	}
+
+	clean() {
+		this.blocksById = {};
+		this.blocks = [];
+
+		this.$divElement.empty();
 	}
 
 	/*

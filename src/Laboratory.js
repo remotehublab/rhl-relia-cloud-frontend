@@ -54,15 +54,21 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             default:
                 return "Status not recognized";
         }
-}
+    }
 
     useEffect(() => {
+        console.log("Calling useEffect in Laboratory");
+        console.log(reliaWidgets);
         if (reliaWidgets !== null)
             reliaWidgets.stop();
 
         const newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
         newReliaWidgets.start();
         setReliaWidgets(newReliaWidgets);
+
+        return () => {
+            newReliaWidgets.stop();
+        }
     }, []);
 
     useEffect(() => {
@@ -77,7 +83,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             <Row >
                 <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> {t(convertStatusMessage(currentSession.status))}</Col>
             </Row>
-            <div id={"relia-widgets"}> </div>
+            <div id={"relia-widgets"} className="row"> </div>
         </Container>
     );
 }

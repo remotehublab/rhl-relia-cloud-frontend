@@ -17,8 +17,13 @@ import ReliaFrequencySink from './FrequencySink.js';
 // how fast it should ask for devices
 var CHECK_DEVICES_TIME_MS = 500;
 
+window.RELIA_WIDGETS_COUNTER = 0;
+
 export class ReliaWidgets {
 	constructor($divElement) {
+		window.RELIA_WIDGETS_COUNTER = window.RELIA_WIDGETS_COUNTER + 1;
+		this.identifier = window.RELIA_WIDGETS_COUNTER;
+
 		this.devicesUrl = window.API_BASE_URL + "data/current/devices";
 		// this.blocksById = {
 		//     deviceName1: [block1, block2...],
@@ -28,7 +33,7 @@ export class ReliaWidgets {
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
-		console.log("CREATING RELIAWIDGETS", $divElement.length);
+		console.log("CREATING RELIAWIDGETS: ", this.identifier, "length:", $divElement.length);
 	}
 
 	/*
@@ -36,6 +41,7 @@ export class ReliaWidgets {
 	*/
 	start() {
 		if (!this.running) {
+			console.log("Starting ReliaWidgets(id=" + this.identifier + ")");
 			this.running = true;
 			this.process();
 		}
@@ -45,7 +51,7 @@ export class ReliaWidgets {
 	* stop()
 	*/
 	stop() {
-		console.log("STOPPING RELIAWIDGETS");
+		console.log("Stopping ReliaWidgets(id=" + this.identifier + ")");
 		if (this.running) {
 			this.running = false;
 
@@ -85,7 +91,7 @@ export class ReliaWidgets {
 				var $deviceContents;
 				var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
 				if (!self.blocksById[deviceName]) {
-					console.log("device name ", deviceName, " not found in self.blocksById. Creating new block with identifier: ", deviceNameIdentifier);
+					console.log("device name ", deviceName, " not found in self.blocksById of ReliaWidgets(id= ", self.identifier, "). Creating new block with identifier: ", deviceNameIdentifier);
 					$deviceContents = $("<div id='" + deviceNameIdentifier + "' class='col-6'><center><h2>" + t("widgets.general.device") + ": " + deviceName + "</h2></center><br>" + "</div>");
 					self.$divElement.append($deviceContents);
 					self.blocksById[deviceName] = {};

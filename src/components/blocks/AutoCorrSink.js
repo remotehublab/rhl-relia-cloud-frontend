@@ -3,9 +3,9 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaAutoCorrSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier) {
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
 
-		super($divElement, deviceIdentifier, blockIdentifier);
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
 
 		var self = this;
 

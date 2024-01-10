@@ -20,11 +20,12 @@ var CHECK_DEVICES_TIME_MS = 500;
 window.RELIA_WIDGETS_COUNTER = 0;
 
 export class ReliaWidgets {
-	constructor($divElement) {
+	constructor($divElement, taskId) {
 		window.RELIA_WIDGETS_COUNTER = window.RELIA_WIDGETS_COUNTER + 1;
 		this.identifier = window.RELIA_WIDGETS_COUNTER;
+		this.taskId = taskId;
 
-		this.devicesUrl = window.API_BASE_URL + "data/current/devices";
+		this.devicesUrl = window.API_BASE_URL + "data/tasks/" + taskId + "/devices";
 		// this.blocksById = {
 		//     deviceName1: [block1, block2...],
 		//     deviceName2: [block3, block4...],
@@ -106,7 +107,7 @@ export class ReliaWidgets {
 					$deviceContents = $("#" + deviceNameIdentifier);
 				}
 
-				var blocksUrl = window.API_BASE_URL + "data/current/devices/" + deviceName + "/blocks";
+				var blocksUrl = window.API_BASE_URL + "data/tasks/" + self.taskId + "/devices/" + deviceName + "/blocks";
 				$.get(blocksUrl).done(function (data) {
 					if (!self.running)
 						return;

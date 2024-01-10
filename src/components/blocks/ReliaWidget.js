@@ -1,11 +1,12 @@
 import $ from 'jquery';
 
 class ReliaWidget {
-    constructor($divElement, deviceIdentifier, blockIdentifier) {
+    constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
         this.$div = $divElement;
         this.deviceIdentifier = deviceIdentifier;
         this.blockIdentifier = blockIdentifier;
-        this.url = window.API_BASE_URL + "data/current/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
+        this.taskIdentifier = taskIdentifier;
+        this.url = window.API_BASE_URL + "data/tasks/" + taskIdentifier + "/devices/" + deviceIdentifier + "/blocks/" + blockIdentifier;
         this.running = false;
     }
 

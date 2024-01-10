@@ -4,8 +4,8 @@ import ReliaWidget from './ReliaWidget';
 
 export class ReliaVectorSink extends ReliaWidget {
 
-	constructor($divElement, deviceIdentifier, blockIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
 
 		var self = this;
 

@@ -62,7 +62,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         if (reliaWidgets !== null)
             reliaWidgets.stop();
 
-        const newReliaWidgets = new ReliaWidgets($("#relia-widgets"));
+        const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), currentSession.taskIdentifier);
         newReliaWidgets.start();
         setReliaWidgets(newReliaWidgets);
 

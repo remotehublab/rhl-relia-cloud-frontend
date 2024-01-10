@@ -3,8 +3,8 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaHistogramSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
 		var self = this;
 
 		self.$div.html(

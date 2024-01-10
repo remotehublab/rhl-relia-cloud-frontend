@@ -134,27 +134,27 @@ export class ReliaWidgets {
 							// console.log("Loading...", deviceName, blockName);
 							var block; // a block inherits from ReliaWidget
 							if (blockName.startsWith("RELIA Constellation Sink")) {
-								block = new ReliaConstellationSink($divContents, deviceName, blockName);
+								block = new ReliaConstellationSink($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Time Sink")) {
-								block = new ReliaTimeSink($divContents, deviceName, blockName);
+								block = new ReliaTimeSink($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Vector Sink")) {
-								block = new ReliaVectorSink($divContents, deviceName, blockName);
+								block = new ReliaVectorSink($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Variable Range")) {
-								block = new ReliaVariableRange($divContents, deviceName, blockName);
+								block = new ReliaVariableRange($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Histogram Sink")) {
-								block = new ReliaHistogramSink($divContents, deviceName, blockName);
+								block = new ReliaHistogramSink($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Variable CheckBox")) {
-								block = new ReliaCheckBox($divContents, deviceName, blockName);
+								block = new ReliaCheckBox($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Variable PushButton")) {
-								block = new ReliaPushButton($divContents, deviceName, blockName);
+								block = new ReliaPushButton($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Variable Chooser")) {
-								block = new ReliaChooser($divContents, deviceName, blockName);
+								block = new ReliaChooser($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Number Sink")) {
-								block = new ReliaNumberSink($divContents, deviceName, blockName);
+								block = new ReliaNumberSink($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Eye Plot")) {
-								block = new ReliaEyePlot($divContents, deviceName, blockName);
+								block = new ReliaEyePlot($divContents, deviceName, blockName, self.taskId);
 							} else if (blockName.startsWith("RELIA Frequency Sink")) {
-								block = new ReliaFrequencySink($divContents, deviceName, blockName);							
+								block = new ReliaFrequencySink($divContents, deviceName, blockName, self.taskId);
 							} else { // Add more blocks here
 								console.log("Unsupported block: ", blockName);
 								return;

@@ -222,6 +222,8 @@ function Loader({
                     "message": data.message,
                     "assignedInstance": data.assignedInstance,
                     "assignedInstanceName": data.assignedInstance,
+                    "transmitterFilename": data.transmitterFilename,
+                    "receiverFilename": data.receiverFilename,
                     "renderingWidgets": currentSession.renderingWidgets,
                 }
                 setCurrentSession(newSession);

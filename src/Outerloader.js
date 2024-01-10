@@ -67,6 +67,8 @@ function Outerloader() {
         "message": "",
         "assignedInstance": null,
         "assignedInstanceName": "",
+        "receiverFilename": null,
+        "transmitterFilename": null,
         "renderingWidgets": false,
     });
 

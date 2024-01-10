@@ -96,6 +96,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>
                         <h2>{ t("runner.receiver") }</h2>
+                        { currentSession.receiverFilename != null && <h4>({ currentSession.receiverFilename })</h4> }
                     </center>
                     
                     <div id={"relia-widgets-receiver"}></div>
@@ -103,6 +104,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>
                         <h2>{ t("runner.transmitter") }</h2>
+                        { currentSession.transmitterFilename != null && <h4>({ currentSession.transmitterFilename })</h4> }
                     </center>
                     
                     <div id={"relia-widgets-transmitter"}></div>

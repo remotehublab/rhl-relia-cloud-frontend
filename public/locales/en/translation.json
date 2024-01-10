@@ -80,6 +80,10 @@
     }
   },
   "runner": {
+    "assigned-instance": "Assigned instance",
+    "no-instance-yet": "No instance yet",
+    "receiver": "Receiver",
+    "transmitter": "Transmitter",
     "messages": {
       "your-gnu-radio-code-is-now-running-in-both-remote-devices": "Your GNU Radio code is now running in both remote devices",
       "waiting-for-a-remote-set-up-to-be-available": "Waiting for a remote setup to be available",

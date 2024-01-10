@@ -220,6 +220,8 @@ function Loader({
                     "taskIdentifier": currentSession.taskIdentifier,
                     "status": data.status,
                     "message": data.message,
+                    "assignedInstance": data.assignedInstance,
+                    "assignedInstanceName": data.assignedInstance,
                     "renderingWidgets": currentSession.renderingWidgets,
                 }
                 setCurrentSession(newSession);
@@ -322,6 +324,8 @@ function Loader({
                     "taskIdentifier": data.taskIdentifier,
                     "status": data.status,
                     "message": data.message,
+                    "assignedInstance": null,
+                    "assignedInstanceName": t("runner.no-instance-yet"),
                     "renderingWidgets": currentSession.renderingWidgets,
                 }
                 setCurrentSession(newSession);
@@ -358,10 +362,10 @@ function Loader({
                         {t("loader.upload.file-name")}
                     </Col>
                     <Col xs={2} md={3} className={"radio-col fw-bold"}>
-                      Tx
+                      Rx
                     </Col>
                     <Col xs={2} md={3} className={"radio-col fw-bold"}>
-                      Rx
+                      Tx
                     </Col>
                     <Col xs={1}  className={"remove-col fw-bold"}>
                       {t("loader.upload.delete")}
@@ -376,16 +380,16 @@ function Loader({
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
-                        name="transmitter"
-                        onChange={() => handleSelect('TX', fileName)}
-                        checked={selectedFilesColumnTX.includes(fileName)}
+                        name="receiver"
+                        onChange={() => handleSelect('RX',fileName)}
+                        checked={selectedFilesColumnRX.includes(fileName)}
                       />
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
-                        name="receiver"
-                        onChange={() => handleSelect('RX',fileName)}
-                        checked={selectedFilesColumnRX.includes(fileName)}
+                        name="transmitter"
+                        onChange={() => handleSelect('TX', fileName)}
+                        checked={selectedFilesColumnTX.includes(fileName)}
                       />
                     </Col>
                     <Col xs={1}  className={"remove-col"}>

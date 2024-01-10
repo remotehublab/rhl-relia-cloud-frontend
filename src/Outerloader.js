@@ -65,6 +65,8 @@ function Outerloader() {
         "taskIdentifier": null,
         "status": "not_started",
         "message": "",
+        "assignedInstance": null,
+        "assignedInstanceName": "",
         "renderingWidgets": false,
     });
 

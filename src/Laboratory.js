@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 // for  translations
 import i18n, {t} from './i18n';
@@ -56,13 +56,16 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         }
     }
 
+    const currentSessionRef = useRef(currentSession);
+    currentSessionRef.current = currentSession;
+
     useEffect(() => {
         console.log("Calling useEffect in Laboratory");
         console.log(reliaWidgets);
         if (reliaWidgets !== null)
             reliaWidgets.stop();
 
-        const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), currentSession.taskIdentifier);
+        const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), currentSession.taskIdentifier, currentSessionRef);
         newReliaWidgets.start();
         setReliaWidgets(newReliaWidgets);
 
@@ -79,12 +82,32 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         }
     }, [ currentSession ]);
 
+    // The receiver is always on the left!
     return (
         <Container className={"laboratory-container text-center"}>
             <Row >
-                <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> {t(convertStatusMessage(currentSession.status))}</Col>
+                <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> 
+                    {t(convertStatusMessage(currentSession.status))}
+                    <br /><br />
+                    <span>{t("runner.assigned-instance")}: <span>{currentSession.assignedInstanceName}</span></span>
+                </Col>
             </Row>
-            <div id={"relia-widgets"} className="row"> </div>
+            <Row id={"relia-widgets"}> 
+                <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
+                    <center>
+                        <h2>{ t("runner.receiver") }</h2>
+                    </center>
+                    
+                    <div id={"relia-widgets-receiver"}></div>
+                </Col>
+                <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
+                    <center>
+                        <h2>{ t("runner.transmitter") }</h2>
+                    </center>
+                    
+                    <div id={"relia-widgets-transmitter"}></div>
+                </Col>
+            </Row>
         </Container>
     );
 }

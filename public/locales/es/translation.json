@@ -78,6 +78,10 @@
     }
   },
   "runner": {
+    "assigned-instance": "Instancia asignada",
+    "no-instance-yet": "Ninguna nistancia todavía",
+    "receiver": "Receptor",
+    "transmitter": "Transmisor",    
     "messages": {
       "your-gnu-radio-code-is-now-running-in-both-remote-devices": "Tu código GNU Radio está en ejecución en ambos dispositivos remotos",
       "waiting-for-a-remote-set-up-to-be-available": "Esperando que una configuración remota esté disponible",

@@ -89,7 +89,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> 
                     {t(convertStatusMessage(currentSession.status))}
                     <br /><br />
-                    <span>{t("runner.assigned-instance")}: <span>{currentSession.assignedInstanceName}</span></span>
+                    <span>{t("runner.assigned-instance")}: <a target="_blank" href="{ currentSession.cameraUrl || '#'}">{currentSession.assignedInstanceName}</a></span>
                 </Col>
             </Row>
             <Row id={"relia-widgets"}> 

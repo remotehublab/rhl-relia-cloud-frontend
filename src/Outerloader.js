@@ -69,6 +69,7 @@ function Outerloader() {
         "assignedInstanceName": "",
         "receiverFilename": null,
         "transmitterFilename": null,
+        "cameraUrl": null,
         "renderingWidgets": false,
     });
 

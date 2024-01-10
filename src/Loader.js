@@ -224,6 +224,7 @@ function Loader({
                     "assignedInstanceName": data.assignedInstance,
                     "transmitterFilename": data.transmitterFilename,
                     "receiverFilename": data.receiverFilename,
+                    "cameraUrl": data.cameraUrl,
                     "renderingWidgets": currentSession.renderingWidgets,
                 }
                 setCurrentSession(newSession);
@@ -328,6 +329,9 @@ function Loader({
                     "message": data.message,
                     "assignedInstance": null,
                     "assignedInstanceName": t("runner.no-instance-yet"),
+                    "transmitterFilename": null,
+                    "receiverFilename": null,
+                    "cameraUrl": null,
                     "renderingWidgets": currentSession.renderingWidgets,
                 }
                 setCurrentSession(newSession);

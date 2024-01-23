@@ -32,20 +32,24 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
 
     const handleCameraButtonClick = () => {
-        // might have to put this in the outer scope
-        setShowCamera(prevShowCamera => !prevShowCamera);
-        if(!showCamera) {
+        setShowCamera(prevShowCamera => {
+        if (!prevShowCamera) {
             intervalIdRef.current = setInterval(cameraURLGenerator, 1000);
-        } else {
+        } else if (intervalIdRef.current) {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null;
         }
+        return !prevShowCamera;
+    });
     };
 
     const cameraURLGenerator = () => {
         console.log("CAMERA URL GENERATOR CALLED! with url " + cameraURL);
-        setCameraUrl("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam?r" + (cameraURLSeed + 1) );
-        setCameraURlSeed(cameraURLSeed+1);
+        setCameraURlSeed(prevCameraURLSeed => {
+            const newSeed = prevCameraURLSeed + 1;
+            setCameraUrl("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam?r" + newSeed);
+            return newSeed;
+        });
     }
 
     function convertStatusMessage(status) {

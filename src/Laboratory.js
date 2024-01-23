@@ -34,7 +34,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     const handleCameraButtonClick = () => {
         setShowCamera(prevShowCamera => {
         if (!prevShowCamera) {
-            intervalIdRef.current = setInterval(cameraURLGenerator, 1000);
+            intervalIdRef.current = setInterval(cameraURLGenerator, 100);
         } else if (intervalIdRef.current) {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null;

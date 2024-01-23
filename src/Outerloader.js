@@ -188,7 +188,7 @@ function Outerloader() {
                 if (data.locale && data.locale != i18n.language) {
                     i18n.changeLanguage(data.locale);
                 }
-                
+
                 // Update the userData state with the retrieved data
                 setUserData(data);
             })

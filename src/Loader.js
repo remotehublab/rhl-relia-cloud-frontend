@@ -59,20 +59,12 @@ function Loader({
 
 }) {
 
-    const possibleFileStatus = [
-        <a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
-            Upload GNU radio files to proceed
-        </a>,
-        <a>Uploading files, please wait</a>,
-        <a>Error uploading files</a>,
-        <a>Error sending files, please try again</a>,
-        <a></a>,
-        <a>Please select one RX and one TX file to proceed</a>];
-
     // inner container that hold the send to device button, implemented separately, so it can be dynamically rendered
     const [senderComponent, setSenderComponent] = useState(<Container/>);
 
-    const [fileStatus, setFileStatus] = useState(possibleFileStatus[0]);
+    const [fileStatus, setFileStatus] = useState(<a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
+            Upload GNU radio files to proceed
+        </a>);
 
     // effect hook that updates the container object  if we ever have more then one file
     useEffect(() => {
@@ -99,7 +91,8 @@ function Loader({
         if (storedFiles.length > 0) {
             setFileStatus(<a>Select one TX file and one RX file to proceed</a>);
         }  else {
-            setFileStatus(possibleFileStatus[0]);
+            setFileStatus(<a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
+            Upload GNU radio files to proceed</a>);
         }
         setSenderComponent(<Container />);
     }
@@ -123,7 +116,7 @@ function Loader({
             for (let i = 0; i < files.length; i++) {
                 formData.append('file-' + i, files[i]);
             }
-            setFileStatus(possibleFileStatus[1]);
+            setFileStatus(<a>Uploading files, please wait</a>);
             // Now, send the formData using Fetch.
             fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
                     method: 'POST',
@@ -138,10 +131,10 @@ function Loader({
                     setStoredFiles([...storedFiles, ...newFileNames]);
                 }).catch(error => {
                     console.error('Error uploading files:', error);
-                    setFileStatus(possibleFileStatus[2]);
+                    setFileStatus(<a>Error uploading files</a>);
                 })
                 .finally(() => {
-                setFileStatus(possibleFileStatus[5]);
+                setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
             });
         } else {
             // Log a message if no files are selected.
@@ -348,7 +341,7 @@ function Loader({
             } else {
 
             console.log('Failed to fetch: Status ' + response.status);
-            setFileStatus(possibleFileStatus[3]);
+            setFileStatus(<a>Error sending files, please try again</a>);
         }
         }).then((data) => {
             if (data && data.success) {
@@ -369,7 +362,7 @@ function Loader({
                 setTimeout(checkStatus, 1000 );
                 setSelectedTab("laboratory");
             } else {
-                setFileStatus(possibleFileStatus[3]);
+                setFileStatus(<a>Error sending files, please try again</a>);
                 console.error('Failed to create task');
             }
         });

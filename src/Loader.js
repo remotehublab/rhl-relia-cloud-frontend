@@ -112,6 +112,7 @@ function Loader({
             const newUploadedFiles = Array.from(event.target.files);
             const formData = new FormData();
             const files = event.target.files;
+            let isError = false;
             // Add each file to the form data.
             for (let i = 0; i < files.length; i++) {
                 formData.append('file-' + i, files[i]);
@@ -132,9 +133,12 @@ function Loader({
                 }).catch(error => {
                     console.error('Error uploading files:', error);
                     setFileStatus(<a>Error uploading files</a>);
+                    isError = true;
                 })
                 .finally(() => {
-                setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
+                if (!isError) {
+                    setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
+                }
             });
         } else {
             // Log a message if no files are selected.

@@ -64,13 +64,15 @@ function Loader({
             Upload GNU radio files to proceed
         </a>,
         <a>Uploading files, please wait</a>,
-        <a>Error uploading files</a>];
+        <a>Error uploading files</a>,
+        <a>Error sending files, please try again</a>,
+        <a></a>,
+        <a>Please select one RX and one TX file to proceed</a>];
 
     // inner container that hold the send to device button, implemented separately, so it can be dynamically rendered
     const [senderComponent, setSenderComponent] = useState(<Container/>);
 
     const [fileStatus, setFileStatus] = useState(possibleFileStatus[0]);
-
 
     // effect hook that updates the container object  if we ever have more then one file
     useEffect(() => {
@@ -86,8 +88,20 @@ function Loader({
           </Row>
         </Container>
       );
+      setFileStatus(<a>Ready to upload</a>);
+    } else if (selectedFilesColumnTX.length > 0) {
+        setFileStatus(<a>Select one RX file to proceed</a>);
+        setSenderComponent(<Container/>);
+    } else if (selectedFilesColumnRX.length > 0){
+        setFileStatus(<a>Select one TX file to proceed</a>);
+        setSenderComponent(<Container />);
     } else {
-      setSenderComponent(<Container />);
+        if (storedFiles.length > 0) {
+            setFileStatus(<a>Select one TX file and one RX file to proceed</a>);
+        }  else {
+            setFileStatus(possibleFileStatus[0]);
+        }
+        setSenderComponent(<Container />);
     }
     sendMetaData();
   }, [selectedFilesColumnTX, selectedFilesColumnRX]);
@@ -127,8 +141,7 @@ function Loader({
                     setFileStatus(possibleFileStatus[2]);
                 })
                 .finally(() => {
-
-                setFileStatus(possibleFileStatus[0]);
+                setFileStatus(possibleFileStatus[5]);
             });
         } else {
             // Log a message if no files are selected.
@@ -332,9 +345,13 @@ function Loader({
         }).then((response) => {
             if (response.status === 200) {
                 return response.json();
-            }
+            } else {
+
+            console.log('Failed to fetch: Status ' + response.status);
+            setFileStatus(possibleFileStatus[3]);
+        }
         }).then((data) => {
-            if (data.success) {
+            if (data && data.success) {
                 const newSession = {
                     "taskIdentifier": data.taskIdentifier,
                     "status": data.status,
@@ -352,7 +369,8 @@ function Loader({
                 setTimeout(checkStatus, 1000 );
                 setSelectedTab("laboratory");
             } else {
-                console.error('Failed to create task:', data.message);
+                setFileStatus(possibleFileStatus[3]);
+                console.error('Failed to create task');
             }
         });
     };
@@ -374,7 +392,7 @@ function Loader({
           </Row>
           <Row>
             <Col>
-              {storedFiles.length != 0 ? (
+              {storedFiles.length != 0  ? (
             <Container>
                   <Row>
                     <Col xs={7} md={5} className={"file-name-col fw-bold"}>
@@ -399,6 +417,7 @@ function Loader({
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
+                        type="radio"
                         name="receiver"
                         onChange={() => handleSelect('RX',fileName)}
                         checked={selectedFilesColumnRX.includes(fileName)}
@@ -406,6 +425,7 @@ function Loader({
                     </Col>
                     <Col xs={2} md={3} className={"radio-col"}>
                       <Form.Check
+                        type="radio"
                         name="transmitter"
                         onChange={() => handleSelect('TX', fileName)}
                         checked={selectedFilesColumnTX.includes(fileName)}
@@ -418,12 +438,13 @@ function Loader({
                 ))}
               </Container>
       ) : (
+        <Container></Container>
+      )}
         <Container className={"introduction-container"}>
             <Col md={{span: 6, offset: 3}} >
                {fileStatus}
             </Col>
         </Container>
-      )}
             </Col>
           </Row>
           <Row>

@@ -92,6 +92,11 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                     <span>{t("runner.assigned-instance")}: <a target="_blank" href={ currentSession.cameraUrl == null ? '#' : currentSession.cameraUrl }>{currentSession.assignedInstanceName}</a></span>
                 </Col>
             </Row>
+            <Row>
+                <Col  className={"button-container"}>
+                    <a className={"btn btn-primary"}>Show <i className="bi bi-camera-fill"></i></a>
+                </Col>
+            </Row>
             <Row id={"relia-widgets"}> 
                 <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>

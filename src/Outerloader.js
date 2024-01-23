@@ -7,6 +7,7 @@ import React, {
     useState
 } from 'react';
 
+
 // for  translations
 import i18n, {
     t
@@ -33,6 +34,7 @@ import Introduction from "./Introduction";
 import LabsLand_logo from './components/images/LabsLand-logo.png';
 import UW_logo from './components/images/uw-logo.gif';
 import RHL_logo from './components/images/RHL-logo.png';
+
 
 /**
  * Renders the Outerloader component.
@@ -113,6 +115,8 @@ function Outerloader() {
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
         getUserData();
+        const intervalId = setInterval(getUserData, 5*  60 * 1000);
+        // could add clean up function to clear timer if we ever want to stop it
     }, []);
 
     useEffect(() => {
@@ -168,6 +172,7 @@ function Outerloader() {
      *    and extracts receiver and transmitter-specific files to manage their respective states.
      */
     const getUserData = () => {
+        console.log("CALLED getUserData");
         fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/poll`, {
                 method: 'GET'
             })
@@ -178,6 +183,7 @@ function Outerloader() {
                     throw new Error('Network response was not ok.');
                 }
             })
+            // bug here possibly if data is not returned correctly
             .then((data) => {
                 if (data.locale && data.locale != i18n.language) {
                     i18n.changeLanguage(data.locale);
@@ -214,6 +220,8 @@ function Outerloader() {
                     setSelectedFilesColumnTX(selectedTXFiles);
                 } else {
                     console.error('Error fetching files:', data.message);
+                    window.location.href = userData.redirect_to;
+
                 }
             })
             .catch(error => {

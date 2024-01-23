@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 
 // for  translations
 import i18n, {t} from './i18n';
@@ -18,13 +19,35 @@ import $ from 'jquery';
  * @returns {JSX.Element} The rendered Introduction component.
  */
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
-
+    const [cameraURLSeed, setCameraURlSeed] = useState(0);
+    const [showCamera, setShowCamera] = useState(false);
+    const [cameraURL, setCameraUrl] = useState("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam");
+    const intervalIdRef = useRef(null);
     // function formatString(input) {
     //     return input
     //         .split('-') // Split the string by hyphens
     //         .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
     //         .join(' '); // Join the words back into a string with spaces
     // }
+
+
+    const handleCameraButtonClick = () => {
+        // might have to put this in the outer scope
+        setShowCamera(prevShowCamera => !prevShowCamera);
+        if(!showCamera) {
+            intervalIdRef.current = setInterval(cameraURLGenerator, 1000);
+        } else {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null;
+        }
+    };
+
+    const cameraURLGenerator = () => {
+        console.log("CAMERA URL GENERATOR CALLED! with url " + cameraURL);
+        setCameraUrl("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam?r" + (cameraURLSeed + 1) );
+        setCameraURlSeed(cameraURLSeed+1);
+    }
+
     function convertStatusMessage(status) {
         switch (status) {
             case 'error':
@@ -60,8 +83,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     currentSessionRef.current = currentSession;
 
     useEffect(() => {
-        console.log("Calling useEffect in Laboratory");
-        console.log(reliaWidgets);
+        //console.log("Calling useEffect in Laboratory");
+        //console.log(reliaWidgets);
         if (reliaWidgets !== null)
             reliaWidgets.stop();
 
@@ -93,10 +116,17 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 </Col>
             </Row>
             <Row>
-                <Col  className={"button-container"}>
-                    <a className={"btn btn-primary"}>Show <i className="bi bi-camera-fill"></i></a>
+                <Col className={"button-container"}>
+                    <button className={"btn btn-primary"} onClick={handleCameraButtonClick}>
+                        Show <i className="bi bi-camera-fill"></i>
+                    </button>
                 </Col>
             </Row>
+            {showCamera && (
+                <Row>
+                    <img src={cameraURL} alt="Camera" />
+                </Row>
+            )}
             <Row id={"relia-widgets"}> 
                 <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>

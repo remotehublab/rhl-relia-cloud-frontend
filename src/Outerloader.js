@@ -115,7 +115,8 @@ function Outerloader() {
     // Define a useEffect hook to make the fetch call when the component mounts
     useEffect(() => {
         getUserData();
-        const intervalId = setInterval(getUserData, 5*  60 * 1000);
+        // Run for now every 5 minutes
+        const intervalId = setInterval(getUserData, 5 *  60 * 1000);
         // could add clean up function to clear timer if we ever want to stop it
     }, []);
 
@@ -191,6 +192,10 @@ function Outerloader() {
 
                 // Update the userData state with the retrieved data
                 setUserData(data);
+
+                if (!data.success && data.redirect_to) {
+                    window.location.href = data.redirect_to;
+                }
             })
             .catch((error) => {
                 console.error('Fetch error:', error.message);
@@ -220,8 +225,6 @@ function Outerloader() {
                     setSelectedFilesColumnTX(selectedTXFiles);
                 } else {
                     console.error('Error fetching files:', data.message);
-                    window.location.href = userData.redirect_to;
-
                 }
             })
             .catch(error => {

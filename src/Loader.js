@@ -80,7 +80,8 @@ function Loader({
           </Row>
         </Container>
       );
-      setFileStatus(<a>Ready to upload</a>);
+      // setFileStatus(<a>Ready to upload</a>);
+      setFileStatus(null);
     } else if (selectedFilesColumnTX.length > 0) {
         setFileStatus(<a>Select one RX file to proceed</a>);
         setSenderComponent(<Container/>);
@@ -438,7 +439,7 @@ function Loader({
         <Container></Container>
       )}
         <Container className={"introduction-container"}>
-            <Col md={{span: 6, offset: 3}} >
+            <Col md={{span: 8, offset: 2}} style={{ display: fileStatus != null ? 'block' : 'none' }}>
                {fileStatus}
             </Col>
         </Container>

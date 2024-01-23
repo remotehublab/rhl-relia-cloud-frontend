@@ -116,19 +116,21 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> 
                     {t(convertStatusMessage(currentSession.status))}
                     <br /><br />
-                    <span>{t("runner.assigned-instance")}: <a target="_blank" href={ currentSession.cameraUrl == null ? '#' : currentSession.cameraUrl }>{currentSession.assignedInstanceName}</a></span>
-                </Col>
-            </Row>
-            <Row>
-                <Col className={"button-container"}>
-                    <button className={"btn btn-primary"} onClick={handleCameraButtonClick}>
-                        Show <i className="bi bi-camera-fill"></i>
-                    </button>
+                    <span>
+                        {t("runner.assigned-instance")}: <span><tt>{currentSession.assignedInstanceName}</tt></span>
+
+                        &nbsp;&nbsp;
+                        <button className={"btn bt-sm btn-primary"} onClick={handleCameraButtonClick}>
+                            Show <i className="bi bi-camera-fill"></i>
+                        </button>
+                    </span>
                 </Col>
             </Row>
             {showCamera && (
                 <Row>
-                    <img src={cameraURL} alt="Camera" />
+                    <center>
+                        <img src={cameraURL} alt="Camera" width="50%"/>
+                    </center>
                 </Row>
             )}
             <Row id={"relia-widgets"}> 

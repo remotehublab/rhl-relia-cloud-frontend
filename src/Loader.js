@@ -55,12 +55,22 @@ function Loader({
     selectedFilesColumnRX,
     setSelectedFilesColumnRX,
     selectedFilesColumnTX,
-    setSelectedFilesColumnTX
+    setSelectedFilesColumnTX,
+
 }) {
 
+    const possibleFileStatus = [
+        <a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
+            Upload GNU radio files to proceed
+        </a>,
+        <a>Uploading files, please wait</a>,
+        <a>Error uploading files</a>];
 
     // inner container that hold the send to device button, implemented separately, so it can be dynamically rendered
-    const [senderComponent, setSenderComponent] = useState(<Container />);
+    const [senderComponent, setSenderComponent] = useState(<Container/>);
+
+    const [fileStatus, setFileStatus] = useState(possibleFileStatus[0]);
+
 
     // effect hook that updates the container object  if we ever have more then one file
     useEffect(() => {
@@ -95,12 +105,11 @@ function Loader({
             const newUploadedFiles = Array.from(event.target.files);
             const formData = new FormData();
             const files = event.target.files;
-
             // Add each file to the form data.
             for (let i = 0; i < files.length; i++) {
                 formData.append('file-' + i, files[i]);
             }
-
+            setFileStatus(possibleFileStatus[1]);
             // Now, send the formData using Fetch.
             fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
                     method: 'POST',
@@ -110,14 +119,17 @@ function Loader({
                 .then(data => {
                     const newFileNames = [];
                     for (const newFile of newUploadedFiles) {
-                        // TODO: add check for unique files
                         newFileNames.push(newFile.name);
                     }
                     setStoredFiles([...storedFiles, ...newFileNames]);
                 }).catch(error => {
                     console.error('Error uploading files:', error);
-                });
+                    setFileStatus(possibleFileStatus[2]);
+                })
+                .finally(() => {
 
+                setFileStatus(possibleFileStatus[0]);
+            });
         } else {
             // Log a message if no files are selected.
             console.log('No files selected.');
@@ -362,7 +374,8 @@ function Loader({
           </Row>
           <Row>
             <Col>
-              <Container>
+              {storedFiles.length != 0 ? (
+            <Container>
                   <Row>
                     <Col xs={7} md={5} className={"file-name-col fw-bold"}>
                         {t("loader.upload.file-name")}
@@ -404,6 +417,13 @@ function Loader({
                   </Row>
                 ))}
               </Container>
+      ) : (
+        <Container className={"introduction-container"}>
+            <Col md={{span: 6, offset: 3}} >
+               {fileStatus}
+            </Col>
+        </Container>
+      )}
             </Col>
           </Row>
           <Row>

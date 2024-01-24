@@ -83,17 +83,17 @@ function Loader({
       // setFileStatus(<a>Ready to upload</a>);
       setFileStatus(null);
     } else if (selectedFilesColumnTX.length > 0) {
-        setFileStatus(<a>Select one RX file to proceed</a>);
+        setFileStatus(<span>Select one RX file to proceed</span>);
         setSenderComponent(<Container/>);
     } else if (selectedFilesColumnRX.length > 0){
-        setFileStatus(<a>Select one TX file to proceed</a>);
+        setFileStatus(<span>Select one TX file to proceed</span>);
         setSenderComponent(<Container />);
     } else {
         if (storedFiles.length > 0) {
-            setFileStatus(<a>Select one TX file and one RX file to proceed</a>);
+            setFileStatus(<span>Select one TX file and one RX file to proceed</span>);
         }  else {
-            setFileStatus(<a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
-            Upload GNU radio files to proceed</a>);
+            setFileStatus(<span>Upload GNU radio files to proceed</span>);
+            //setFileStatus(<span>Upload GNU radio files to proceed. <a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">See the docs</a></span>);
         }
         setSenderComponent(<Container />);
     }

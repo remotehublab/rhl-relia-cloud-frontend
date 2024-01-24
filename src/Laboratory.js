@@ -22,6 +22,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     const [cameraURLSeed, setCameraURlSeed] = useState(0);
     const [showCamera, setShowCamera] = useState(false);
     const [cameraURL, setCameraUrl] = useState(currentSession.cameraUrl);
+    const cameraShouldRunRef = useRef(null);
+    const currentSessionStatusRef = useRef(null);
     const cameraUrlRef = useRef(null);
     const intervalIdRef = useRef(null);
     // function formatString(input) {
@@ -33,27 +35,37 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
 
     const handleCameraButtonClick = () => {
-        setShowCamera(prevShowCamera => {
-        if (!prevShowCamera) {
-            intervalIdRef.current = setInterval(cameraURLGenerator, 100);
-        } else if (intervalIdRef.current) {
-            clearInterval(intervalIdRef.current);
-            intervalIdRef.current = null;
+        var newShowCamera = !showCamera;
+        setShowCamera(newShowCamera);
+
+        if (newShowCamera) {
+            cameraShouldRunRef.current = true;
+            if (shouldCameraReloadInCurrentStatus()) {
+                setCameraUrl(getCameraURL());
+            }
+        } else {
+            cameraShouldRunRef.current = false;
         }
-        return !prevShowCamera;
-    });
     };
 
-    const cameraURLGenerator = () => {
-        console.log("CAMERA URL GENERATOR CALLED! with url " + cameraURL);
-        setCameraURlSeed(prevCameraURLSeed => {
-            const newSeed = prevCameraURLSeed + 1;
-            if (cameraUrlRef.current) {
-                setCameraUrl(cameraUrlRef.current + "?r" + newSeed);
-            }
-            return newSeed;
-        });
+    const shouldCameraReloadInCurrentStatus = () => {
+        var currentStatus = currentSessionStatusRef.current;
+        return currentStatus == 'receiver-assigned' || currentStatus == 'fully-assigned' || currentStatus == 'receiver-still-processing' || currentStatus == 'transmitter-still-processing';
     }
+
+    const onImageLoaded = () => {
+        // Only when the image is loaded (or there is an error), try to reload the image again after 50ms
+        // but only if in that moment we are still in the right conditions
+        setTimeout(function () {
+            if (cameraShouldRunRef.current && shouldCameraReloadInCurrentStatus()) {
+                setCameraUrl(getCameraURL());
+            }
+        }, 50);
+    };
+
+    const getCameraURL = () => {
+        return cameraUrlRef.current + "?t=" + new Date().toString();
+    };
 
     function convertStatusMessage(status) {
         switch (status) {
@@ -88,6 +100,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
     const currentSessionRef = useRef(currentSession);
     currentSessionRef.current = currentSession;
+    currentSessionStatusRef.current = currentSession.status;
 
     useEffect(() => {
         //console.log("Calling useEffect in Laboratory");
@@ -110,8 +123,10 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             if (reliaWidgets !== null)
                 reliaWidgets.stop();
         }
+        currentSessionStatusRef.current = currentSession.status;
         cameraUrlRef.current = currentSession.cameraUrl;
-        setCameraUrl(currentSession.cameraUrl);
+
+        setCameraUrl(getCameraURL());
     }, [ currentSession ]);
 
     // The receiver is always on the left!
@@ -134,7 +149,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             {showCamera && (
                 <Row>
                     <center>
-                        <img src={cameraURL} alt="Camera" width="50%"/>
+                        <img src={cameraURL} onLoad={onImageLoaded} onError={onImageLoaded} alt="Camera" width="50%"/>
                         <br />
                         <p>
                             <i>Receiver (left) and transmitter (right) devices inside a Faraday Cage.</i>

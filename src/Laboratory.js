@@ -21,7 +21,8 @@ import $ from 'jquery';
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
     const [cameraURLSeed, setCameraURlSeed] = useState(0);
     const [showCamera, setShowCamera] = useState(false);
-    const [cameraURL, setCameraUrl] = useState("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam");
+    const [cameraURL, setCameraUrl] = useState(currentSession.cameraUrl);
+    const cameraUrlRef = useRef(null);
     const intervalIdRef = useRef(null);
     // function formatString(input) {
     //     return input
@@ -47,7 +48,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         console.log("CAMERA URL GENERATOR CALLED! with url " + cameraURL);
         setCameraURlSeed(prevCameraURLSeed => {
             const newSeed = prevCameraURLSeed + 1;
-            setCameraUrl("https://relia.rhlab.ece.uw.edu/cams/presets/relia-s1i1cam?r" + newSeed);
+            if (cameraUrlRef.current) {
+                setCameraUrl(cameraUrlRef.current + "?r" + newSeed);
+            }
             return newSeed;
         });
     }
@@ -107,6 +110,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             if (reliaWidgets !== null)
                 reliaWidgets.stop();
         }
+        cameraUrlRef.current = currentSession.cameraUrl;
+        setCameraUrl(currentSession.cameraUrl);
     }, [ currentSession ]);
 
     // The receiver is always on the left!

@@ -120,8 +120,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                         {t("runner.assigned-instance")}: <span><tt>{currentSession.assignedInstanceName}</tt></span>
 
                         &nbsp;&nbsp;
-                        <button className={"btn bt-sm btn-primary"} onClick={handleCameraButtonClick}>
-                            Show <i className="bi bi-camera-fill"></i>
+                        <button className="btn btn-sm btn-primary" onClick={handleCameraButtonClick}>
+                            {showCamera ? "Hide" : "Show"} <i className="bi bi-camera-fill"></i>
                         </button>
                     </span>
                 </Col>
@@ -130,6 +130,10 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Row>
                     <center>
                         <img src={cameraURL} alt="Camera" width="50%"/>
+                        <br />
+                        <p>
+                            <i>Receiver (left) and transmitter (right) devices inside a Faraday Cage.</i>
+                        </p>
                     </center>
                 </Row>
             )}

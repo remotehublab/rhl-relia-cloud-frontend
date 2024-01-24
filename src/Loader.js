@@ -158,15 +158,16 @@ function Loader({
         if (column === 'RX') {
             if (selectedFilesColumnRX.includes(fileName)) {
                 const newColumnRX = selectedFilesColumnRX.filter(file => file !== fileName);
+
                 setSelectedFilesColumnRX(newColumnRX);
             } else {
-                setSelectedFilesColumnRX([...selectedFilesColumnRX, fileName]);
+                setSelectedFilesColumnRX([fileName]);
             }
         } else if (column === 'TX') {
             if (selectedFilesColumnTX.includes(fileName)) {
                 setSelectedFilesColumnTX(selectedFilesColumnTX.filter(file => file !== fileName));
             } else {
-                setSelectedFilesColumnTX([...selectedFilesColumnTX, fileName]);
+                setSelectedFilesColumnTX([fileName]);
             }
         } else {
             console.log(column + " is not a valid column");

@@ -18,7 +18,10 @@ import $ from 'jquery';
  *
  * @returns {JSX.Element} The rendered Introduction component.
  */
-function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets}) {
+function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets, fileStatus,
+    setFileStatus,
+    manageTask,
+    checkStatus}) {
     const [cameraURLSeed, setCameraURlSeed] = useState(0);
     const [showCamera, setShowCamera] = useState(false);
     const [cameraURL, setCameraUrl] = useState(currentSession.cameraUrl);
@@ -42,6 +45,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         }
     };
 
+
+
     const shouldCameraReloadInCurrentStatus = () => {
         let currentStatus = currentSessionStatusRef.current;
         return currentStatus == 'receiver-assigned' || currentStatus == 'fully-assigned' || currentStatus == 'receiver-still-processing' || currentStatus == 'transmitter-still-processing';
@@ -49,7 +54,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
     const onImageLoaded = () => {
         // Only when the image is loaded (or there is an error), try to reload the image again after 50ms
-        // but only if in that moment we are still in the right conditions
+        // but only if at that moment we are still in the right conditions
         setTimeout(function () {
             if (cameraShouldRunRef.current && shouldCameraReloadInCurrentStatus()) {
                 setCameraUrl(getCameraURL());
@@ -123,80 +128,6 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         setCameraUrl(getCameraURL());
     }, [ currentSession ]);
 
-    const manageTask = () => {
-
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
-                    method: 'POST'
-        }).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            } else {
-
-            console.log('Failed to fetch: Status ' + response.status);
-        }
-        }).then((data) => {
-            if (data && data.success) {
-                const newSession = {
-                    "taskIdentifier": data.taskIdentifier,
-                    "status": data.status,
-                    "message": data.message,
-                    "assignedInstance": null,
-                    "assignedInstanceName": t("runner.no-instance-yet"),
-                    "transmitterFilename": null,
-                    "receiverFilename": null,
-                    "cameraUrl": null,
-                    "renderingWidgets": currentSession.renderingWidgets,
-                }
-                setCurrentSession(newSession);
-                Object.assign(currentSession, newSession);
-                console.log(currentSession);
-                setTimeout(checkStatus, 1000 );
-            } else {
-
-                console.error('Failed to create task');
-            }
-        });
-    };
-
-
-     const checkStatus = () => {
-         fetch(`${process.env.REACT_APP_API_BASE_URL}/scheduler/user/tasks/${currentSession.taskIdentifier}`, {
-            method: 'GET'
-        }).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-        }).then((data) => {
-            if (data.success) {
-                const newSession = {
-                    "taskIdentifier": currentSession.taskIdentifier,
-                    "status": data.status,
-                    "message": data.message,
-                    "assignedInstance": data.assignedInstance,
-                    "assignedInstanceName": data.assignedInstance,
-                    "transmitterFilename": data.transmitterFilename,
-                    "receiverFilename": data.receiverFilename,
-                    "cameraUrl": data.cameraUrl,
-                    "renderingWidgets": currentSession.renderingWidgets,
-                }
-                setCurrentSession(newSession);
-                Object.assign(currentSession, newSession);
-                console.log("checked status " + currentSession);
-                if (// skip completed
-                    data.status === "queued"
-                    //  skip deleted
-                    || data.status === "receiver-assigned"
-                    || data.status === "fully-assigned"
-                    || data.status === 'receiver-still-processing'
-                    || data.status === "transmitter-still-processing"
-                    || data.status === 'receiver-assigned' ) {
-                    setTimeout(checkStatus, 1000 );
-                }
-            } else {
-                console.error('Failed to check status:', data.message);
-            }
-        });
-     };
 
     // The receiver is always on the left!
     return (

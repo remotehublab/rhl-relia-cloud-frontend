@@ -1,0 +1,1538 @@
+[33mcommit c189fa0b569f03a0978d3944251dbb6582f0c26b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 30 11:19:10 2024 -0800
+
+    Fixed non .grc file bug
+    Added refresh button
+
+[33mcommit 8bf9ad1850a3e718b7bf3b0b8dc942509cd32fa3[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 23:04:10 2024 -0800
+
+    Change the camera code so it does not accumulate requests
+
+[33mcommit 66811ed785520949e4e6438542d3bc3cdb88d057[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 18:17:18 2024 -0800
+
+    Do not use a hardcoded URL
+
+[33mcommit 94214fe8322f7dbcdaf91e3398890210bdbd2e01[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 16:19:04 2024 -0800
+
+    Improve messages and add pedro's code for button
+
+[33mcommit 2cb2611dd43f6c865a60772fe86c9d5da921b935[m
+Merge: f9ff9218 2e8881ad
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 16:04:02 2024 -0800
+
+    Merge branch 'main' of github.com:/remotehublab/rhl-relia-cloud-frontend
+
+[33mcommit 2e8881adcab8d280c3240a6a86f60518952de473[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 16:03:50 2024 -0800
+
+    Fixed issue with files in the backend being selected in single file selection mode
+
+[33mcommit f9ff9218833348742e35ba4bf841523d354eb2fe[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 16:03:14 2024 -0800
+
+    Change the texts
+
+[33mcommit 7735610af4c5196cf23689937a40cc66d4e859d2[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 23 15:59:36 2024 -0800
+
+    Make small changes on pedro's code
+
+[33mcommit 27f2919fa1573d65c69d493767c23d905513607f[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 15:09:05 2024 -0800
+
+    Fixed error message not showing on loader bug
+
+[33mcommit a3193b0f155e12780349794e7bb19535e6ab4e36[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 15:01:53 2024 -0800
+
+    Refactoring code in Loader.js
+
+[33mcommit ada72b289d70af2505028b5ba6c83653c1189330[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 14:39:50 2024 -0800
+
+    Image display working, needs to be formated
+
+[33mcommit 437fe241b345dc07896880e96efdbe93870ea321[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 13:20:20 2024 -0800
+
+    Started worked on image display
+    currently not working!
+
+[33mcommit a6b8d92ff31af264916c688619190c63ec7defd4[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 12:52:48 2024 -0800
+
+    Added timer to call get user status , and force redirect.
+    Fixed some issues with uploading messages.
+    Added camera button.
+
+[33mcommit cf8e603e4842a8b157001120f1e5329c0e86c224[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Jan 23 11:50:53 2024 -0800
+
+    added uploading information text  to loader
+
+[33mcommit bb50b79eb1a39b386b2274e343a7d5e0d33cb1b5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 22:41:05 2024 -0800
+
+    Fix the camera URL
+
+[33mcommit 3be2f7bcf95c14fad2c83c99fca0933a053d98d1[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 22:38:15 2024 -0800
+
+    Show the camera URL
+
+[33mcommit 66cc3a96b3be007740489022d6323a1ea7c7a9ff[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 22:00:59 2024 -0800
+
+    Show the filenames as well
+
+[33mcommit 0602488bb585b1c976574077412421d415ca3fa8[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 21:55:18 2024 -0800
+
+    Improve the user interface: receiver always on the left side, etc.
+
+[33mcommit 493bf3212cb13d8eddfa0a36c9c6b381b9841e75[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 19:14:35 2024 -0800
+
+    Fix component constructors
+
+[33mcommit c74ee4ce08fdb7fa50248e7c3a68253d376bd3c5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Jan 9 19:09:36 2024 -0800
+
+    Adopt new URL scheme
+
+[33mcommit ebd1048f86b3d6fdf50489d264bff5fc22a8fb66[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Jan 8 22:32:32 2024 -0800
+
+    Clean the div object and all the variables on unloading the component
+
+[33mcommit 61bc17fd42f35978fc718d52e6523ffde28773ff[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Jan 8 22:20:06 2024 -0800
+
+    Make running more reliable
+
+[33mcommit bca0336830622a3cfeef4c8f19bfa4d8ec6e1cd6[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Jan 8 22:18:14 2024 -0800
+
+    Dont start more than once
+
+[33mcommit e75b228c15b31a436de669fae043c39b05ba1316[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Jan 8 17:23:08 2024 -0800
+
+    Stop ReliaWidgets so there is only one running each time
+
+[33mcommit b791d9143915fd96509400a1cde76b4f0f8c86e5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sun Jan 7 23:32:07 2024 -0800
+
+    Fix missing status
+
+[33mcommit c5456c01d8cacec26eb0798479f1a3abbc2365f3[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 17:01:49 2024 -0800
+
+    Add the device name using REACT_APP_
+
+[33mcommit cc8c16c96a21eeccb013e5ec004cfbd81618f90b[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 16:53:05 2024 -0800
+
+    Add the device name
+
+[33mcommit 3ffc6168bf25a6b38d8fda526c9a110db5fa2263[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 15:26:18 2024 -0800
+
+    metadata URL fix
+
+[33mcommit 514cfb59f61441cb261201bb7024cb5361a67e7f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 15:24:19 2024 -0800
+
+    Make / point to the right URL
+
+[33mcommit d0cd22cce49d06fd52d29be192001f7b9722b274[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 15:23:24 2024 -0800
+
+    Fix the routing issues
+
+[33mcommit 658a95b807e8514640dccf7d1aadffb3c2f58846[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 15:07:17 2024 -0800
+
+    Show errors with locations
+
+[33mcommit 96822d6758b4b05e40a28b51e3650225c0b47861[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 15:01:36 2024 -0800
+
+    Change URLs
+
+[33mcommit eee4ddff1a745335c54e977041fb838b58ed3579[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 14:53:01 2024 -0800
+
+    Use basename to change /static/ and /locales/
+
+[33mcommit 5c6af944edf350096da0f0cda332f200a03f9695[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sat Jan 6 14:21:30 2024 -0800
+
+    Rename URLs
+
+[33mcommit 09178a4c7e6c70881620475332c49bbfca36079f[m
+Merge: 39cb06db 981ea2a0
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Jan 4 23:28:32 2024 -0800
+
+    Merge pedro's branch into main
+
+[33mcommit 981ea2a0085eb988771a8d82eae0f847a492f968[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Jan 4 23:26:40 2024 -0800
+
+    Add intro
+
+[33mcommit 86f44900453e4375bc608eca9d854e34f58c1797[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Nov 21 15:35:21 2023 -0800
+
+    Add link to the mockup
+
+[33mcommit e1b0e75b4fff8233dfa7be9f80848f9618dcba2b[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Nov 21 15:27:49 2023 -0800
+
+    Add a couple of translations, add the bootstrap button, change a couple of styles
+
+[33mcommit 09aabdfc4b041c9fd85e890f1079c54771265840[m[33m ([m[1;32mpedro-frontend-dev[m[33m)[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Nov 20 14:45:40 2023 -0800
+
+    removed old env files
+
+[33mcommit 4be254c8477738a5499056765f72e208c7eab960[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Nov 20 14:44:21 2023 -0800
+
+    Made status human readble
+
+[33mcommit fada919eb6233166495ea95810b3df5a1277e50d[m
+Merge: 5f543e2b 3efacb7e
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Nov 20 14:24:36 2023 -0800
+
+    Merge branch 'pedro-frontend-dev' of gitlab.com:relia-project/cloud/relia-frontend into pedro-frontend-dev
+
+[33mcommit 3efacb7e1bcc14e5b1273a393bf1bc42dc8b7d93[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Nov 20 21:03:27 2023 +0000
+
+    Made text human readable + formatting
+
+[33mcommit 5f543e2b3157861f9e92920ca000be11a5b3c4bc[m
+Merge: d0e56b15 56bd12bd
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Nov 20 11:16:37 2023 -0800
+
+    Merge branch 'pedro-frontend-dev' of gitlab.com:relia-project/cloud/relia-frontend into pedro-frontend-dev
+
+[33mcommit 56bd12bd5c13f7a26417df56d85b60e0d59a1eb4[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Nov 17 15:16:33 2023 -0800
+
+    Update environments
+
+[33mcommit d0e56b15c4876d850e67e29239c6abbab0e921eb[m
+Merge: 7e210335 73f0e0ca
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Fri Nov 17 14:23:38 2023 -0800
+
+    Merge branch 'pedro-frontend-dev' of gitlab.com:relia-project/cloud/relia-frontend into pedro-frontend-dev
+    
+    # Conflicts:
+    #       package.json
+
+[33mcommit 73f0e0ca9583b2daa3b599f527ef9643220f5504[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Nov 17 14:19:07 2023 -0800
+
+    Rename environments so they are all in an environments folder
+
+[33mcommit 73c3ab7dd91b37e97355af45aa50a51252511229[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Fri Nov 17 13:46:29 2023 -0800
+
+    test
+
+[33mcommit b11bf8d65e4e60fa705639228e864b90184fef26[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Tue Nov 14 20:18:06 2023 -0800
+
+    added new env files
+
+[33mcommit 005f83d267c6ffd2d9f8eac1fb6a9acc9581808b[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Tue Nov 14 20:13:27 2023 -0800
+
+    modified  project to supply base URls based on env
+
+[33mcommit 79bd4b7961af8e7d94103d30c5a0b8252d8a5568[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed Nov 1 15:24:13 2023 -0700
+
+    Call stop also when completed, etc.
+
+[33mcommit 3e31af735fc30b92a7763b99724cd0983fdc3e54[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Oct 31 12:39:07 2023 -0700
+
+    added documentation
+
+[33mcommit 7bd8f54827b5b8d36a67b83c5a75254f6dbaa41d[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 30 18:00:38 2023 -0700
+
+    fixed type
+
+[33mcommit b49f88f6c7ae82c85b06d717af008e6ab50c53c8[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Oct 30 17:55:22 2023 -0700
+
+    calls  cancelTask whenever the user clicks on Load Files or Introduction. CAlls the server to tell it to stop the task and change the current task status to not ready (basically, reinitialize everything).
+    it is not possible to call Laboratory() until you click the send button
+    added documentation to loader.js
+
+[33mcommit 41e1c8a0de6f70dbfe911617853aa187694866a6[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Oct 30 15:23:04 2023 -0700
+
+    formating + refactoring
+
+[33mcommit e206eb505b6491598293cc9a2d1f54e8e08194f1[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Oct 30 11:18:27 2023 -0700
+
+    frontend when loaded will corectly match checkmarks for files that were previously marked as rx tx (matching metadata)
+
+[33mcommit 135fd3132c5279eba33942ccef225126ab45a91c[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Tue Oct 24 13:04:11 2023 -0700
+
+    Few changes to move the laboratory creation up
+
+[33mcommit b0bf6bc8c577e64128afe30959a1fe3d99b606d4[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Tue Oct 24 12:30:40 2023 -0700
+
+    Fixed importing google charts
+
+[33mcommit 822e8807180eab0e908272aff54655b5af65155f[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Fri Oct 13 18:04:11 2023 -0700
+
+    Fixed issue that caused task to not start. Also fixed bug in effecthook in lab tab. App will also change tab automatically now
+
+[33mcommit 8f9d745e44f20e87d9dad2177c27d2919343b17e[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Fri Oct 13 14:04:31 2023 -0700
+
+    Removed effect hook from lab to force relia-widgets to appear
+
+[33mcommit f28b1596dae7a929f6e9d4f4ede5dce55d48c8a3[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Tue Oct 10 17:33:38 2023 -0700
+
+    A lot of code refactoring, now files that are already in the backend will show up on frontend, also now clicking the checkmarks will correctly update metadata
+
+[33mcommit 67fe4f43d71a58491ac9ba140a99e68621488bfa[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Oct 9 17:57:12 2023 -0700
+
+    Started work to get files that are already uploaded to show up on first load.
+    Broke a lot of stuff on the way...
+
+[33mcommit ebeefed10636e8ddd8e9923f36c3eeacf2cd6750[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Mon Oct 9 10:24:17 2023 -0700
+
+    Work on the backend tasks calls made in fridays meeting
+
+[33mcommit 6b100287b4b3bedbd695ab74121c5e24f2ee4c64[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Fri Oct 6 16:38:12 2023 -0700
+
+    When clicked on the button below the file list, call the new task method explained above, and redirect the user to the “Laboratory” tab.:
+    
+    Code implemented but GET request no working
+    
+    Call every second the method to know what is the current state. Keep it in a state variable (React’s useState([])):
+    
+    same as above
+    
+    Show what is the current state in the user interface in the Laboratory tab.
+    
+    If the user changes tabs (going to Load files or intro), cancel the current task if there is a task ongoing (i.e., not in error / completed / etc.)
+    Function code, need to refactor nav bar
+
+[33mcommit 73c5f9f7645acb6fd89bc81c7c3c1b1ad26e3ad2[m
+Author: Pedro Amarante <ppedrolia@gmail.com>
+Date:   Fri Sep 29 19:00:40 2023 -0700
+
+    Added function to change tab when sendToSDRDevice button is clicked, currently not working.
+
+[33mcommit 7e210335ba3e9e8afe4247978bd21d88e86aa0f5[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Fri Nov 17 13:46:29 2023 -0800
+
+    test
+
+[33mcommit 2153d529671a34ca0371ad35f59d07a77768cf71[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Tue Nov 14 20:18:06 2023 -0800
+
+    added new env files
+
+[33mcommit 75727371fc668825f36aa1a1f8cb106458c6fd16[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Nov 14 20:13:27 2023 -0800
+
+    modified  project to supply base URls based on env
+
+[33mcommit df015a5fa3127446941dab1251a9f55d2aea534a[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed Nov 1 15:24:13 2023 -0700
+
+    Call stop also when completed, etc.
+
+[33mcommit 49ee33ae4c4a265b996c832961afa242e51fae18[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Oct 31 12:39:07 2023 -0700
+
+    added documentation
+
+[33mcommit 6fc72f179b0cefd6a30e03f3755f39c29d15c139[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 30 18:00:38 2023 -0700
+
+    fixed type
+
+[33mcommit decbe38e4e7180e25a134714350158da9959b2da[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 30 17:55:22 2023 -0700
+
+    calls  cancelTask whenever the user clicks on Load Files or Introduction. CAlls the server to tell it to stop the task and change the current task status to not ready (basically, reinitialize everything).
+    it is not possible to call Laboratory() until you click the send button
+    added documentation to loader.js
+
+[33mcommit f11c8901f1ab9bf9b5cc174d9425089c3fc708e2[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 30 15:23:04 2023 -0700
+
+    formating + refactoring
+
+[33mcommit ace08e43dbc9db6571fd0a1aa3e51b8e877c73a1[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 30 11:18:27 2023 -0700
+
+    frontend when loaded will corectly match checkmarks for files that were previously marked as rx tx (matching metadata)
+
+[33mcommit b6d3ccf8bf1be41fe9f75f7bbb0646fb6364aa8f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Oct 24 13:04:11 2023 -0700
+
+    Few changes to move the laboratory creation up
+
+[33mcommit 2998464f92d128e32135d84d891ebd05935e3ff8[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Tue Oct 24 12:30:40 2023 -0700
+
+    Fixed importing google charts
+
+[33mcommit 3e7a6126adf9c0463fb92cf1bf3991cfb7148321[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Fri Oct 13 18:04:11 2023 -0700
+
+    Fixed issue that caused task to not start. Also fixed bug in effecthook in lab tab. App will also change tab automatically now
+
+[33mcommit 9595cd150880268584c0c9c326895bec28e0ac20[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Fri Oct 13 14:04:31 2023 -0700
+
+    Removed effect hook from lab to force relia-widgets to appear
+
+[33mcommit 1021f128d11c4396fba03ea0f613746bc97a8931[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Tue Oct 10 17:33:38 2023 -0700
+
+    A lot of code refactoring, now files that are already in the backend will show up on frontend, also now clicking the checkmarks will correctly update metadata
+
+[33mcommit a8bd59a23f765573b6fe98c2a8b8ad5b1f003779[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 9 17:57:12 2023 -0700
+
+    Started work to get files that are already uploaded to show up on first load.
+    Broke a lot of stuff on the way...
+
+[33mcommit 3a4879459033a1d9a58d45bd3f1619168334d2d6[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Mon Oct 9 10:24:17 2023 -0700
+
+    Work on the backend tasks calls made in fridays meeting
+
+[33mcommit 6d0e9ce8cf9a2bbf7d7dfd3de42b277bac534e1a[m
+Author: Brian <brianchap@protonmail.com>
+Date:   Fri Oct 6 16:38:12 2023 -0700
+
+    When clicked on the button below the file list, call the new task method explained above, and redirect the user to the “Laboratory” tab.:
+    
+    Code implemented but GET request no working
+    
+    Call every second the method to know what is the current state. Keep it in a state variable (React’s useState([])):
+    
+    same as above
+    
+    Show what is the current state in the user interface in the Laboratory tab.
+    
+    If the user changes tabs (going to Load files or intro), cancel the current task if there is a task ongoing (i.e., not in error / completed / etc.)
+    Function code, need to refactor nav bar
+
+[33mcommit 521e34d98fd9285337f578a5a56865c45a6244ca[m
+Author: pedroa2 <pedroa2@cs.washington.edu>
+Date:   Fri Sep 29 19:00:40 2023 -0700
+
+    Added function to change tab when sendToSDRDevice button is clicked, currently not working.
+
+[33mcommit 9bbaf8344022fa7f7ce6f86eed4b2e7ae3b2d309[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Sep 25 18:41:07 2023 -0700
+
+    Remove the padding on top of the logos (they're already quite big)
+
+[33mcommit 72d94a5959fc183affcfdfb52d5ebe977769d6e3[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 20 00:13:08 2023 -0300
+
+    fixed bug to correctly send metadata on send to DSR  function.
+    refactored some of the code
+
+[33mcommit 150beaf3419e96ff2f502e5208ac30e8ae87aa5b[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 18:27:39 2023 -0300
+
+    added code for sending metadata in frontend, but received json on the backend seems to be empty
+
+[33mcommit c8dfd6cd9e931f1e42bbb64af5cae938de84ad33[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 16:29:44 2023 -0300
+
+    added fetch call to delete files from server
+    some refactoring
+
+[33mcommit ed325a9569fdad98a5c9ac5f278d6b3684f443f5[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 13:48:18 2023 -0300
+
+    Fixed minor debugging bug
+
+[33mcommit 529d03791fe2ef3dc1213cbd02b8c229162af3b4[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 13:41:11 2023 -0300
+
+    fixed double file upload bug
+
+[33mcommit 1219be9d2410db901d649b9ac4a6f96ac1e884aa[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 04:31:13 2023 -0300
+
+    changed frontend to support backend,
+    making requests now,
+    backend seems to not be able to receive requests to /files/, so uploading files not working
+
+[33mcommit 2d9825268b60a072b6b345533bc1ba5108221ea4[m
+Merge: e8e1d609 b671a90a
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 03:27:19 2023 -0300
+
+    Merge remote-tracking branch 'origin/pedro-frontend-dev' into pedro-frontend-dev
+    
+    # Conflicts:
+    #       src/Loader.js
+
+[33mcommit e8e1d609692bef7da372d1238df28f23df9f824e[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 14 03:24:13 2023 -0300
+
+    modified frontend to handle backend
+       * can send multiple files at once
+       * removed redundant upload files button
+       * added files.py to branch
+
+[33mcommit b671a90a9bba87cb8d647a3c9bfb94a5d46674f5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Sep 12 19:58:36 2023 -0700
+
+    Separate introduction and laboratory and add a call to /files/
+
+[33mcommit e98a38829fe2fcd196f78a943ec17305b6fbf04a[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Sep 12 01:13:39 2023 -0300
+
+    fixed text overflow
+    added fetch call from user data
+
+[33mcommit f8269aaf134c9bc0c37e8264840676d819d7f3aa[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Sep 7 15:36:39 2023 -0700
+
+    Small UI changes
+
+[33mcommit 6dbe21e03e79ab724abf79f4ebf3f33cd9143bcd[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Sep 7 14:35:26 2023 -0700
+
+    Update links
+
+[33mcommit af30efd3a0a40f4980fa5a1bab9f310ea421af80[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 7 18:07:38 2023 -0300
+
+    Added translations, edited UI, updated packages
+
+[33mcommit 97612d867cce1e32901b5406f58d3b06a4de69fc[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 7 03:35:59 2023 -0300
+
+    Progress on outerloader todos, improved design of remove button
+
+[33mcommit f109ecce09cdc42834d1e77e5f6c701679519b9d[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Thu Sep 7 02:55:10 2023 -0300
+
+    New added images
+
+[33mcommit 328f4f54b9ba6a2d3f67a566ee032f1a6eb12594[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 6 19:00:34 2023 -0300
+
+    Corrected images, removed timer, changed title
+
+[33mcommit 81d0eb8c48d18229c91f94d2872db68aabf3ce1e[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 6 03:06:09 2023 -0300
+
+    Added documentation, improved UI
+
+[33mcommit 520c3cd3d0572b07f47f1015bdc35e54c9caecfe[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 6 02:17:05 2023 -0300
+
+    Added new images
+
+[33mcommit 293a517aca062e14580c53d486603a1354b98a93[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 6 02:16:28 2023 -0300
+
+    Created new outerloader component
+
+[33mcommit 21d341261aa8bb2b006a90a2eea55744aad03b57[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Wed Sep 6 00:02:49 2023 -0300
+
+    Got basic ui of the loader component done
+
+[33mcommit c184d7c7be7526bdea4b0e444fbde9473e804a2a[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Sep 5 23:02:23 2023 -0300
+
+    Started process of redoing UI, using react-bootstrap
+
+[33mcommit b6bd3c31f7b6223a23dfc07eee49f70b0cbc678f[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Sep 5 21:40:39 2023 -0300
+
+    Added i18n API to the page
+
+[33mcommit 0f81ede7ea5e73d60d25507446ccae37b3a78e0c[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Sep 5 21:40:30 2023 -0300
+
+    Added i18n API to the page
+
+[33mcommit 7ecf674c21df196db653c49c73543aa84050a44a[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Tue Sep 5 21:37:44 2023 -0300
+
+    Added i18n API to the page
+
+[33mcommit 3e581e4bc8bd67d79e3abc7dd8c6d003e589f2be[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Sep 4 16:26:36 2023 -0300
+
+    Added functionality to remove files
+
+[33mcommit dc62ae11694393372b70b6cd4707e5cf2a9a3249[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Mon Sep 4 16:11:22 2023 -0300
+
+    Work on UI/UX:
+    * made components work more intuitively
+    * added multiple file selection
+    * very basic css
+
+[33mcommit 39cb06db2f15a23b3c406295c769b9db264912dc[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Sat Sep 2 21:05:37 2023 -0300
+
+    Added documentation to the handleUploadGRC_transmitter event handler
+
+[33mcommit dc625c40e02205adf3ed18528a2b0574f4080698[m
+Author: Pedro <ppedrolia@gmail.com>
+Date:   Sat Sep 2 00:03:55 2023 -0300
+
+    Created basic framework of how the Loader.js component is going to work. Created the components and added basic functionality between then.
+
+[33mcommit b56d1f6a1deedf264565941e110a52fb8424a8a1[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Aug 17 19:12:13 2023 -0700
+
+    Change name of RELIA
+
+[33mcommit 48efebea32a3bc3b07417c48e29ba05b8890ddb5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Aug 17 19:09:10 2023 -0700
+
+    Add Brazilian translations
+
+[33mcommit 62c42db7fa03e0ab9bc670483914d5d3a6abd44d[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Aug 17 19:04:09 2023 -0700
+
+    Translate another message
+
+[33mcommit 370e00c8ede3ee12ee0c883b0692837674cc428f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Aug 17 18:56:59 2023 -0700
+
+    Start supporting translations
+
+[33mcommit 3d6592b855381cdc6bbea83b7c9bc8f912d853f3[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri May 19 00:54:48 2023 -0700
+
+    Fix remaining widgets
+
+[33mcommit 0fc7834d2380a67ccc371eb41685e6b6366e6d04[m
+Merge: 6d77bd50 e3e65a87
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 23:36:29 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 6d77bd50cbd3e90de14aae8f7d604a88b4a80b74[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 21:14:39 2023 -0700
+
+    Standardize the widgets around ReliaWidget
+
+[33mcommit e3e65a8784387f4447f51e7346ba00d5efb2be08[m
+Merge: 018c1bae 538c0665
+Author: root <root@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu May 18 15:49:47 2023 -0700
+
+    Merge branch 'main' of https://gitlab.com/relia-project/cloud/relia-frontend
+
+[33mcommit 018c1bae8fad7f6559d1389abc68f21b2c35ea6c[m
+Author: root <root@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu May 18 15:49:33 2023 -0700
+
+    Minor change in spacing
+
+[33mcommit 538c066547b79227b17fc94a412110f0d04e1a93[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 15:22:21 2023 -0700
+
+    Migrate more widgets to the new OOP model
+
+[33mcommit 4a36bf9be508afb177ab7ca8b328117925534723[m
+Merge: 67cba4d7 745cb81f
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 15:14:45 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 67cba4d7a12cde54f4334438c3c139c0d5b4d78f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 15:14:42 2023 -0700
+
+    Start modifying the widgets as a class
+
+[33mcommit 745cb81f97f6579b699959c8c94b19235b0f4e00[m
+Author: root <root@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu May 18 15:04:06 2023 -0700
+
+    Clean file list
+
+[33mcommit b4f8c39db21ecd3e140ee7b8c84a30f393ce3a04[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu May 18 13:46:16 2023 -0700
+
+    Change messages and start supporting 'stop'
+
+[33mcommit 7cff8defed227eec822079267d3f076c6695fe4d[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed May 17 21:24:54 2023 -0700
+
+    Refactor much of the loading code
+
+[33mcommit 2408e0db212d95324b4a2545215102ae5f2251c1[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue May 2 13:31:17 2023 -0700
+
+    Add button to manually stop
+
+[33mcommit 97896f640d4e471bbd207587126227f3a69005c6[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue May 2 13:08:27 2023 -0700
+
+    Small thing: rename button
+
+[33mcommit 1fbd5f180785dcda03195efc426665aa96ba6116[m
+Merge: 95407f92 ea70fb4b
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon May 1 21:52:24 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 95407f92a8fe1548bcf0a6f7266ae9d64aee9100[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon May 1 21:52:12 2023 -0700
+
+    Fix reschedule bug
+
+[33mcommit ea70fb4b5099803e3b3efe23aa8c4d15683fd8a6[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Wed Apr 19 22:12:54 2023 -0700
+
+    zoom widgets modifications
+
+[33mcommit 8884d7c0b901975c913743721fccff30f72842ea[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Wed Apr 19 21:03:48 2023 -0700
+
+    constellation widget modifications
+
+[33mcommit a4984782e9d71eacc407c8ad879d5e410fd782c8[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Apr 17 21:22:21 2023 -0700
+
+    Refresh on backward step to main page
+
+[33mcommit e7941b6306ddca79262558a070b7773c0d0860e1[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Apr 13 17:48:47 2023 -0700
+
+    Use loaderDevelopment.js. we MUST delete the loader.js soon
+
+[33mcommit 9fd8432f84da713d9c7f6e152f0e56f61b41fd3d[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Apr 11 00:04:31 2023 -0700
+
+    EyePlot Widget
+
+[33mcommit 7c352cbf84d3604fa4083c63eb5a164ac3bdc9e5[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Apr 3 18:15:55 2023 -0700
+
+    Streamline UI
+
+[33mcommit 120416fddfa54ade7df2f11d2d514cf8c1184d49[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Mon Apr 3 11:43:38 2023 -0700
+
+    Adding the ACF function widget
+
+[33mcommit f07bcb2420d54fcf763ec45a7018dd102cfae54e[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Mar 28 23:53:22 2023 +0200
+
+    Sanitize the jQuery identifiers
+
+[33mcommit c9aa49fa60efa6a6c464f66bb3ffc1e42d2e6a6c[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 28 03:33:50 2023 -0700
+
+    Tie up loose ends
+
+[33mcommit eae4459846e78988a929ad97624dafeb8155c5ad[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 21 16:32:35 2023 -0700
+
+    Refactor code
+
+[33mcommit 18f70ede89c9a334aa20d48eba3bfb2a7b244313[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 21 16:12:09 2023 -0700
+
+    Undo some changes
+
+[33mcommit 6a5a8b2615cf92ff6a8971cf54cddedccf2b8cd5[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 21 02:12:57 2023 -0700
+
+    Ensure no direct communication with scheduler
+
+[33mcommit 2c747ffee7a942347ce865557475ac947bf5db55[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Mar 17 00:35:40 2023 -0700
+
+    Increase time showing data
+
+[33mcommit 7c1b20ea37e337b3364e3a92bd4368f1ec8a078c[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Mar 16 17:34:30 2023 -0700
+
+    Show the title of the device bigger
+
+[33mcommit 1b0eb9edeee82bcef234d5f55b74a3173d68e1f5[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Mar 16 17:32:36 2023 -0700
+
+    Force col-6 so it does show it in 50%
+
+[33mcommit 1eae00d35263fc03b755c98e98db6cd51d73b103[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Mar 16 17:23:16 2023 -0700
+
+    Maximize size of cols
+
+[33mcommit 4c47b8bc8413600a2ef7136c16205948e6911340[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Mar 16 17:20:53 2023 -0700
+
+    Try to improve the cols of the devices
+
+[33mcommit e93fc65f02c0d308a3c2c4f70058080bed42b874[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Mar 16 15:44:20 2023 -0700
+
+    Add in package.json the required libraries
+
+[33mcommit 77753d61cc35157547bd048d2480e610e5072645[m
+Merge: 307e51cc 8d430864
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 14 03:06:57 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 307e51cc0d9c9f640ab51f2fb8c57a3911c28847[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Mar 14 03:05:08 2023 -0700
+
+    Integration p3
+
+[33mcommit 8d430864bec0744451a874f4dbb6a41a23fb430f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Mar 14 00:14:12 2023 -0700
+
+    Add react-collapsible and react-icons
+
+[33mcommit 014b76f8fc9aa653dc85ff3b88b97824aaad2a5a[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Mar 13 22:02:28 2023 -0700
+
+    Streamline UI
+
+[33mcommit 182d8aa4e458179b4dcbe195e2d441bb7dac5d1c[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Sun Mar 12 22:43:02 2023 -0700
+
+    adding manual limits in 3 widgets
+
+[33mcommit add1177eba7883d1d963c643734b921f2dc44b2e[m
+Merge: 60d9fe5b a679c457
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Sun Mar 12 20:08:05 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 60d9fe5b877ea5b45379399a018b75d1226e9a92[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Sun Mar 12 20:07:52 2023 -0700
+
+    Frequency Sink max and min manual input
+
+[33mcommit a679c457a86c56720a26dd9664a70c9d13e3fd53[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Sun Mar 12 17:54:21 2023 -0700
+
+    Fix Firefox issue
+
+[33mcommit 6b1353e3b006d1c89a3c29a1233813b7907ef9b3[m
+Merge: aa0af147 7941ff7e
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Sun Mar 12 17:03:31 2023 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit aa0af1473f51c2aef5bf9adf07f34253601927f8[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Sun Mar 12 01:48:39 2023 -0800
+
+    updates in fft widget
+
+[33mcommit 7941ff7efd2a49870ccc1b9e8f5505ae8c64c8ed[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Sat Mar 11 16:54:15 2023 -0800
+
+    Updates
+
+[33mcommit b7ff9b9534b3560fd690efe4b5eff2be688986cd[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Sat Mar 11 02:56:30 2023 -0800
+
+    Updates
+
+[33mcommit 7c4815499a327d62b6f3adcd511c772c4cb1734c[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Mar 10 13:36:55 2023 -0800
+
+    Revert changes that require session that are not needed
+
+[33mcommit b2625125c823c9a289e40282130722e852854416[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Mar 10 13:12:50 2023 -0800
+
+    Add .DS_Store to gitignore
+
+[33mcommit b7fe3a5379a2755332174ae495cdbb5732354de2[m
+Merge: 8b248d60 3f84c355
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Fri Mar 10 13:10:47 2023 -0800
+
+    Merge branch 'VectorSink-10-3'
+
+[33mcommit 8b248d6056b341ccd384bbb202cd5ff45d90387c[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Mar 10 09:07:06 2023 -0800
+
+    Remove absolute URLs to localhost
+
+[33mcommit 3f84c355df2a6f7d4ab2b96d3d296c389a7c05be[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Thu Mar 9 00:34:53 2023 -0800
+
+    VectorSink update
+
+[33mcommit f040baec4d63cbcb126492a9e238d24b317ae587[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu Mar 2 22:49:13 2023 -0800
+
+    Integration p2
+
+[33mcommit df084b64c9fe1819d0af9eee5cc170b44bbce402[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu Mar 2 01:29:16 2023 -0800
+
+    Fix time
+
+[33mcommit d22635b2a623faa606aa2edf8d287de0f411de6f[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Thu Mar 2 01:12:43 2023 -0800
+
+    Fix bug
+
+[33mcommit 59edaf74e2f3ea1b3f058d7695325470051c1d45[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Wed Mar 1 21:33:56 2023 -0800
+
+    Integration p1
+
+[33mcommit d8ef7c6f6a6794875d8b04b753139a61b6f7dc4f[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Fri Feb 24 13:32:22 2023 -0800
+
+    Minor modification
+
+[33mcommit 6ef343262de9cfd03864485d1492831b97d63e33[m
+Merge: 0f3ec1dc 51b9a942
+Author: Brian Chap <brianchap@protonmail.com>
+Date:   Fri Feb 24 10:31:18 2023 +0000
+
+    Merge branch '220_branch' into 'main'
+    
+    220 branch
+    
+    See merge request relia-project/cloud/relia-frontend!2
+
+[33mcommit 51b9a9423ff4b5188394b3906a8ca1fe56d77eed[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Fri Feb 24 02:29:42 2023 -0800
+
+    First round of modifications
+
+[33mcommit 0f3ec1dc0af64bc5b072059ecce15529cd20350f[m
+Merge: b20d85ea 33f5caac
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed Feb 22 13:51:23 2023 -0800
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit b20d85ea5738febbd21290e92af6516935aae30e[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed Feb 22 13:51:21 2023 -0800
+
+    Update constellation sink
+
+[33mcommit 9aa048b25569d3f3297025c380d50fd65b6f6964[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Wed Feb 22 12:57:33 2023 -0800
+
+    Fix constellation
+
+[33mcommit 33f5caac9ed4ca3643d522f313f9d9bf5cda4aae[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Wed Feb 22 12:14:44 2023 -0800
+
+    vector initialization
+
+[33mcommit 94c5e53e2eb99867981d12f21f4dde424503cb28[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Tue Feb 21 13:33:51 2023 -0800
+
+    json => body
+
+[33mcommit bcb914586792689d8b66715739940a3abdf556da[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Feb 20 22:15:56 2023 -0800
+
+    Minor update
+
+[33mcommit cd9ac0d1f099444eee6b81891fd37ab076a439e6[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Feb 20 21:57:51 2023 -0800
+
+    Push for visibility
+
+[33mcommit 3137f148ffe3e6d1e0f2d9d7e38177250467e6e5[m
+Merge: 50477fe7 8893311d
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Feb 20 20:42:38 2023 -0800
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 50477fe7329bd11c60d368e65b419c708b9a98f7[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Feb 20 20:42:02 2023 -0800
+
+    Asynchronize functions to improve authentication
+
+[33mcommit 8893311da924391e37872dffa33b59453b576ecc[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Fri Feb 17 23:11:14 2023 -0800
+
+    FrequencySink widget
+
+[33mcommit d4804ef8fc3af7a999f47f0b3306324268f7a24a[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Thu Feb 16 00:01:33 2023 -0800
+
+    Constellation Sink features
+
+[33mcommit c12ee4a25cb2e0ce40f81a30fd37d5b7d6601ce1[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Mon Feb 6 23:20:55 2023 -0800
+
+    Add linewidth and stlye
+
+[33mcommit 268aa82875a605b13c06d27b1b6c45ee91aadd74[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Feb 2 14:22:51 2023 -0800
+
+    change things as discussed in the meeting
+
+[33mcommit 0fedb6f316649835af7ec8188317331141c083ca[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Jan 31 12:55:53 2023 -0800
+
+    progress in widht and style
+
+[33mcommit b8317d681bf108c457d85a400b8125b2240485e1[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Jan 31 11:15:21 2023 -0800
+
+    signals with all coloors and keep even when they are disabled
+
+[33mcommit 386be425e3d559552b53d1c11af678507bb14339[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Jan 31 02:02:53 2023 -0800
+
+    Part of update
+
+[33mcommit c73406e1402a3f94299c957c0a6f12164118926d[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Jan 24 02:02:23 2023 -0800
+
+    Added features of colors to every signal
+
+[33mcommit a94e6190ed3469df3ab1681b5148ddcd92dbb222[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Jan 10 01:14:21 2023 -0800
+
+    Logical updates
+
+[33mcommit ed3a8c11e8b97f730cbb12218a58bcc190dbe7c9[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Jan 3 01:21:42 2023 -0800
+
+    More updates
+
+[33mcommit 5e4f342855c25d15e4317cb492bca8bb35ad9208[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Dec 19 20:45:25 2022 -0800
+
+    Modify proxies
+
+[33mcommit 34b60b31eb4e70d2e98178b6d1b0a1e174bf63d7[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Dec 19 15:56:56 2022 -0800
+
+    Prepare for scheduler
+
+[33mcommit 707c9a6857e4ebdad8f61b7771c1008b8fa9ac64[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Dec 5 21:32:31 2022 -0800
+
+    File selection, enable/disable, renaming, reorganizing into columns, etc.
+
+[33mcommit cd79d531f107eb094b08828a1f10109e5d5b6928[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Dec 1 13:01:40 2022 -0800
+
+    Start adding button
+
+[33mcommit 23889c1b7717624af7cc304110de86bb971b6acf[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Dec 1 12:54:22 2022 -0800
+
+    Change a bit the layout
+
+[33mcommit 5a27d36e2933f7a36a81d047c65055d538ebb4c9[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Dec 1 12:41:50 2022 -0800
+
+    Use longer names for transmitter and receiver
+
+[33mcommit 0d966d25d4a230ca69336f4538ca3c9bf392b0d3[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Nov 29 12:20:12 2022 -0800
+
+    Adding the Eye Plot widget
+
+[33mcommit 8aebede8511f23cf4201a3c5f954584aa5244e4d[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Nov 29 02:02:31 2022 -0800
+
+    Fix bugs + add links
+
+[33mcommit 7c775513bb753b5930e6d1ca99d64569bafaf896[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Wed Nov 23 22:15:32 2022 -0800
+
+    Time Sink with n input channels
+
+[33mcommit f35b60f364410980a76303b9e1bef843dcee2dd5[m
+Merge: 5dde6b78 f81c8557
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Nov 22 13:48:42 2022 -0800
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend
+
+[33mcommit 5dde6b7881aa610a44d3b08837915a1c561d9925[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Nov 22 13:48:20 2022 -0800
+
+    Minor fixes
+
+[33mcommit f81c855785e27b7471ed12634a777a38ab4fdda3[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Nov 22 12:32:16 2022 -0800
+
+    1st version of Multichannel Sink
+
+[33mcommit 26b34ec2a440f745f15d7ab0d265ad1478828169[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Nov 22 01:06:23 2022 -0800
+
+    More updates
+
+[33mcommit 8248e2868fe4c5a4ad9f9cfe72dd02fcb0702dbf[m
+Merge: a9349fb7 d09bd34e
+Author: Brian Chap <brianchap@protonmail.com>
+Date:   Tue Nov 22 08:07:10 2022 +0000
+
+    Merge branch 'fileUploadingWork' into 'main'
+    
+    File uploading work
+    
+    See merge request relia-project/cloud/relia-frontend!1
+
+[33mcommit d09bd34eec948076c28b7ddbaa48d324eb284afd[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Tue Nov 22 00:02:07 2022 -0800
+
+    Some updates
+
+[33mcommit 76f0b51c248fe02798221fc7b1c765734fb6df18[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 21 22:58:04 2022 -0800
+
+    Pushing new updates
+
+[33mcommit a9349fb71e7ec5624c5a0a9c552fa7f19d8a5fcc[m
+Merge: d3048c71 e765a625
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 21 19:53:29 2022 -0800
+
+    Merge branches
+
+[33mcommit d3048c71fe9dae8b3639c917d6997a518d008928[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 21 19:51:01 2022 -0800
+
+    Adding Marcos's contribution to merge branches
+
+[33mcommit d0f550b688d93c266ecc09b2e67662c702c75bd2[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Nov 21 19:39:14 2022 -0800
+
+    Upload only grc files
+
+[33mcommit 055cc822333faef129c575c1f9cc2fbe7efac0af[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Nov 21 19:33:03 2022 -0800
+
+    Fix the /user/upload path instead of /upload
+
+[33mcommit 3d4d77b876e9f9549d9e311151ee6478f1c92ef0[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 21 19:25:33 2022 -0800
+
+    Add missing file
+
+[33mcommit ef1722f25077b03025f433aa647da3d977d8bf96[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 21 19:10:10 2022 -0800
+
+    Committing for visibility on CORS error
+
+[33mcommit e765a625f365e6aec42d8c0687b266500e409def[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Mon Nov 21 12:25:44 2022 -0800
+
+    developing of Time Sink multichannel
+
+[33mcommit 961789482fddde58ed6f8d03197eeec44c4b163c[m
+Merge: 26c59142 f6571482
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Nov 15 01:56:47 2022 -0800
+
+    Merge branch 'main' of gitlab.com:relia-project/cloud/relia-frontend into main
+
+[33mcommit 26c59142603e444fbf09f3e90b675ef053ed94eb[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Nov 15 01:55:23 2022 -0800
+
+    New Widget NumberSink added
+
+[33mcommit f6571482f181bf5ea11d89987072f76efa3f7858[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 14 23:05:02 2022 -0800
+
+    Remove login for now
+
+[33mcommit 40d4177089bb57a1e3ad91c6dcc490736dca8cef[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 14 22:50:19 2022 -0800
+
+    Add missing files from last push
+
+[33mcommit 09de32668b574f5c9468399762e9e7ba136539d9[m
+Author: Brian <brian@LAPTOP-NCGIRP78.localdomain>
+Date:   Mon Nov 14 22:45:17 2022 -0800
+
+    First round of routing by authentication updates - frontend
+
+[33mcommit d8036896530600b18f85869c53127448cf1eff1d[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Nov 8 12:02:04 2022 -0800
+
+    Modifying the VectorSink Relia block with bootstrap inputs
+
+[33mcommit 9a1e74892bf4cfa53c6df1b7569b5b91c35c0311[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Oct 28 16:39:58 2022 -0700
+
+    Improve frontend other widgets
+
+[33mcommit 70d823f7680633746d6a06f1ab5c9afbd6d34db6[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Oct 28 16:13:54 2022 -0700
+
+    Implement pushbutton
+
+[33mcommit 6b2ba58fa02b67380f7f6e5562be07c79db25897[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Oct 28 15:52:39 2022 -0700
+
+    Use slugify
+
+[33mcommit 7a865cd86261fe70e0193cf7d215e022f187dd4f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Fri Oct 28 15:43:19 2022 -0700
+
+    Improvements in the UI
+
+[33mcommit 2f8cb4dcdc6f43fc776859ac663fae37fb1d54f8[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Oct 25 15:31:57 2022 -0400
+
+    Input Chooser Widget added
+
+[33mcommit 45297f1072f89dd58051539b97e9ea446194ec1c[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Oct 25 13:15:35 2022 -0400
+
+    Input Push Button Widget added
+
+[33mcommit 4734bd28190576662b81cb4c065803eec8910794[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Tue Oct 25 13:00:58 2022 -0400
+
+    Input Push Button Widget added
+
+[33mcommit bf90719f071a3c7c9ccbcdc1c2de8d75992550bd[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Oct 17 15:45:21 2022 -0700
+
+    Start adding checkbox variable widget
+
+[33mcommit cb81af462ff4a3acccd2b998f3457b4cb27c8da2[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Oct 17 14:51:34 2022 -0700
+
+    Call reset in the beginning
+
+[33mcommit 4cf6a417f28469a5fee2d45ceb37cc4e250e36e0[m
+Merge: 71c78e7b 3dc78645
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Oct 17 14:17:50 2022 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/react/react-relia
+
+[33mcommit 71c78e7b9e6e46830d673b18c8af34fb18874d05[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Mon Oct 17 14:17:44 2022 -0700
+
+    Avoid having twice the functions
+
+[33mcommit 3dc78645cbc11d89f71c234b7184d8f9596fa25e[m
+Author: Marcos Inonan <minonan@uw.edu>
+Date:   Mon Oct 17 00:38:41 2022 -0700
+
+    New Widget added: Relia Histogram
+
+[33mcommit d36e7c6195ca38425f97cd7a24e413e050639399[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sun Oct 16 23:11:44 2022 -0700
+
+    Start supporting variable
+
+[33mcommit 311c7594ad042448d10cf2eca5e471138bf9b3e2[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Sun Oct 16 22:35:20 2022 -0700
+
+    Support localrc
+
+[33mcommit f6c8b753cbed8a122abc355bca97c609c8cf046d[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Oct 13 15:08:45 2022 -0700
+
+    Refactor relia.js with smaller files
+
+[33mcommit 6528d22d629f109a213c0d17de24b0974bcd287f[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Oct 13 14:58:52 2022 -0700
+
+    Try 127.0.0.1
+
+[33mcommit 162abaafb351070ca5b45ca69721e654cf41e94a[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Oct 13 14:39:07 2022 -0700
+
+    Fix the main index so that we can work on our own
+
+[33mcommit 50893ff80ca60ca058157ee200003fc251dddf3a[m
+Author: Pablo Orduña <pablo@labsland.com>
+Date:   Thu Oct 13 13:52:49 2022 -0700
+
+    Remove node_modules; add the newest version of relia.js
+
+[33mcommit d857341152698d3cfb72ad91b20c3d5d9a53a74c[m
+Merge: 870dd74b 557a66ac
+Author: unknown <hsapucla@g.ucla.edu>
+Date:   Tue Oct 11 16:07:30 2022 -0700
+
+    Merge branch 'main' of gitlab.com:relia-project/react/react-relia
+    Merge for React components
+
+[33mcommit 870dd74bb1bb98be8090d58cefe4e59ddc0f9758[m
+Author: unknown <hsapucla@g.ucla.edu>
+Date:   Tue Oct 11 16:07:03 2022 -0700
+
+    Add React component for GRC file upload
+
+[33mcommit 557a66ac9dd466633f63703485a68dfa7b0cd105[m
+Author: Brian Chap <brianchap@protonmail.com>
+Date:   Tue Oct 4 06:29:50 2022 +0000
+
+    How to avoid a flop era - pt. 1
+
+[33mcommit 87c29ed1b3eff188dfb47bb0c9873ac07c380c14[m
+Author: unknown <hsapucla@g.ucla.edu>
+Date:   Mon Oct 3 23:21:13 2022 -0700
+
+    First commit: basic architecture
+
+[33mcommit f6143f53ce740bc0b6fe4203e164fcb26bdee779[m
+Author: Brian Chap <brianchap@protonmail.com>
+Date:   Tue Oct 4 06:09:38 2022 +0000
+
+    Initial commit

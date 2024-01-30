@@ -78,6 +78,12 @@ function Outerloader() {
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
 
+
+
+    const [fileStatus, setFileStatus] = useState(<a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
+            Upload GNU radio files to proceed
+        </a>);
+
     // Set a global variable for the base API URL.
     window.API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/api/`;
 
@@ -154,9 +160,10 @@ function Outerloader() {
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
                                storedFiles={storedFiles} setStoredFiles={setStoredFiles} setSelectedFilesColumnRX={setSelectedFilesColumnRX}
                                 selectedFilesColumnRX={selectedFilesColumnRX} selectedFilesColumnTX={selectedFilesColumnTX} setSelectedFilesColumnTX={setSelectedFilesColumnTX}
-                                 manageTask={manageTask} checkStatus={checkStatus}/> ;
+                                 fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}/> ;
             case 'laboratory':
-                return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}/> ;
+                return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}
+                                    fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}/> ;
             default:
                 return null;
         }
@@ -297,7 +304,7 @@ function Outerloader() {
      * workflow of submitting and monitoring tasks in the application.
      *
     */
-    const manageTask = (setFileStatus) => {
+    const manageTask = () => {
 
         fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
                     method: 'POST'
@@ -308,9 +315,8 @@ function Outerloader() {
 
              // TODO
             console.log('Failed to fetch: Status ' + response.status);
-            if (setFileStatus) {
-                setFileStatus(<a>Error sending files, please try again</a>);
-            }
+            setFileStatus(<a>Error sending files, please try again</a>);
+
         }
         }).then((data) => {
             if (data && data.success) {

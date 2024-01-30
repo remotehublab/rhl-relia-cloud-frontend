@@ -45,7 +45,54 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         }
     };
 
+    const refreshTask = () => {
+        if (reliaWidgets !== null) {
+            reliaWidgets.stop();
+            reliaWidgets.clean();
+        }
 
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
+                    method: 'POST'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+
+             // TODO
+            console.log('Failed to fetch: Status ' + response.status);
+            setFileStatus(<a>Error sending files, please try again</a>);
+
+        }
+        }).then((data) => {
+            if (data && data.success) {
+                const newSession = {
+                    "taskIdentifier": data.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "assignedInstance": null,
+                    "assignedInstanceName": t("runner.no-instance-yet"),
+                    "transmitterFilename": null,
+                    "receiverFilename": null,
+                    "cameraUrl": null,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+
+                Object.assign(currentSession, newSession);
+                console.log(currentSession);
+                setTimeout(checkStatus, 1000 );
+
+                const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), data.taskIdentifier, currentSessionRef);
+                newReliaWidgets.start();
+                setReliaWidgets(newReliaWidgets);
+            } else {
+               if (setFileStatus) {
+                setFileStatus(<a>Error sending files, please try again</a>);
+                }
+                console.error('Failed to create task');
+            }
+        });
+    };
 
     const shouldCameraReloadInCurrentStatus = () => {
         let currentStatus = currentSessionStatusRef.current;
@@ -58,6 +105,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         setTimeout(function () {
             if (cameraShouldRunRef.current && shouldCameraReloadInCurrentStatus()) {
                 setCameraUrl(getCameraURL());
+                // for some reason setCameraUrl goes super slow to refresh, so we manipulate DOM directly
+                document.getElementById("camera-image").src = getCameraURL();
             }
         }, 50);
     };
@@ -136,9 +185,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> 
                     {t(convertStatusMessage(currentSession.status))}
                     { currentSession.status === "completed" && (
-                            <button className="btn btn-sm btn-primary" onClick={manageTask}>
+                            <span>&nbsp;<button className="btn btn-sm btn-primary" onClick={refreshTask}>
                                  Refresh <i className="bi bi-arrow-clockwise"></i>
-                            </button>
+                            </button></span>
 
                     )}
                     <br></br>
@@ -154,8 +203,10 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
             </Row>
             {showCamera && (
                 <Row>
+                    <Col xs={{ span: 12 }} md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }} xl={{ span: 6, offset: 3 }}>
+                        <img id={"camera-image"} src={cameraURL} onLoad={onImageLoaded} onError={onImageLoaded} alt="Camera" width="100%"/>
+                    </Col>
                     <center>
-                        <img src={cameraURL} onLoad={onImageLoaded} onError={onImageLoaded} alt="Camera" width="50%"/>
                         <br />
                         <p>
                             <i>Receiver (left) and transmitter (right) devices inside a Faraday Cage.</i>

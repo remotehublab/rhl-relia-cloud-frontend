@@ -26,16 +26,10 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     const currentSessionStatusRef = useRef(null);
     const cameraUrlRef = useRef(null);
     const intervalIdRef = useRef(null);
-    // function formatString(input) {
-    //     return input
-    //         .split('-') // Split the string by hyphens
-    //         .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
-    //         .join(' '); // Join the words back into a string with spaces
-    // }
 
 
     const handleCameraButtonClick = () => {
-        var newShowCamera = !showCamera;
+        let newShowCamera = !showCamera;
         setShowCamera(newShowCamera);
 
         if (newShowCamera) {
@@ -49,7 +43,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     };
 
     const shouldCameraReloadInCurrentStatus = () => {
-        var currentStatus = currentSessionStatusRef.current;
+        let currentStatus = currentSessionStatusRef.current;
         return currentStatus == 'receiver-assigned' || currentStatus == 'fully-assigned' || currentStatus == 'receiver-still-processing' || currentStatus == 'transmitter-still-processing';
     }
 
@@ -129,13 +123,94 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         setCameraUrl(getCameraURL());
     }, [ currentSession ]);
 
+    const manageTask = () => {
+
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
+                    method: 'POST'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+
+            console.log('Failed to fetch: Status ' + response.status);
+        }
+        }).then((data) => {
+            if (data && data.success) {
+                const newSession = {
+                    "taskIdentifier": data.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "assignedInstance": null,
+                    "assignedInstanceName": t("runner.no-instance-yet"),
+                    "transmitterFilename": null,
+                    "receiverFilename": null,
+                    "cameraUrl": null,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log(currentSession);
+                setTimeout(checkStatus, 1000 );
+            } else {
+
+                console.error('Failed to create task');
+            }
+        });
+    };
+
+
+     const checkStatus = () => {
+         fetch(`${process.env.REACT_APP_API_BASE_URL}/scheduler/user/tasks/${currentSession.taskIdentifier}`, {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then((data) => {
+            if (data.success) {
+                const newSession = {
+                    "taskIdentifier": currentSession.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "assignedInstance": data.assignedInstance,
+                    "assignedInstanceName": data.assignedInstance,
+                    "transmitterFilename": data.transmitterFilename,
+                    "receiverFilename": data.receiverFilename,
+                    "cameraUrl": data.cameraUrl,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log("checked status " + currentSession);
+                if (// skip completed
+                    data.status === "queued"
+                    //  skip deleted
+                    || data.status === "receiver-assigned"
+                    || data.status === "fully-assigned"
+                    || data.status === 'receiver-still-processing'
+                    || data.status === "transmitter-still-processing"
+                    || data.status === 'receiver-assigned' ) {
+                    setTimeout(checkStatus, 1000 );
+                }
+            } else {
+                console.error('Failed to check status:', data.message);
+            }
+        });
+     };
+
     // The receiver is always on the left!
     return (
         <Container className={"laboratory-container text-center"}>
             <Row >
                 <Col className={"laboratory-status-message"} md={{ span: 10, offset: 1 }}> 
                     {t(convertStatusMessage(currentSession.status))}
-                    <br /><br />
+                    { currentSession.status === "completed" && (
+                            <button className="btn btn-sm btn-primary" onClick={manageTask}>
+                                 Refresh <i className="bi bi-arrow-clockwise"></i>
+                            </button>
+
+                    )}
+                    <br></br>
                     <span>
                         {t("runner.assigned-instance")}: <span><tt>{currentSession.assignedInstanceName}</tt></span>
 

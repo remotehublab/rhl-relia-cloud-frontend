@@ -109,43 +109,45 @@ function Loader({
      * It also makes a call to the backend to send the new files to the server
      */
     const handleFileChange = (event) => {
-        if (event.target.files.length > 0) {
-            const newUploadedFiles = Array.from(event.target.files);
+    if (event.target.files.length > 0) {
+        // filer non .grc
+        const newUploadedFiles = Array.from(event.target.files).filter(file => file.name.toLowerCase().endsWith('.grc'));
+
+        if (newUploadedFiles.length > 0) {
             const formData = new FormData();
-            const files = event.target.files;
-            let isError = false;
-            // Add each file to the form data.
-            for (let i = 0; i < files.length; i++) {
-                formData.append('file-' + i, files[i]);
-            }
+
+            // Add each .grc file to the form data.
+            newUploadedFiles.forEach(file => {
+                formData.append('file', file);
+            });
+
             setFileStatus(<a>Uploading files, please wait</a>);
+
             // Now, send the formData using Fetch.
             fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const newFileNames = [];
-                    for (const newFile of newUploadedFiles) {
-                        newFileNames.push(newFile.name);
-                    }
-                    setStoredFiles([...storedFiles, ...newFileNames]);
-                }).catch(error => {
-                    console.error('Error uploading files:', error);
-                    setFileStatus(<a>Error uploading files</a>);
-                    isError = true;
-                })
-                .finally(() => {
-                if (!isError) {
-                    setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
-                }
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const newFileNames = newUploadedFiles.map(file => file.name);
+                setStoredFiles([...storedFiles, ...newFileNames]);
+            })
+            .catch(error => {
+                console.error('Error uploading files:', error);
+                setFileStatus(<a>Error uploading files</a>);
+            })
+            .finally(() => {
+                setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
             });
         } else {
-            // Log a message if no files are selected.
-            console.log('No files selected.');
+            console.log('No .grc files selected.');
         }
-    };
+    } else {
+        console.log('No files selected.');
+    }
+};
+
 
 
     /**

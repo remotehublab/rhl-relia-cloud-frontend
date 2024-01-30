@@ -153,7 +153,8 @@ function Outerloader() {
             case 'loadFiles':
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
                                storedFiles={storedFiles} setStoredFiles={setStoredFiles} setSelectedFilesColumnRX={setSelectedFilesColumnRX}
-                                selectedFilesColumnRX={selectedFilesColumnRX} selectedFilesColumnTX={selectedFilesColumnTX} setSelectedFilesColumnTX={setSelectedFilesColumnTX}/>;
+                                selectedFilesColumnRX={selectedFilesColumnRX} selectedFilesColumnTX={selectedFilesColumnTX} setSelectedFilesColumnTX={setSelectedFilesColumnTX}
+                                 manageTask={manageTask} checkStatus={checkStatus}/> ;
             case 'laboratory':
                 return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}/> ;
             default:
@@ -274,6 +275,127 @@ function Outerloader() {
         });
         }
 
+
+     /**
+     * Initiates a new task for processing and switches the user to the "Laboratory" tab.
+     *
+     * This function is responsible for starting a new processing task with the server.
+     * It sends a POST request to the '/user/tasks/' endpoint to create a new task.
+     * Upon successful creation, the task's details are updated in the current session,
+     * and the user interface is redirected to the "Laboratory" tab where the task progress
+     * can be monitored. This function is an essential part of the workflow in the SDR (Software Defined Radio)
+     * operation setup, where it marks the transition from file selection and setup to the actual
+     * processing and observation phase in the "Laboratory" tab.
+     *
+     * On a successful server response, the current session state is updated with the new task's
+     * identifier, status, and message. This function also initiates a status check loop by calling
+     * `checkStatus` function, which repeatedly checks the status of the newly created task.
+     *
+     * Usage:
+     * This function is typically called when a user has finished setting up files for transmission
+     * and reception and is ready to start the processing task. It represents a key action in the
+     * workflow of submitting and monitoring tasks in the application.
+     *
+    */
+    const manageTask = (setFileStatus) => {
+
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
+                    method: 'POST'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+
+             // TODO
+            console.log('Failed to fetch: Status ' + response.status);
+            if (setFileStatus) {
+                setFileStatus(<a>Error sending files, please try again</a>);
+            }
+        }
+        }).then((data) => {
+            if (data && data.success) {
+                const newSession = {
+                    "taskIdentifier": data.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "assignedInstance": null,
+                    "assignedInstanceName": t("runner.no-instance-yet"),
+                    "transmitterFilename": null,
+                    "receiverFilename": null,
+                    "cameraUrl": null,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log(currentSession);
+                setTimeout(checkStatus, 1000 );
+                setSelectedTab("laboratory");
+            } else {
+               if (setFileStatus) {
+                setFileStatus(<a>Error sending files, please try again</a>);
+                }
+                console.error('Failed to create task');
+            }
+        });
+    };
+
+    /**
+     * Periodically checks the status of the current user task on the server.
+     *
+     * This function makes GET requests to the server to retrieve the current status of a task
+     * identified by `currentSession.taskIdentifier`. It updates the `currentSession` state with
+     * the new status, message, and any additional data received from the server.
+     *
+     * If the task status is one of the intermediate states (like "queued", "receiver-assigned",
+     * "fully-assigned", etc.), the function sets a timeout to call itself again, effectively
+     * creating a polling mechanism to regularly check for updates until the task reaches a
+     * final state (like "completed" or "deleted").
+     *
+     * @requires currentSession - The current user session object, which contains the taskIdentifier.
+     * @modifies currentSession - Updates the currentSession state with the latest task status and message.
+     *
+     * Usage:
+     * This function is used to continuously monitor the progress of a task related to SDR (Software Defined Radio) operations.
+     * It is important for keeping the user interface in sync with the task's progress on the server.
+     */
+    const checkStatus = () => {
+         fetch(`${process.env.REACT_APP_API_BASE_URL}/scheduler/user/tasks/${currentSession.taskIdentifier}`, {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+        }).then((data) => {
+            if (data.success) {
+                const newSession = {
+                    "taskIdentifier": currentSession.taskIdentifier,
+                    "status": data.status,
+                    "message": data.message,
+                    "assignedInstance": data.assignedInstance,
+                    "assignedInstanceName": data.assignedInstance,
+                    "transmitterFilename": data.transmitterFilename,
+                    "receiverFilename": data.receiverFilename,
+                    "cameraUrl": data.cameraUrl,
+                    "renderingWidgets": currentSession.renderingWidgets,
+                }
+                setCurrentSession(newSession);
+                Object.assign(currentSession, newSession);
+                console.log("checked status " + currentSession);
+                if (// skip completed
+                    data.status === "queued"
+                    //  skip deleted
+                    || data.status === "receiver-assigned"
+                    || data.status === "fully-assigned"
+                    || data.status === 'receiver-still-processing'
+                    || data.status === "transmitter-still-processing"
+                    || data.status === 'receiver-assigned' ) {
+                    setTimeout(checkStatus, 1000 );
+                }
+            } else {
+                console.error('Failed to check status:', data.message);
+            }
+        });
+     };
         /**
          * Fetches and displays the library of files for the user.
          *

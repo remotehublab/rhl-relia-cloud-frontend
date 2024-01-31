@@ -194,16 +194,19 @@ function Outerloader() {
             })
             // bug here possibly if data is not returned correctly
             .then((data) => {
+                if (!data.success) {
+                    if (data.redirect_to)
+                        window.location.href = data.redirect_to;
+                    else
+                        window.location.href = "https://relia.rhlab.ece.uw.edu"
+                }
+
                 if (data.locale && data.locale != i18n.language) {
                     i18n.changeLanguage(data.locale);
                 }
 
                 // Update the userData state with the retrieved data
                 setUserData(data);
-
-                if (!data.success && data.redirect_to) {
-                    window.location.href = data.redirect_to;
-                }
             })
             .catch((error) => {
                 console.error('Fetch error:', error.message);

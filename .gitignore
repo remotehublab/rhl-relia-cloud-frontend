@@ -1,6 +1,8 @@
 localrc
 node_modules
 build
+build-pluto
+build-redpitaya
 *.swp
 *.swo
 .DS_Store

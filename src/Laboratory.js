@@ -186,7 +186,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                     {t(convertStatusMessage(currentSession.status))}
                     { currentSession.status === "completed" && (
                             <span>&nbsp;<button className="btn btn-sm btn-primary" onClick={refreshTask}>
-                                 Refresh <i className="bi bi-arrow-clockwise"></i>
+                                 {t("runner.buttons.refresh")} <i className="bi bi-arrow-clockwise"></i>
                             </button></span>
 
                     )}

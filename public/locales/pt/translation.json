@@ -61,7 +61,23 @@
       "select-files-to-upload-for-either-the-transmitter-or-the-receiver": "Selecione arquivos para enviar, seja para o transmissor ou o receptor",
       "transmitter-file": "Arquivo transmissor",
       "upload": "Enviar",
-      "receiver-file": "Arquivo receptor"
+      "receiver-file": "Arquivo receptor",
+      "file": "Arquivo",
+      "remove" : "Remover",
+      "introduction": "Introdução",
+      "load-files": "Carregar arquivos",
+      "laboratory": "Laboratorio",
+      "go-back": "Voltar",
+      "file-name": "Nome do arquivo",
+      "delete": "Deletar",
+      "file-status": {
+        "uploading-files": "Enviando arquivos, por favor esperar",
+        "upload-error": "Erro ao enviar arquivos",
+        "select-rx-tx": "Por favor selecione um arquivo Rx e um arquivo Tx para continuar",
+        "select-tx": "Selecione um arquivo Tx para continuar",
+        "select-rx": "Selecione um arquivo Rx para continuar",
+        "upload-gnu": "Envie arquivos GNU radio para continuar"
+      }
     },
     "select": {
       "submit-tasks": "Selecionar arquivos existentes de GNU Radio",
@@ -91,7 +107,11 @@
     "buttons": {
       "return-to-file-upload": "Voltar para envio de arquivos",
       "stop": "Parar",
-      "run-again": "Executar novamente"
-    }
+      "run-again": "Executar novamente",
+      "show": "Mostrar",
+      "refresh": "Recarregar",
+      "hide": "Ocultar"
+    },
+    "faraday-info": "Receptor (esquerda) e transmissor (direita) dentro de uma Gaiola de Faraday."
   }
 }

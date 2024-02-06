@@ -67,7 +67,15 @@
       "load-files": "Cargar ficheros",
       "laboratory": "Laboratorio",
       "file-name": "Nombre de fichero",
-      "delete": "Borrar"
+      "delete": "Borrar",
+      "file-status": {
+        "uploading-files": "Subiendo archivos, por favor espere",
+        "upload-error": "Error al subir archivos",
+        "select-rx-tx": "Por favor seleccione un archivo RX y un archivo TX para continuar",
+        "select-tx": "Seleccione un archivo TX para continuar ",
+        "select-rx": "Seleccione un archivo RX para continuar ",
+        "upload-gnu": "Suba archivos de GNU radio para continuar"
+      }
     },
     "select": {
       "submit-tasks": "Seleccionar archivos existentes de GNU Radio",
@@ -98,7 +106,11 @@
     "buttons": {
       "return-to-file-upload": "Volver a subida de archivos",
       "stop": "Detener",
-      "run-again": "Ejecutar nuevamente"
-    }
+      "run-again": "Ejecutar nuevamente",
+      "show": "Mostrar",
+      "refresh": "Recargar",
+      "hide": "Ocultar"
+    },
+    "faraday-info": "Receptor (izquierda) y transmisor (derecha) dispositivos dentro de una Jaula de Faraday\n"
   }
 }

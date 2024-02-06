@@ -196,7 +196,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
                         &nbsp;&nbsp;
                         <button className="btn btn-sm btn-primary" onClick={handleCameraButtonClick}>
-                            {showCamera ? "Hide" : "Show"} <i className="bi bi-camera-fill"></i>
+                            {showCamera ? t("runner.buttons.hide") : t("runner.buttons.show")} <i className="bi bi-camera-fill"></i>
                         </button>
                     </span>
                 </Col>
@@ -209,7 +209,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                     <center>
                         <br />
                         <p>
-                            <i>Receiver (left) and transmitter (right) devices inside a Faraday Cage.</i>
+                            <i>{t("runner.faraday-info")}</i>
                         </p>
                     </center>
                 </Row>

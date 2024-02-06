@@ -69,7 +69,15 @@
       "laboratory": "Laboratory",
       "go-back": "Go back",
       "file-name": "File Name",
-      "delete": "Delete"
+      "delete": "Delete",
+      "file-status": {
+        "uploading-files": "Uploading files, please wait",
+        "upload-error": "Error uploading files",
+        "select-rx-tx": "Please select one RX and one TX file to proceed",
+        "select-tx": "Select one Tx file to proceed ",
+        "select-rx": "Select one Rx file to proceed ",
+        "upload-gnu": "Upload GNU radio files to proceed"
+      }
     },
     "select": {
       "submit-tasks": "Select existing GNU Radio files",
@@ -100,7 +108,11 @@
     "buttons": {
       "return-to-file-upload": "Return to file upload",
       "stop": "Stop",
-      "run-again": "Run again"
-    }
+      "run-again": "Run again",
+      "show": "Show",
+      "refresh": "Refresh",
+      "hide": "Hide"
+    },
+    "faraday-info": "Receiver (left) and transmitter (right) devices inside a Faraday Cage."
   }
 }

@@ -87,16 +87,16 @@ function Loader({
       // setFileStatus(<a>Ready to upload</a>);
       setFileStatus(null);
     } else if (selectedFilesColumnTX.length > 0) {
-        setFileStatus(<span>Select one RX file to proceed</span>);
+        setFileStatus(<span>{t("loader.upload.file-status.select-rx")}</span>);
         setSenderComponent(<Container/>);
     } else if (selectedFilesColumnRX.length > 0){
-        setFileStatus(<span>Select one TX file to proceed</span>);
+        setFileStatus(<span>{t("loader.upload.file-status.select-tx")}</span>);
         setSenderComponent(<Container />);
     } else {
         if (storedFiles.length > 0) {
-            setFileStatus(<span>Select one TX file and one RX file to proceed</span>);
+            setFileStatus(<span>{t("loader.upload.file-status.select-rx-tx")}</span>);
         }  else {
-            setFileStatus(<span>Upload GNU radio files to proceed</span>);
+            setFileStatus(<span>{t("loader.upload.file-status.upload-gnu")}</span>);
             //setFileStatus(<span>Upload GNU radio files to proceed. <a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">See the docs</a></span>);
         }
         setSenderComponent(<Container />);
@@ -125,7 +125,7 @@ function Loader({
                 formData.append('file', file);
             });
 
-            setFileStatus(<a>Uploading files, please wait</a>);
+            setFileStatus(<a>{t("loader.upload.file-status.uploading-files")}</a>);
 
             // Now, send the formData using Fetch.
             fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
@@ -139,10 +139,10 @@ function Loader({
             })
             .catch(error => {
                 console.error('Error uploading files:', error);
-                setFileStatus(<a>Error uploading files</a>);
+                setFileStatus(<a>{t("loader.upload.file-status.upload-error")}</a>);
             })
             .finally(() => {
-                setFileStatus(<a>Please select one RX and one TX file to proceed</a>);
+                setFileStatus(<a>{t("loader.upload.file-status.select-rx-tx")}</a>);
             });
         } else {
             console.log('No .grc files selected.');
@@ -321,65 +321,6 @@ function Loader({
                 console.error('Error sending metadata:', error);
             });
         };
-
-    /**
-     * Initiates a new task for processing and switches the user to the "Laboratory" tab.
-     *
-     * This function is responsible for starting a new processing task with the server.
-     * It sends a POST request to the '/user/tasks/' endpoint to create a new task.
-     * Upon successful creation, the task's details are updated in the current session,
-     * and the user interface is redirected to the "Laboratory" tab where the task progress
-     * can be monitored. This function is an essential part of the workflow in the SDR (Software Defined Radio)
-     * operation setup, where it marks the transition from file selection and setup to the actual
-     * processing and observation phase in the "Laboratory" tab.
-     *
-     * On a successful server response, the current session state is updated with the new task's
-     * identifier, status, and message. This function also initiates a status check loop by calling
-     * `checkStatus` function, which repeatedly checks the status of the newly created task.
-     *
-     * Usage:
-     * This function is typically called when a user has finished setting up files for transmission
-     * and reception and is ready to start the processing task. It represents a key action in the
-     * workflow of submitting and monitoring tasks in the application.
-     *
-    */
-    // const manageTask = () => {
-    //
-    //     fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
-    //                 method: 'POST'
-    //     }).then((response) => {
-    //         if (response.status === 200) {
-    //             return response.json();
-    //         } else {
-    //
-    //         console.log('Failed to fetch: Status ' + response.status);
-    //         setFileStatus(<a>Error sending files, please try again</a>);
-    //     }
-    //     }).then((data) => {
-    //         if (data && data.success) {
-    //             const newSession = {
-    //                 "taskIdentifier": data.taskIdentifier,
-    //                 "status": data.status,
-    //                 "message": data.message,
-    //                 "assignedInstance": null,
-    //                 "assignedInstanceName": t("runner.no-instance-yet"),
-    //                 "transmitterFilename": null,
-    //                 "receiverFilename": null,
-    //                 "cameraUrl": null,
-    //                 "renderingWidgets": currentSession.renderingWidgets,
-    //             }
-    //             setCurrentSession(newSession);
-    //             Object.assign(currentSession, newSession);
-    //             console.log(currentSession);
-    //             setTimeout(checkStatus, 1000 );
-    //             setSelectedTab("laboratory");
-    //         } else {
-    //             setFileStatus(<a>Error sending files, please try again</a>);
-    //             console.error('Failed to create task');
-    //         }
-    //     });
-    // };
-
 
     return (
       <Container>

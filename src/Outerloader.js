@@ -170,6 +170,129 @@ function Outerloader() {
     };
 
     /**
+     * Creates an AI conversation with the LabsLand AI Assistant
+     */
+    function createLabsLandAiConversation(conversationsConfiguration) {
+        window.LabsLand = {};
+        let LabsLand = window.LabsLand;
+
+        if (typeof(LabsLand.Conversations) === "undefined") {
+            LabsLand.Conversations = {};
+        }
+
+        // Create the conversation component and append it to the DOM
+        LabsLand.Conversations.createConversationComponent = function (options) {
+            if (!options) {
+                options = {};
+            }
+            let config;
+            if (!options.config) {
+                config = {};
+            } else {
+                config = options.config;
+            }
+
+            let conversationComponent = document.createElement('lle-conversation');
+            window.conversationComponent = conversationComponent;
+
+            console.log("Conversation component created:", conversationComponent);
+
+            // Set the apiEndpoint property on the web component
+            conversationComponent.apiEndpoint = "https://labs.labsland.com/ai/external-labs/";
+
+            console.log("apiEndpoint set to:", conversationComponent.apiEndpoint);
+
+            var defaultQuestions = options.defaultQuestions;
+            if (defaultQuestions !== null && defaultQuestions !== undefined) {
+                conversationComponent.questions = defaultQuestions;
+            }
+
+            if (config) {
+                // handle the preconfiguration, if any
+                if (config.available) {
+                    if (config.role == 'instructor') {
+                        conversationComponent.isActive = true;
+                    } else {
+                        if (config.enabled) {
+                            conversationComponent.isActive = true;
+                        } else {
+                            conversationComponent.isActive = false;
+                        }
+                    }
+        
+                    conversationComponent.allowFullTextMessages = config.allowFullTextMessages || false;
+        
+                    if (config.questions !== undefined && config.questions !== null) {
+                        var questions = [];
+                        for (var i = 0; i < config.questions.length; i++)
+                            questions.push({
+                                'type': 'standard',
+                                'content': config.questions[i]
+                            });
+                        conversationComponent.questions = questions;
+                    }
+        
+                    if (config.enabled) {
+                        if (config.role == 'instructor') {
+                            conversationComponent.systemDisclaimer = "Students can see and use this assistant.";
+                        } else { // student
+                            conversationComponent.systemDisclaimer = "Conversations are being recorded and viewable by your instructor.";
+                        }
+                    } else {
+                        if (config.role == 'instructor') {
+                            conversationComponent.systemDisclaimer = "Students **cannot** see and use this assistant until you configure it in the AI Assistant settings.";
+                        }
+                    }
+        
+                    if (config.surveyUrl) {
+                        conversationComponent.surveyUrl = config.surveyUrl;
+                    }
+        
+                    if (window.LANG) {
+                        conversationComponent.lang = window.LANG;
+                    } else if (window.LANGUAGE) {
+                        conversationComponent.lang = window.LANGUAGE;
+                    }
+        
+                    if (config.surveyIntroText) {
+                        conversationComponent.surveyIntroText = config.surveyIntroText;
+                    }
+        
+                    if (config.welcomePrompt) {
+                        setTimeout(function () {
+                            var event = new CustomEvent('newPromptMessage', { detail: { content: config.welcomePrompt }, bubbles: true, composed: true });
+                            conversationComponent.dispatchEvent(event);
+                        }, 1000);
+                    }
+        
+                } else {
+                    conversationComponent.isActive = false;
+                }
+        
+                if (config.settingsUrl) {
+                    conversationComponent.settingsUrl = config.settingsUrl;
+                }
+            }
+                    
+
+            document.getElementById('conversation-container').appendChild(conversationComponent);
+
+            // Verify if it's appended
+            if (document.getElementById('conversation-container').contains(conversationComponent)) {
+                console.log("Conversation component appended to DOM successfully!");
+            } else {
+                console.error("Conversation component not appended!");
+            }
+        };
+
+        // Optionally configure options and create the conversation component
+        LabsLand.Conversations.createConversationComponent({
+            defaultQuestions: ["What can this assistant do?", "How can I interact with it?"],
+            config: conversationsConfiguration
+        });
+    }
+
+    /**
      * Fetches and updates user-specific data and stored files information.
      *
      * This function performs two primary tasks:
@@ -207,6 +330,10 @@ function Outerloader() {
 
                 // Update the userData state with the retrieved data
                 setUserData(data);
+
+                if (data.conversations) {
+                    createLabsLandAiConversation();
+                }
             })
             .catch((error) => {
                 console.error('Fetch error:', error.message);

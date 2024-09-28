@@ -198,7 +198,7 @@ function Outerloader() {
             console.log("Conversation component created:", conversationComponent);
 
             // Set the apiEndpoint property on the web component
-            conversationComponent.apiEndpoint = "https://labs.labsland.com/ai/external-labs/";
+            conversationComponent.apiEndpoint = location.href;
 
             console.log("apiEndpoint set to:", conversationComponent.apiEndpoint);
 
@@ -287,7 +287,16 @@ function Outerloader() {
 
         // Optionally configure options and create the conversation component
         LabsLand.Conversations.createConversationComponent({
-            defaultQuestions: ["What can this assistant do?", "How can I interact with it?"],
+            defaultQuestions: [
+                {
+                    "type": "standard",
+                    "content": "What can this assistant do?"
+                }, 
+                {
+                    "type": "standard",
+                    "content": "How can I interact with it?"
+                }
+            ],
             config: conversationsConfiguration
         });
     }

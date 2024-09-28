@@ -341,7 +341,7 @@ function Outerloader() {
                 setUserData(data);
 
                 if (data.conversations) {
-                    createLabsLandAiConversation();
+                    createLabsLandAiConversation(data.conversations);
                 }
             })
             .catch((error) => {

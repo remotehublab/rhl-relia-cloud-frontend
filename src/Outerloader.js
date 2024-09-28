@@ -198,7 +198,7 @@ function Outerloader() {
             console.log("Conversation component created:", conversationComponent);
 
             // Set the apiEndpoint property on the web component
-            conversationComponent.apiEndpoint = location.href;
+            conversationComponent.apiEndpoint = window.location.href;
 
             console.log("apiEndpoint set to:", conversationComponent.apiEndpoint);
 

@@ -17,6 +17,8 @@ import { Container, Col  } from 'react-bootstrap';
 function Introduction() {
     // TODO: fill this document, discuss it with 
     // https://docs.google.com/presentation/d/1LkXYqcaKgF1N0DhtzHHImhMU4-TM61e7jvPDsA2jbY4/edit#slide=id.g29df1718c1d_0_4
+    const deviceName = process.env.REACT_APP_DEVICE_NAME;
+    
     return (
         <Container className={"introduction-container"}>
             <Col md={{span: 10, offset: 1}}>

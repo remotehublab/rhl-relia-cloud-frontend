@@ -39,6 +39,7 @@
     "build:redpitaya:staging": "env-cmd -f environments/redpitaya-stagingrc react-scripts build",
     "build": "env-cmd -f environments/devrc react-scripts build",
     "test": "react-scripts test",
+    "test:assistant-slice:coverage": "CI=true react-scripts test --coverage --watchAll=false --collectCoverageFrom=src/Outerloader.js --collectCoverageFrom=src/Laboratory.js --collectCoverageFrom=src/components/blocks/loaderDevelopment.js --collectCoverageFrom=src/components/blocks/ReliaWidget.js --collectCoverageFrom=src/conversations/reliaConversation.js --collectCoverageFrom=src/conversations/reliaConversationContext.js",
     "eject": "react-scripts eject",
     "i18n:scan": "i18next-scanner"
   },

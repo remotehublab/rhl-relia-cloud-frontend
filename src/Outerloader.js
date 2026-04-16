@@ -4,6 +4,7 @@
 */
 import React, {
     useEffect,
+    useRef,
     useState
 } from 'react';
 
@@ -21,7 +22,6 @@ import {
     Container,
     Row,
     Col,
-    Button,
     Image,
     Nav
 } from 'react-bootstrap';
@@ -29,6 +29,8 @@ import './Loader.css';
 import Loader from "./Loader";
 import Laboratory from "./Laboratory";
 import Introduction from "./Introduction";
+import { ensureConversationComponent, removeConversationComponent, buildDefaultQuestions, resolveConversationConfig } from './conversations/reliaConversation';
+import { buildReliaConversationContext } from './conversations/reliaConversationContext';
 
 //images
 import LabsLand_logo from './components/images/LabsLand-logo.png';
@@ -50,6 +52,8 @@ import RHL_logo from './components/images/RHL-logo.png';
  */
 function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
+    const [chartLibraryStatus, setChartLibraryStatus] = useState('loading');
+    const [conversationConfig, setConversationConfig] = useState(null);
 
     const [userData, setUserData] = useState({
         "locale": "en",
@@ -78,6 +82,14 @@ function Outerloader() {
     const [selectedFilesColumnRX, setSelectedFilesColumnRX] = useState([]);
     const [selectedFilesColumnTX, setSelectedFilesColumnTX] = useState([]);
 
+    const currentSessionRef = useRef(currentSession);
+    const reliaWidgetsRef = useRef(reliaWidgets);
+    const selectedTabRef = useRef(selectedTab);
+
+    currentSessionRef.current = currentSession;
+    reliaWidgetsRef.current = reliaWidgets;
+    selectedTabRef.current = selectedTab;
+
 
 
     const [fileStatus, setFileStatus] = useState(<a href="https://rhlab.ece.uw.edu/projects/relia/" target="_blank" rel="noopener noreferrer">
@@ -87,35 +99,83 @@ function Outerloader() {
     // Set a global variable for the base API URL.
     window.API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/api/`;
 
-    // Using useEffect to execute code after the component mounts.
     useEffect(() => {
-      // Accessing the document's head element.
-      const head = document.head;
+        let cancelled = false;
+        let timeoutId = null;
 
-      // Check if the Google Charts script is already loaded.
-      let script = document.getElementById('googleChartsScript');
-      if (!script) {
-        // If the script isn't loaded, create a new script element.
-        script = document.createElement('script');
-        // Set the source of the script to load Google Charts.
-        script.src = "https://www.gstatic.com/charts/loader.js";
-        // Assign an ID to the script for future reference.
-        script.id = 'googleChartsScript';
-
-        // Define what happens once the script is loaded.
-        script.onload = () => {
-          // Check if the Google Charts library is available.
-          if (window.google && window.google.charts) {
-            // Load the 'corechart' package from Google Charts.
-            window.google.charts.load('current', { 'packages': ['corechart'] });
-          }
+        const markReady = () => {
+            if (!cancelled) {
+                setChartLibraryStatus('ready');
+            }
         };
 
-        // Append the script element to the document's head.
-        head.appendChild(script);
-        // console.log(process.env.REACT_APP_API_BASE_URL);
-      }
-    }, []); // The empty dependency array ensures this effect runs once after initial render.
+        const markFailed = () => {
+            if (!cancelled) {
+                setChartLibraryStatus('failed');
+            }
+        };
+
+        const loadCharts = () => {
+            if (window.google && window.google.visualization) {
+                markReady();
+                return;
+            }
+
+            if (!(window.google && window.google.charts)) {
+                markFailed();
+                return;
+            }
+
+            try {
+                window.google.charts.load('current', { 'packages': ['corechart'] });
+                window.google.charts.setOnLoadCallback(function () {
+                    if (window.google && window.google.visualization) {
+                        markReady();
+                    } else {
+                        markFailed();
+                    }
+                });
+                timeoutId = setTimeout(function () {
+                    if (!cancelled && !(window.google && window.google.visualization)) {
+                        markFailed();
+                    }
+                }, 10000);
+            } catch (error) {
+                console.error('Failed to initialize Google Charts', error);
+                markFailed();
+            }
+        };
+
+        if (window.google && window.google.visualization) {
+            markReady();
+            return function cleanup() {
+                cancelled = true;
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+            };
+        }
+
+        const head = document.head;
+        let script = document.getElementById('googleChartsScript');
+        if (!script) {
+            script = document.createElement('script');
+            script.src = "https://www.gstatic.com/charts/loader.js";
+            script.id = 'googleChartsScript';
+            script.onload = loadCharts;
+            script.onerror = markFailed;
+            head.appendChild(script);
+        } else {
+            loadCharts();
+        }
+
+        return function cleanup() {
+            cancelled = true;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, []);
 
 
     // Define a useEffect hook to make the fetch call when the component mounts
@@ -123,7 +183,9 @@ function Outerloader() {
         getUserData();
         // Run for now every 5 minutes
         const intervalId = setInterval(getUserData, 5 *  60 * 1000);
-        // could add clean up function to clear timer if we ever want to stop it
+        return function cleanup() {
+            clearInterval(intervalId);
+        };
     }, []);
 
     useEffect(() => {
@@ -163,145 +225,12 @@ function Outerloader() {
                                  fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}/> ;
             case 'laboratory':
                 return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}
-                                    fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}/> ;
+                                    fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}
+                                    chartLibraryStatus={chartLibraryStatus}/> ;
             default:
                 return null;
         }
     };
-
-    /**
-     * Creates an AI conversation with the LabsLand AI Assistant
-     */
-    function createLabsLandAiConversation(conversationsConfiguration) {
-        window.LabsLand = {};
-        let LabsLand = window.LabsLand;
-
-        if (typeof(LabsLand.Conversations) === "undefined") {
-            LabsLand.Conversations = {};
-        }
-
-        // Create the conversation component and append it to the DOM
-        LabsLand.Conversations.createConversationComponent = function (options) {
-            if (!options) {
-                options = {};
-            }
-            let config;
-            if (!options.config) {
-                config = {};
-            } else {
-                config = options.config;
-            }
-
-            let conversationComponent = document.createElement('lle-conversation');
-            window.conversationComponent = conversationComponent;
-
-            console.log("Conversation component created:", conversationComponent);
-
-            conversationComponent.context = {};
-
-            // Set the apiEndpoint property on the web component
-            conversationComponent.apiEndpoint = window.location.href;
-
-            console.log("apiEndpoint set to:", conversationComponent.apiEndpoint);
-
-            var defaultQuestions = options.defaultQuestions;
-            if (defaultQuestions !== null && defaultQuestions !== undefined) {
-                conversationComponent.questions = defaultQuestions;
-            }
-
-            if (config) {
-                // handle the preconfiguration, if any
-                if (config.available) {
-                    if (config.role == 'instructor') {
-                        conversationComponent.isActive = true;
-                    } else {
-                        if (config.enabled) {
-                            conversationComponent.isActive = true;
-                        } else {
-                            conversationComponent.isActive = false;
-                        }
-                    }
-        
-                    conversationComponent.allowFullTextMessages = config.allowFullTextMessages || false;
-        
-                    if (config.questions !== undefined && config.questions !== null) {
-                        var questions = [];
-                        for (var i = 0; i < config.questions.length; i++)
-                            questions.push({
-                                'type': 'standard',
-                                'content': config.questions[i]
-                            });
-                        conversationComponent.questions = questions;
-                    }
-        
-                    if (config.enabled) {
-                        if (config.role == 'instructor') {
-                            conversationComponent.systemDisclaimer = "Students can see and use this assistant.";
-                        } else { // student
-                            conversationComponent.systemDisclaimer = "Conversations are being recorded and viewable by your instructor.";
-                        }
-                    } else {
-                        if (config.role == 'instructor') {
-                            conversationComponent.systemDisclaimer = "Students **cannot** see and use this assistant until you configure it in the AI Assistant settings.";
-                        }
-                    }
-        
-                    if (config.surveyUrl) {
-                        conversationComponent.surveyUrl = config.surveyUrl;
-                    }
-        
-                    if (window.LANG) {
-                        conversationComponent.lang = window.LANG;
-                    } else if (window.LANGUAGE) {
-                        conversationComponent.lang = window.LANGUAGE;
-                    }
-        
-                    if (config.surveyIntroText) {
-                        conversationComponent.surveyIntroText = config.surveyIntroText;
-                    }
-        
-                    if (config.welcomePrompt) {
-                        setTimeout(function () {
-                            var event = new CustomEvent('newPromptMessage', { detail: { content: config.welcomePrompt }, bubbles: true, composed: true });
-                            conversationComponent.dispatchEvent(event);
-                        }, 1000);
-                    }
-        
-                } else {
-                    conversationComponent.isActive = false;
-                }
-        
-                if (config.settingsUrl) {
-                    conversationComponent.settingsUrl = config.settingsUrl;
-                }
-            }
-                    
-
-            document.getElementById('conversation-container').appendChild(conversationComponent);
-
-            // Verify if it's appended
-            if (document.getElementById('conversation-container').contains(conversationComponent)) {
-                console.log("Conversation component appended to DOM successfully!");
-            } else {
-                console.error("Conversation component not appended!");
-            }
-        };
-
-        // Optionally configure options and create the conversation component
-        LabsLand.Conversations.createConversationComponent({
-            defaultQuestions: [
-                {
-                    "type": "standard",
-                    "content": "What can this assistant do?"
-                }, 
-                {
-                    "type": "standard",
-                    "content": "How can I interact with it?"
-                }
-            ],
-            config: conversationsConfiguration
-        });
-    }
 
     /**
      * Fetches and updates user-specific data and stored files information.
@@ -335,16 +264,14 @@ function Outerloader() {
                         window.location.href = "https://relia.rhlab.ece.uw.edu"
                 }
 
-                if (data.locale && data.locale != i18n.language) {
+                if (data.locale && data.locale !== i18n.language) {
                     i18n.changeLanguage(data.locale);
                 }
 
                 // Update the userData state with the retrieved data
                 setUserData(data);
 
-                if (data.conversations) {
-                    createLabsLandAiConversation(data.conversations);
-                }
+                setConversationConfig(data.conversations || null);
             })
             .catch((error) => {
                 console.error('Fetch error:', error.message);
@@ -380,6 +307,47 @@ function Outerloader() {
                 console.error('Error:', error.message);
             });
         }
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const mountConversation = async function () {
+            const container = document.getElementById('conversation-container');
+            if (!container) {
+                return;
+            }
+
+            if (!conversationConfig) {
+                removeConversationComponent(container);
+                return;
+            }
+
+            const resolvedConfig = await resolveConversationConfig(conversationConfig);
+            if (cancelled) {
+                return;
+            }
+
+            ensureConversationComponent({
+                container,
+                config: resolvedConfig,
+                apiEndpoint: window.location.href,
+                defaultQuestions: buildDefaultQuestions(),
+                getContextForMessage: function () {
+                    return buildReliaConversationContext({
+                        selectedTab: selectedTabRef.current,
+                        currentSession: currentSessionRef.current,
+                        reliaWidgets: reliaWidgetsRef.current
+                    });
+                }
+            });
+        };
+
+        mountConversation();
+
+        return function cleanup() {
+            cancelled = true;
+        };
+    }, [conversationConfig, currentSession, reliaWidgets, selectedTab]);
 
 
 
@@ -456,7 +424,7 @@ function Outerloader() {
 
              // TODO
             console.log('Failed to fetch: Status ' + response.status);
-            setFileStatus(<a>Error sending files, please try again</a>);
+            setFileStatus(<span>Error sending files, please try again</span>);
 
         }
         }).then((data) => {
@@ -479,7 +447,7 @@ function Outerloader() {
                 setSelectedTab("laboratory");
             } else {
                if (setFileStatus) {
-                setFileStatus(<a>Error sending files, please try again</a>);
+                setFileStatus(<span>Error sending files, please try again</span>);
                 }
                 console.error('Failed to create task');
             }
@@ -553,56 +521,20 @@ function Outerloader() {
          * Note: This function is primarily used for debugging.
          */
 
-        const showLibrary = () => {
-        // Make a GET request to '/files/' to fetch the list of files
-        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/files/`, {
-                method: 'GET'
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                if (data.success) {
-
-                    const {
-                        files,
-                        metadata
-                    } = data;
-                    console.log(files);
-                    console.log(metadata);
-                    console.log('Current receiver:', metadata['receiver']);
-
-                    // Show files from metadata['transmitter']
-                    console.log('Current trasmitter:', metadata['transmitter']);
-
-                    // Print every file in the files array
-                    files.forEach((file) => {
-                        console.log('File:', file);
-                    });
-
-                } else {
-
-                    console.error('Failed to fetch files:', data.message);
-                }
-            });
-    };
-
     return (
         <Container>
 
           <Container className={"outer-container"}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"https://ece.uw.edu"} target="_blank"><Image src={UW_logo} fluid  className={"image"}/></a>
+                    <a className={"image-col"} href={"https://ece.uw.edu"} target="_blank" rel="noopener noreferrer"><Image src={UW_logo} fluid  className={"image"}/></a>
                 </Col>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"https://rhlab.ece.uw.edu"} target="_blank"><Image  src={RHL_logo} fluid className={"image"}/></a>
+                    <a className={"image-col"} href={"https://rhlab.ece.uw.edu"} target="_blank" rel="noopener noreferrer"><Image  src={RHL_logo} fluid className={"image"}/></a>
 
                 </Col>
                 <Col className={"image-col"}>
-                    <a className={"image-col"} href={"https://labsland.com"} target="_blank"><Image src={LabsLand_logo} fluid className={"image"}/></a>
+                    <a className={"image-col"} href={"https://labsland.com"} target="_blank" rel="noopener noreferrer"><Image src={LabsLand_logo} fluid className={"image"}/></a>
                 </Col>
             </Row>
             <Row >

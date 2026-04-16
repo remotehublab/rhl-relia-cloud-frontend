@@ -3,8 +3,8 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 class ReliaConstellationSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 
 		var self = this;
 
@@ -237,6 +237,7 @@ class ReliaConstellationSink extends ReliaWidget {
 
 
 			if (chEnabledCounter != 0) {
+				const seriesDefinitions = [];
 				for (var pos = 0; pos < self.Number2plot; ++pos) {
 
 					for (var idx = 0; idx < chEnabledCounter; ++idx) {
@@ -258,6 +259,24 @@ class ReliaConstellationSink extends ReliaWidget {
 
 				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 				self.chart.draw(dataTable, self.options);
+				for (var channelIndex = 0; channelIndex < chEnabledCounter; ++channelIndex) {
+					seriesDefinitions.push({
+						label: String(columns[channelIndex + 1]).replace(/'/g, ""),
+						points: dataout_real[channelIndex].map(function (realValue, pointIndex) {
+							return {
+								x: Number(realValue),
+								y: Number(dataout_imag[channelIndex][pointIndex])
+							};
+						})
+					});
+				}
+				self.setSnapshot(self.buildSeriesSnapshot(
+					'constellation-sink',
+					'In-Phase',
+					seriesDefinitions,
+					t('widgets.constellation-sink.quadrature'),
+					null
+				));
 
 				if (self.$autoscaleCheckbox.is(':checked')) {
 					//var tempmax_real=new Array(chEnabledCounter).fill(null);

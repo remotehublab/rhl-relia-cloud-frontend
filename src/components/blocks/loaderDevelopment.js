@@ -13,8 +13,8 @@ import ReliaChooser from './VariableChooser.js';
 import ReliaNumberSink from './NumberSink.js';
 import ReliaEyePlot from './EyePlot.js';
 import ReliaFrequencySink from './FrequencySink.js';
+import ReliaAutoCorrSink from './AutoCorrSink.js';
 
-// how fast it should ask for devices
 var CHECK_DEVICES_TIME_MS = 500;
 
 window.RELIA_WIDGETS_COUNTER = 0;
@@ -25,13 +25,14 @@ export class ReliaWidgets {
 		this.identifier = window.RELIA_WIDGETS_COUNTER;
 		this.taskId = taskId;
 		this.currentSessionRef = currentSessionRef;
-
 		this.devicesUrl = window.API_BASE_URL + "data/tasks/" + taskId + "/devices";
-		// this.blocksById = {
-		//     deviceName1: [block1, block2...],
-		//     deviceName2: [block3, block4...],
-		// }
 		this.blocksById = {};
+		this.blockStatusesByDevice = {};
+		this.unsupportedBlocksByDevice = {};
+		this.deviceStatuses = {
+			receiver: { state: 'initializing' },
+			transmitter: { state: 'initializing' }
+		};
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
@@ -40,26 +41,23 @@ export class ReliaWidgets {
 
 	clean() {
 		this.blocksById = {};
+		this.blockStatusesByDevice = {};
+		this.unsupportedBlocksByDevice = {};
 		this.blocks = [];
-
 		this.$divElement.find("#relia-widgets-receiver").empty();
 		this.$divElement.find("#relia-widgets-transmitter").empty();
 	}
 
-	/*
-	* start() will start the process
-	*/
 	start() {
 		if (!this.running) {
 			console.log("Starting ReliaWidgets(id=" + this.identifier + ")");
 			this.running = true;
+			this.setDeviceStatus('receiver', 'initializing');
+			this.setDeviceStatus('transmitter', 'initializing');
 			this.process();
 		}
 	}
 
-	/*
-	* stop()
-	*/
 	stop() {
 		console.log("Stopping ReliaWidgets(id=" + this.identifier + ")");
 		if (this.running) {
@@ -72,10 +70,200 @@ export class ReliaWidgets {
 		}
 	}
 
-	/*
-	* process() is run quite often (defined by CHECK_DEVICES_TIME_MS + time taken by the server to respond), will ask the server
-	* if there are devices, etc.
-	*/
+	getAssistantContext() {
+		const receiverPlots = [];
+		const transmitterPlots = [];
+
+		for (var i = 0; i < this.blocks.length; i++) {
+			const block = this.blocks[i];
+			if (!block || !block.getAiContext) {
+				continue;
+			}
+
+			const snapshot = block.getAiContext();
+			if (!snapshot) {
+				continue;
+			}
+
+			if (this.getDeviceType(block.deviceIdentifier) === 'receiver') {
+				receiverPlots.push(snapshot);
+			} else {
+				transmitterPlots.push(snapshot);
+			}
+		}
+
+		return {
+			receiverPlots,
+			transmitterPlots,
+			deviceStatuses: this.getDeviceStatuses()
+		};
+	}
+
+	getDeviceStatuses() {
+		return {
+			receiver: this.deviceStatuses.receiver.state,
+			transmitter: this.deviceStatuses.transmitter.state
+		};
+	}
+
+	getDeviceType(deviceIdentifier) {
+		return deviceIdentifier.endsWith(':r') ? 'receiver' : 'transmitter';
+	}
+
+	getStatusMessage(state) {
+		switch (state) {
+			case 'initializing':
+				return t("runner.widget-status.initializing");
+			case 'waiting_for_block':
+				return t("runner.widget-status.waiting-for-block");
+			case 'waiting_for_data':
+				return t("runner.widget-status.waiting-for-data");
+			case 'retrying':
+				return t("runner.widget-status.retrying");
+			case 'failed':
+				return t("runner.widget-status.failed");
+			default:
+				return '';
+		}
+	}
+
+	getStatusClass(state) {
+		switch (state) {
+			case 'retrying':
+				return 'alert alert-warning';
+			case 'failed':
+				return 'alert alert-danger';
+			default:
+				return 'alert alert-info';
+		}
+	}
+
+	ensureDeviceStatusElement(deviceType) {
+		const $deviceContainer = this.$divElement.find("#relia-widgets-" + deviceType);
+		let $status = $deviceContainer.find(".relia-device-status");
+		if (!$status.length) {
+			$status = $("<div class='relia-device-status alert alert-info text-start mt-2' role='status'></div>");
+			$deviceContainer.prepend($status);
+		}
+		return $status;
+	}
+
+	setDeviceStatus(deviceType, state, messageOverride = null) {
+		this.deviceStatuses[deviceType] = {
+			state: state
+		};
+
+		const $status = this.ensureDeviceStatusElement(deviceType);
+		if (state === 'rendered') {
+			$status.hide();
+			return;
+		}
+
+		$status.removeClass('alert-info alert-warning alert-danger')
+			.addClass(this.getStatusClass(state))
+			.text(messageOverride || this.getStatusMessage(state))
+			.show();
+	}
+
+	registerBlockState(deviceName, blockName, widgetStatus) {
+		if (!this.blockStatusesByDevice[deviceName]) {
+			this.blockStatusesByDevice[deviceName] = {};
+		}
+
+		this.blockStatusesByDevice[deviceName][blockName] = widgetStatus;
+		this.refreshDeviceStatus(deviceName);
+	}
+
+	refreshDeviceStatus(deviceName) {
+		const deviceType = this.getDeviceType(deviceName);
+		const statuses = Object.values(this.blockStatusesByDevice[deviceName] || {});
+		const unsupportedBlocks = this.unsupportedBlocksByDevice[deviceName] || [];
+
+		if (statuses.some((status) => status.state === 'rendered' || status.hasSnapshot)) {
+			this.setDeviceStatus(deviceType, 'rendered');
+			return;
+		}
+
+		if (!statuses.length) {
+			if (unsupportedBlocks.length) {
+				this.setDeviceStatus(deviceType, 'failed', t("runner.widget-status.unsupported-only"));
+			} else {
+				this.setDeviceStatus(deviceType, 'waiting_for_block');
+			}
+			return;
+		}
+
+		if (statuses.some((status) => status.state === 'retrying')) {
+			this.setDeviceStatus(deviceType, 'retrying');
+			return;
+		}
+
+		if (statuses.some((status) => status.state === 'failed')) {
+			this.setDeviceStatus(deviceType, 'failed');
+			return;
+		}
+
+		if (statuses.some((status) => status.state === 'waiting_for_data' || status.state === 'initializing')) {
+			this.setDeviceStatus(deviceType, 'waiting_for_data');
+			return;
+		}
+
+		this.setDeviceStatus(deviceType, 'waiting_for_block');
+	}
+
+	addUnsupportedBlockNotice($deviceContents, deviceName, blockName) {
+		if (!this.unsupportedBlocksByDevice[deviceName]) {
+			this.unsupportedBlocksByDevice[deviceName] = [];
+		}
+
+		if (this.unsupportedBlocksByDevice[deviceName].includes(blockName)) {
+			return;
+		}
+
+		this.unsupportedBlocksByDevice[deviceName].push(blockName);
+		const $notice = $("<div class='alert alert-warning text-start mt-2'></div>");
+		$notice.text(t("runner.widget-status.unsupported-block") + ": " + blockName);
+		$deviceContents.append($notice);
+		this.refreshDeviceStatus(deviceName);
+	}
+
+	buildBlock(deviceName, $divContents, blockName) {
+		const self = this;
+		const blockOptions = {
+			onStateChange: function (widget, widgetStatus) {
+				self.registerBlockState(deviceName, blockName, widgetStatus);
+			}
+		};
+
+		if (blockName.startsWith("RELIA Constellation Sink")) {
+			return new ReliaConstellationSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Time Sink")) {
+			return new ReliaTimeSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Vector Sink")) {
+			return new ReliaVectorSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Variable Range")) {
+			return new ReliaVariableRange($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Histogram Sink")) {
+			return new ReliaHistogramSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Variable CheckBox")) {
+			return new ReliaCheckBox($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Variable PushButton")) {
+			return new ReliaPushButton($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Variable Chooser")) {
+			return new ReliaChooser($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Number Sink")) {
+			return new ReliaNumberSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Eye Plot")) {
+			return new ReliaEyePlot($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA Frequency Sink")) {
+			return new ReliaFrequencySink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		} else if (blockName.startsWith("RELIA AutoCorr Sink")) {
+			return new ReliaAutoCorrSink($divContents, deviceName, blockName, self.taskId, blockOptions);
+		}
+
+		return null;
+	}
+
 	process() {
 		var self = this;
 
@@ -84,11 +272,7 @@ export class ReliaWidgets {
 		}
 
 		$.get(self.devicesUrl).done(function (data) {
-			if (!self.running)
-				return;
-
-			if (!data.success) {
-				console.log("Error loading devices:", data);
+			if (!self.running) {
 				return;
 			}
 
@@ -96,95 +280,104 @@ export class ReliaWidgets {
 				self.process();
 			}, CHECK_DEVICES_TIME_MS);
 
+			if (!data.success) {
+				console.log("Error loading devices:", data);
+				self.setDeviceStatus('receiver', 'retrying');
+				self.setDeviceStatus('transmitter', 'retrying');
+				return;
+			}
+
 			const assignedInstance = self.currentSessionRef.current.assignedInstance;
 			const assignedInstanceName = self.currentSessionRef.current.assignedInstanceName;
 			console.log("assignedInstance: ", assignedInstance);
 
-			if (assignedInstance !== null) {
-				var devices = ["receiver", "transmitter"];
+			if (assignedInstance === null) {
+				self.setDeviceStatus('receiver', 'waiting_for_block');
+				self.setDeviceStatus('transmitter', 'waiting_for_block');
+				return;
+			}
 
-				$.each(devices, function (pos, deviceType) {
-					var $deviceContents;
-					// deviceName is uw-s1i1 + ":r", for example
-					var deviceName = assignedInstanceName + ":" + deviceType[0];
-					var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
-					if (!self.blocksById[deviceName]) {
-						console.log("device name ", deviceName, " not found in self.blocksById of ReliaWidgets(id= ", self.identifier, "). Creating new block with identifier: ", deviceNameIdentifier);
-						var $deviceContainer = self.$divElement.find("#relia-widgets-" + deviceType);
-						$deviceContents = $("<div id='" + deviceNameIdentifier + "'>" + "</div>");
-						$deviceContainer.append($deviceContents);
-						self.blocksById[deviceName] = {};
-					} else {
-						$deviceContents = $("#" + deviceNameIdentifier);
+			var devices = ["receiver", "transmitter"];
+
+			$.each(devices, function (pos, deviceType) {
+				var $deviceContents;
+				var deviceName = assignedInstanceName + ":" + deviceType[0];
+				var deviceNameIdentifier = "device-" + deviceName.replaceAll(":", "-").replaceAll(" ", "-").replaceAll("[", "-").replaceAll("]", "-");
+				if (!self.blocksById[deviceName]) {
+					var $deviceContainer = self.$divElement.find("#relia-widgets-" + deviceType);
+					$deviceContents = $("<div id='" + deviceNameIdentifier + "'>" + "</div>");
+					$deviceContainer.append($deviceContents);
+					self.blocksById[deviceName] = {};
+				} else {
+					$deviceContents = $("#" + deviceNameIdentifier);
+				}
+
+				self.refreshDeviceStatus(deviceName);
+
+				var blocksUrl = window.API_BASE_URL + "data/tasks/" + self.taskId + "/devices/" + deviceName + "/blocks";
+				$.get(blocksUrl).done(function (blockData) {
+					if (!self.running) {
+						return;
 					}
 
-					var blocksUrl = window.API_BASE_URL + "data/tasks/" + self.taskId + "/devices/" + deviceName + "/blocks";
-					$.get(blocksUrl).done(function (data) {
-						if (!self.running)
-							return;
-		
-						if (!data.success) {
-							console.log("Error loading blocks:", data);
-							return;
-						}
-						// console.log("Listing blocks in ", deviceName);
-						$.each(data.blocks, function (post, blockName) {
-							// console.log("Block", blockName, " found at ", deviceName);
-							if (self.blocksById[deviceName] && !self.blocksById[deviceName][blockName]) {
-								// console.log("Block", blockName, " found at ", deviceName, "was NOT included, so we include it now");
-								var $newDiv = $(
-									'<div class="" style="padding: 10px">' +
-									'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +
-									"<h5 class='deviceTitle'></h5>" +
-									"<div class=\"block-contents\" style=\"width: 100%\"></div>" +
-									'</div>' +
-									'</div>'
-								);
-								$deviceContents.append($newDiv);
-								var $divContents = $newDiv.find(".block-contents");
-								// console.log("Loading...", deviceName, blockName);
-								var block; // a block inherits from ReliaWidget
-								if (blockName.startsWith("RELIA Constellation Sink")) {
-									block = new ReliaConstellationSink($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Time Sink")) {
-									block = new ReliaTimeSink($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Vector Sink")) {
-									block = new ReliaVectorSink($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Variable Range")) {
-									block = new ReliaVariableRange($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Histogram Sink")) {
-									block = new ReliaHistogramSink($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Variable CheckBox")) {
-									block = new ReliaCheckBox($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Variable PushButton")) {
-									block = new ReliaPushButton($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Variable Chooser")) {
-									block = new ReliaChooser($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Number Sink")) {
-									block = new ReliaNumberSink($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Eye Plot")) {
-									block = new ReliaEyePlot($divContents, deviceName, blockName, self.taskId);
-								} else if (blockName.startsWith("RELIA Frequency Sink")) {
-									block = new ReliaFrequencySink($divContents, deviceName, blockName, self.taskId);
-								} else { // Add more blocks here
-									console.log("Unsupported block: ", blockName);
-									return;
-								}
-								$newDiv.find("h5.deviceTitle").text(block.translatedIdentifier());
-								self.blocks.push(block);
-								self.blocksById[deviceName][blockName] = block;
-								block.start();
-							} else {
-								if (self.blocksById[deviceName]) {
-									var block = self.blocksById[deviceName][blockName];
-									if (block && !block.running)
-										block.start();
-								}
+					if (!blockData.success) {
+						console.log("Error loading blocks:", blockData);
+						self.setDeviceStatus(deviceType, 'retrying');
+						return;
+					}
+
+					if (!blockData.blocks.length) {
+						self.refreshDeviceStatus(deviceName);
+						return;
+					}
+
+					$.each(blockData.blocks, function (post, blockName) {
+						if (self.blocksById[deviceName] && !self.blocksById[deviceName][blockName]) {
+							var $newDiv = $(
+								'<div class="" style="padding: 10px">' +
+								'<div style="width: 100%; border: 1px solid black; border-radius: 20px; background: #eee; padding: 10px">' +
+								"<h5 class='deviceTitle'></h5>" +
+								"<div class=\"block-contents\" style=\"width: 100%\"></div>" +
+								'</div>' +
+								'</div>'
+							);
+							$deviceContents.append($newDiv);
+							var $divContents = $newDiv.find(".block-contents");
+							var block = self.buildBlock(deviceName, $divContents, blockName);
+							if (!block) {
+								console.log("Unsupported block: ", blockName);
+								self.addUnsupportedBlockNotice($deviceContents, deviceName, blockName);
+								return;
 							}
-						});
+							$newDiv.find("h5.deviceTitle").text(block.translatedIdentifier());
+							self.blocks.push(block);
+							self.blocksById[deviceName][blockName] = block;
+							block.start();
+						} else if (self.blocksById[deviceName]) {
+							var existingBlock = self.blocksById[deviceName][blockName];
+							if (existingBlock && !existingBlock.running) {
+								existingBlock.start();
+							}
+						}
 					});
+
+					self.refreshDeviceStatus(deviceName);
+				}).fail(function () {
+					if (!self.running) {
+						return;
+					}
+					self.setDeviceStatus(deviceType, 'retrying');
 				});
+			});
+		}).fail(function () {
+			if (!self.running) {
+				return;
 			}
+			self.setDeviceStatus('receiver', 'retrying');
+			self.setDeviceStatus('transmitter', 'retrying');
+			setTimeout(function () {
+				self.process();
+			}, CHECK_DEVICES_TIME_MS);
 		});
 	}
 }

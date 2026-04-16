@@ -111,6 +111,17 @@
       "refresh": "Recargar",
       "hide": "Ocultar"
     },
-    "faraday-info": "Receptor (izquierda) y transmisor (derecha) dispositivos dentro de una Jaula de Faraday\n"
+    "faraday-info": "Receptor (izquierda) y transmisor (derecha) dispositivos dentro de una Jaula de Faraday\n",
+    "widget-status": {
+      "loading-chart-library": "Cargando la librería de gráficos para los widgets de RELIA.",
+      "chart-library-failed": "RELIA no pudo cargar la librería de gráficos. Recarga la sesión o inténtalo de nuevo más tarde.",
+      "initializing": "Preparando los widgets para este dispositivo.",
+      "waiting-for-block": "Esperando a que el dispositivo remoto publique widgets para este lado.",
+      "waiting-for-data": "Esperando las primeras muestras del gráfico de este dispositivo.",
+      "retrying": "No se han podido cargar los datos del widget ahora mismo. Reintentando automáticamente.",
+      "failed": "RELIA no pudo cargar uno o más widgets para este dispositivo.",
+      "unsupported-block": "Este tipo de widget todavía no está soportado en la interfaz del laboratorio",
+      "unsupported-only": "Solo se encontraron widgets no soportados para este dispositivo."
+    }
   }
 }

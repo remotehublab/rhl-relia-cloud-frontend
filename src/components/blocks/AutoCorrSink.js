@@ -3,9 +3,9 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaAutoCorrSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
 
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 
 		var self = this;
 
@@ -380,6 +380,23 @@ export class ReliaAutoCorrSink extends ReliaWidget {
 				//console.log(formattedData);
 				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 				self.chart.draw(dataTable, self.options);
+				self.setSnapshot(self.buildSeriesSnapshot(
+					'auto-corr-sink',
+					self.titleHAxis,
+					[
+						{
+							label: 'Real',
+							points: formattedData.slice(1).map(function (row) {
+								return {
+									x: Number(row[0]),
+									y: Number(row[1])
+								};
+							})
+						}
+					],
+					self.yLabelAutoCorrResSink,
+					self.yUnitAutoCorrResSink
+				));
 			}
 		}
 	}

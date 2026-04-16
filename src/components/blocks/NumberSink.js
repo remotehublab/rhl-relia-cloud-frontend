@@ -4,8 +4,8 @@ import ReliaWidget from './ReliaWidget';
 
 
 export class ReliaNumberSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 
 		var self = this;
 
@@ -52,6 +52,23 @@ export class ReliaNumberSink extends ReliaWidget {
 
 		var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 		self.chart.draw(dataTable, self.options);
+		self.setSnapshot(self.buildSeriesSnapshot(
+			'number-sink',
+			'Label',
+			[
+				{
+					label: self.number_name,
+					points: [
+						{
+							x: 0,
+							y: Data[0]
+						}
+					]
+				}
+			],
+			self.number_name,
+			null
+		));
 		//console.log(DataArray);
 	}
 

@@ -113,6 +113,17 @@
       "refresh": "Refresh",
       "hide": "Hide"
     },
-    "faraday-info": "Receiver (left) and transmitter (right) devices inside a Faraday Cage."
+    "faraday-info": "Receiver (left) and transmitter (right) devices inside a Faraday Cage.",
+    "widget-status": {
+      "loading-chart-library": "Loading the chart library for RELIA widgets.",
+      "chart-library-failed": "RELIA could not load the chart library. Please refresh the session or try again later.",
+      "initializing": "Preparing the widgets for this device.",
+      "waiting-for-block": "Waiting for the remote device to publish widgets for this side.",
+      "waiting-for-data": "Waiting for the first plot samples from this device.",
+      "retrying": "Widget data could not be loaded right now. Retrying automatically.",
+      "failed": "RELIA could not load one or more widgets for this device.",
+      "unsupported-block": "This widget type is not yet supported in the laboratory UI",
+      "unsupported-only": "Only unsupported widgets were found for this device."
+    }
   }
 }

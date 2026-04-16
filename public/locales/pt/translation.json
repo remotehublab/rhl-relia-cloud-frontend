@@ -112,6 +112,17 @@
       "refresh": "Recarregar",
       "hide": "Ocultar"
     },
-    "faraday-info": "Receptor (esquerda) e transmissor (direita) dentro de uma Gaiola de Faraday."
+    "faraday-info": "Receptor (esquerda) e transmissor (direita) dentro de uma Gaiola de Faraday.",
+    "widget-status": {
+      "loading-chart-library": "Carregando a biblioteca de gráficos para os widgets do RELIA.",
+      "chart-library-failed": "O RELIA não conseguiu carregar a biblioteca de gráficos. Atualize a sessão ou tente novamente mais tarde.",
+      "initializing": "Preparando os widgets para este dispositivo.",
+      "waiting-for-block": "Aguardando o dispositivo remoto publicar widgets para este lado.",
+      "waiting-for-data": "Aguardando as primeiras amostras do gráfico deste dispositivo.",
+      "retrying": "Os dados do widget não puderam ser carregados agora. Tentando novamente automaticamente.",
+      "failed": "O RELIA não conseguiu carregar um ou mais widgets para este dispositivo.",
+      "unsupported-block": "Esse tipo de widget ainda não é suportado na interface do laboratório",
+      "unsupported-only": "Somente widgets não suportados foram encontrados para este dispositivo."
+    }
   }
 }

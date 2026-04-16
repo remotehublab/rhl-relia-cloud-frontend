@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 
 // for  translations
-import i18n, {t} from './i18n';
+import {t} from './i18n';
 import { withTranslation } from 'react-i18next';
 
 import { Container, Row, Col } from 'react-bootstrap';
@@ -21,16 +21,13 @@ import $ from 'jquery';
 function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWidgets, fileStatus,
     setFileStatus,
     manageTask,
-    checkStatus}) {
-    const [cameraURLSeed, setCameraURlSeed] = useState(0);
+    checkStatus,
+    chartLibraryStatus}) {
     const [showCamera, setShowCamera] = useState(false);
     const [cameraURL, setCameraUrl] = useState(currentSession.cameraUrl);
     const cameraShouldRunRef = useRef(null);
     const currentSessionStatusRef = useRef(null);
     const cameraUrlRef = useRef(null);
-    const intervalIdRef = useRef(null);
-
-
     const handleCameraButtonClick = () => {
         let newShowCamera = !showCamera;
         setShowCamera(newShowCamera);
@@ -60,7 +57,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
              // TODO
             console.log('Failed to fetch: Status ' + response.status);
-            setFileStatus(<a>Error sending files, please try again</a>);
+            setFileStatus(<span>Error sending files, please try again</span>);
 
         }
         }).then((data) => {
@@ -81,13 +78,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 Object.assign(currentSession, newSession);
                 console.log(currentSession);
                 setTimeout(checkStatus, 1000 );
-
-                const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), data.taskIdentifier, currentSessionRef);
-                newReliaWidgets.start();
-                setReliaWidgets(newReliaWidgets);
             } else {
                if (setFileStatus) {
-                setFileStatus(<a>Error sending files, please try again</a>);
+                setFileStatus(<span>Error sending files, please try again</span>);
                 }
                 console.error('Failed to create task');
             }
@@ -96,7 +89,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 
     const shouldCameraReloadInCurrentStatus = () => {
         let currentStatus = currentSessionStatusRef.current;
-        return currentStatus == 'receiver-assigned' || currentStatus == 'fully-assigned' || currentStatus == 'receiver-still-processing' || currentStatus == 'transmitter-still-processing';
+        return currentStatus === 'receiver-assigned' || currentStatus === 'fully-assigned' || currentStatus === 'receiver-still-processing' || currentStatus === 'transmitter-still-processing';
     }
 
     const onImageLoaded = () => {
@@ -151,10 +144,13 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     currentSessionStatusRef.current = currentSession.status;
 
     useEffect(() => {
-        //console.log("Calling useEffect in Laboratory");
-        //console.log(reliaWidgets);
-        if (reliaWidgets !== null)
+        if (chartLibraryStatus !== 'ready' || !currentSession.taskIdentifier) {
+            return;
+        }
+
+        if (reliaWidgets !== null) {
             reliaWidgets.stop();
+        }
 
         const newReliaWidgets = new ReliaWidgets($("#relia-widgets"), currentSession.taskIdentifier, currentSessionRef);
         newReliaWidgets.start();
@@ -163,11 +159,11 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         return () => {
             newReliaWidgets.stop();
             newReliaWidgets.clean();
-        }
-    }, []);
+        };
+    }, [chartLibraryStatus, currentSession.taskIdentifier]);
 
     useEffect(() => {
-        if (currentSession.status == "completed" || currentSession.status == "error" || currentSession.status == "deleted") {
+        if (currentSession.status === "completed" || currentSession.status === "error" || currentSession.status === "deleted") {
             if (reliaWidgets !== null)
                 reliaWidgets.stop();
         }
@@ -212,6 +208,24 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                             <i>{t("runner.faraday-info")}</i>
                         </p>
                     </center>
+                </Row>
+            )}
+            {currentSession.assignedInstance != null && chartLibraryStatus === "loading" && (
+                <Row>
+                    <Col md={{ span: 10, offset: 1 }}>
+                        <div className="alert alert-info text-start">
+                            {t("runner.widget-status.loading-chart-library")}
+                        </div>
+                    </Col>
+                </Row>
+            )}
+            {currentSession.assignedInstance != null && chartLibraryStatus === "failed" && (
+                <Row>
+                    <Col md={{ span: 10, offset: 1 }}>
+                        <div className="alert alert-danger text-start">
+                            {t("runner.widget-status.chart-library-failed")}
+                        </div>
+                    </Col>
                 </Row>
             )}
             <Row id={"relia-widgets"}> 

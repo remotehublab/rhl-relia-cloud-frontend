@@ -3,8 +3,8 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaHistogramSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 		var self = this;
 
 		self.$div.html(
@@ -64,6 +64,23 @@ export class ReliaHistogramSink extends ReliaWidget {
 
 		var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 		self.chart.draw(dataTable, self.options);
+		self.setSnapshot(self.buildSeriesSnapshot(
+			'histogram-sink',
+			'Voltage Values',
+			[
+				{
+					label: 'Voltage Values',
+					points: formattedData.slice(1).map(function (row, index) {
+						return {
+							x: index,
+							y: Number(row[0])
+						};
+					})
+				}
+			],
+			'Count',
+			null
+		));
 		//console.log(DataArray);
 	}
 

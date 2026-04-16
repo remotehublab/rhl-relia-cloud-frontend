@@ -6,8 +6,8 @@ import ReliaWidget from './ReliaWidget';
 window.reliaVariableChooserIdentifierNumber = 0;
 
 export class ReliaVariableChooser extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 		var self = this;
 
 		self.$div.html(

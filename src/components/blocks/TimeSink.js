@@ -3,8 +3,8 @@ import { t } from '../../i18n';
 import ReliaWidget from './ReliaWidget';
 
 export class ReliaTimeSink extends ReliaWidget {
-	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier) {
-		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier);
+	constructor($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options = {}) {
+		super($divElement, deviceIdentifier, blockIdentifier, taskIdentifier, options);
 		var self = this;
 
 		/*$.get(self.url).done(function (data) {
@@ -459,6 +459,24 @@ export class ReliaTimeSink extends ReliaWidget {
 				//console.log(formattedData);
 				var dataTable = window.google.visualization.arrayToDataTable(formattedData);
 				self.chart.draw(dataTable, self.options);
+				const seriesDefinitions = columns.slice(1).map(function (label, seriesIndex) {
+					return {
+						label: String(label),
+						points: formattedData.slice(1).map(function (row) {
+							return {
+								x: Number(row[0]),
+								y: Number(row[seriesIndex + 1])
+							};
+						})
+					};
+				});
+				self.setSnapshot(self.buildSeriesSnapshot(
+					'time-sink',
+					self.titleHAxis,
+					seriesDefinitions,
+					self.yLabelTimeSink,
+					self.yUnitTimeSink
+				));
 
 				if (self.$autoscaleCheckbox.is(':checked')) {
 					var tempmax = new Array(chEnabledCounter).fill(null);

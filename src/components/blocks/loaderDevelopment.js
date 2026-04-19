@@ -34,7 +34,6 @@ export class ReliaWidgets {
 			transmitter: { state: 'initializing' }
 		};
 		this.loggedTrackedDeviceNameSets = new Set();
-		this.loggedWaitingWithVisiblePlotSignatures = new Set();
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
@@ -46,7 +45,6 @@ export class ReliaWidgets {
 		this.blockStatusesByDevice = {};
 		this.unsupportedBlocksByDevice = {};
 		this.loggedTrackedDeviceNameSets.clear();
-		this.loggedWaitingWithVisiblePlotSignatures.clear();
 		this.blocks = [];
 		this.$divElement.find("#relia-widgets-receiver").empty();
 		this.$divElement.find("#relia-widgets-transmitter").empty();
@@ -181,42 +179,6 @@ export class ReliaWidgets {
 		return this.getTrackedDeviceData(deviceType).statuses.some((status) => status.state === 'rendered' || status.hasSnapshot);
 	}
 
-	logWaitingForDataWithVisiblePlot(deviceType, deviceNames, statuses) {
-		const $deviceContainer = this.$divElement.find("#relia-widgets-" + deviceType);
-		if (!$deviceContainer.find('svg, canvas').length) {
-			return;
-		}
-
-		const blockStatuses = [];
-		deviceNames.forEach((deviceName) => {
-			Object.entries(this.blockStatusesByDevice[deviceName] || {}).forEach(([blockName, status]) => {
-				blockStatuses.push({
-					deviceName,
-					blockName,
-					state: status.state,
-					hasSnapshot: !!status.hasSnapshot,
-					error: status.error || null
-				});
-			});
-		});
-
-		const signature = JSON.stringify({
-			deviceType,
-			blockStatuses
-		});
-		if (this.loggedWaitingWithVisiblePlotSignatures.has(signature)) {
-			return;
-		}
-
-		console.debug('ReliaWidgets waiting_for_data while plot DOM exists', {
-			taskId: this.taskId,
-			deviceType,
-			deviceNames,
-			blockStatuses
-		});
-		this.loggedWaitingWithVisiblePlotSignatures.add(signature);
-	}
-
 	getStatusMessage(state) {
 		switch (state) {
 			case 'initializing':
@@ -291,7 +253,7 @@ export class ReliaWidgets {
 	}
 
 	refreshDeviceTypeStatus(deviceType) {
-		const { deviceNames, statuses, unsupportedBlocks } = this.getTrackedDeviceData(deviceType);
+		const { statuses, unsupportedBlocks } = this.getTrackedDeviceData(deviceType);
 
 		if (statuses.some((status) => status.state === 'rendered' || status.hasSnapshot)) {
 			this.setDeviceStatus(deviceType, 'rendered');
@@ -318,7 +280,6 @@ export class ReliaWidgets {
 		}
 
 		if (statuses.some((status) => status.state === 'waiting_for_data' || status.state === 'initializing')) {
-			this.logWaitingForDataWithVisiblePlot(deviceType, deviceNames, statuses);
 			this.setDeviceStatus(deviceType, 'waiting_for_data');
 			return;
 		}

@@ -73,6 +73,29 @@ class StoppingWidget extends ReliaWidget {
     }
 }
 
+class OptionsOverwritingWidget extends ReliaWidget {
+    redraw() {
+        this.options = {
+            chart: true
+        };
+    }
+
+    handleResponseData() {
+        this.setSnapshot(this.buildSeriesSnapshot(
+            'options-overwriting-widget',
+            'x',
+            [
+                {
+                    label: 'Series',
+                    points: [{ x: 1, y: 2 }]
+                }
+            ],
+            'y',
+            null
+        ));
+    }
+}
+
 describe('ReliaWidget polling', () => {
     beforeEach(() => {
         jest.useFakeTimers();
@@ -340,6 +363,29 @@ describe('ReliaWidget polling', () => {
 
         expect(onStateChange).toHaveBeenCalled();
         expect(widget.getWidgetStatus().state).toBe('waiting_for_data');
+    });
+
+    test('keeps lifecycle callbacks working when widgets overwrite this.options for chart config', () => {
+        const firstRequest = createDeferredRequest();
+        const onStateChange = jest.fn();
+        $.get.mockReturnValueOnce(firstRequest.api);
+
+        const widget = new OptionsOverwritingWidget(null, 'uw-s1i1:r', 'Options Block', 'task-1', {
+            onStateChange
+        });
+        widget.start();
+        firstRequest.resolve({
+            success: true,
+            data: {
+                ok: true
+            }
+        });
+
+        expect(onStateChange).toHaveBeenCalledWith(widget, expect.objectContaining({
+            state: 'rendered',
+            hasSnapshot: true
+        }));
+        widget.stop();
     });
 
     test('default handler throws and helper methods keep valid points only', () => {

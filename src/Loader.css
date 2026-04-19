@@ -20,9 +20,41 @@
 }
 
 .footer-container {
-  position: sticky;
-  bottom: 0;
-  background-color: red;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid #e9ecef;
+  margin-top: 1.25rem;
+}
+
+.build-version {
+  color: #6c757d;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.build-version-label {
+  text-transform: lowercase;
+}
+
+.build-version code {
+  color: inherit;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    justify-content: center;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .build-version {
+    text-align: center;
+  }
 }
 
 .introduction-container {

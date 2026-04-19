@@ -51,6 +51,13 @@ import RHL_logo from './components/images/RHL-logo.png';
  * @returns {JSX.Element} The rendered Outerloader component.
  */
 function Outerloader() {
+    const buildCommitShort = process.env.REACT_APP_BUILD_COMMIT_SHORT || process.env.REACT_APP_BUILD_COMMIT || 'unknown';
+    const buildCommitFull = process.env.REACT_APP_BUILD_COMMIT || buildCommitShort;
+    const buildTime = process.env.REACT_APP_BUILD_TIME || null;
+    const buildVersionTitle = buildTime
+        ? `commit ${buildCommitFull} built ${buildTime}`
+        : `commit ${buildCommitFull}`;
+
     const [selectedTab, setSelectedTab] = useState('introduction');
     const [chartLibraryStatus, setChartLibraryStatus] = useState('loading');
     const [conversationConfig, setConversationConfig] = useState(null);
@@ -572,12 +579,29 @@ function Outerloader() {
                 <Col>
                 </Col>
             </Row>
-            <Row >
-                <Col >
-                  {renderContent()}
-                </Col>
-            </Row>
-          </Container>
+	            <Row >
+	                <Col >
+	                  {renderContent()}
+	                </Col>
+	            </Row>
+                <Row>
+                    <Col>
+                        <div className={"footer-container"}>
+                            <span
+                                id="relia-build-version"
+                                className={"build-version"}
+                                data-build-commit={buildCommitFull}
+                                data-build-time={buildTime || ''}
+                                title={buildVersionTitle}
+                            >
+                                <span className={"build-version-label"}>build</span>{' '}
+                                <code>{buildCommitShort}</code>
+                                {buildTime && <span>{' '}· {buildTime}</span>}
+                            </span>
+                        </div>
+                    </Col>
+                </Row>
+	          </Container>
 
           <div id="conversation-container"></div>
       </Container>

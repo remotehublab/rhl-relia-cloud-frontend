@@ -33,6 +33,7 @@ export class ReliaWidgets {
 			receiver: { state: 'initializing' },
 			transmitter: { state: 'initializing' }
 		};
+		this.loggedTrackedDeviceNameSets = new Set();
 		this.running = false;
 		this.$divElement = $divElement;
 		this.blocks = [];
@@ -43,6 +44,7 @@ export class ReliaWidgets {
 		this.blocksById = {};
 		this.blockStatusesByDevice = {};
 		this.unsupportedBlocksByDevice = {};
+		this.loggedTrackedDeviceNameSets.clear();
 		this.blocks = [];
 		this.$divElement.find("#relia-widgets-receiver").empty();
 		this.$divElement.find("#relia-widgets-transmitter").empty();
@@ -119,6 +121,64 @@ export class ReliaWidgets {
 		return assignedInstanceName + ":" + deviceType[0];
 	}
 
+	getTrackedDeviceNames(deviceType) {
+		const trackedDeviceNames = new Set();
+		const currentDeviceName = this.getDeviceNameForType(deviceType);
+
+		if (currentDeviceName) {
+			trackedDeviceNames.add(currentDeviceName);
+		}
+
+		[
+			Object.keys(this.blocksById),
+			Object.keys(this.blockStatusesByDevice),
+			Object.keys(this.unsupportedBlocksByDevice)
+		].forEach((deviceNames) => {
+			deviceNames.forEach((deviceName) => {
+				if (this.getDeviceType(deviceName) === deviceType) {
+					trackedDeviceNames.add(deviceName);
+				}
+			});
+		});
+
+		const trackedDeviceNamesList = Array.from(trackedDeviceNames);
+		if (trackedDeviceNamesList.length > 1) {
+			const signature = deviceType + ":" + trackedDeviceNamesList.slice().sort().join("|");
+			if (!this.loggedTrackedDeviceNameSets.has(signature)) {
+				console.debug("ReliaWidgets detected multiple tracked device names for one side", {
+					taskId: this.taskId,
+					deviceType: deviceType,
+					currentDeviceName: currentDeviceName,
+					trackedDeviceNames: trackedDeviceNamesList
+				});
+				this.loggedTrackedDeviceNameSets.add(signature);
+			}
+		}
+
+		return trackedDeviceNamesList;
+	}
+
+	getTrackedDeviceData(deviceType) {
+		const deviceNames = this.getTrackedDeviceNames(deviceType);
+		const statuses = [];
+		const unsupportedBlocks = [];
+
+		deviceNames.forEach((deviceName) => {
+			statuses.push(...Object.values(this.blockStatusesByDevice[deviceName] || {}));
+			unsupportedBlocks.push(...(this.unsupportedBlocksByDevice[deviceName] || []));
+		});
+
+		return {
+			deviceNames,
+			statuses,
+			unsupportedBlocks
+		};
+	}
+
+	hasTrackedSnapshotForDeviceType(deviceType) {
+		return this.getTrackedDeviceData(deviceType).statuses.some((status) => status.state === 'rendered' || status.hasSnapshot);
+	}
+
 	getStatusMessage(state) {
 		switch (state) {
 			case 'initializing':
@@ -175,13 +235,9 @@ export class ReliaWidgets {
 	}
 
 	setDeviceStatusPreservingSnapshot(deviceType, state, messageOverride = null) {
-		const deviceName = this.getDeviceNameForType(deviceType);
-		if (deviceName) {
-			const statuses = Object.values(this.blockStatusesByDevice[deviceName] || {});
-			if (statuses.some((status) => status.state === 'rendered' || status.hasSnapshot)) {
-				this.setDeviceStatus(deviceType, 'rendered');
-				return;
-			}
+		if (this.hasTrackedSnapshotForDeviceType(deviceType)) {
+			this.setDeviceStatus(deviceType, 'rendered');
+			return;
 		}
 
 		this.setDeviceStatus(deviceType, state, messageOverride);
@@ -193,13 +249,11 @@ export class ReliaWidgets {
 		}
 
 		this.blockStatusesByDevice[deviceName][blockName] = widgetStatus;
-		this.refreshDeviceStatus(deviceName);
+		this.refreshDeviceTypeStatus(this.getDeviceType(deviceName));
 	}
 
-	refreshDeviceStatus(deviceName) {
-		const deviceType = this.getDeviceType(deviceName);
-		const statuses = Object.values(this.blockStatusesByDevice[deviceName] || {});
-		const unsupportedBlocks = this.unsupportedBlocksByDevice[deviceName] || [];
+	refreshDeviceTypeStatus(deviceType) {
+		const { statuses, unsupportedBlocks } = this.getTrackedDeviceData(deviceType);
 
 		if (statuses.some((status) => status.state === 'rendered' || status.hasSnapshot)) {
 			this.setDeviceStatus(deviceType, 'rendered');
@@ -233,12 +287,13 @@ export class ReliaWidgets {
 		this.setDeviceStatus(deviceType, 'waiting_for_block');
 	}
 
+	refreshDeviceStatus(deviceName) {
+		this.refreshDeviceTypeStatus(this.getDeviceType(deviceName));
+	}
+
 	refreshAllDeviceStatuses() {
 		['receiver', 'transmitter'].forEach((deviceType) => {
-			const deviceName = this.getDeviceNameForType(deviceType);
-			if (deviceName) {
-				this.refreshDeviceStatus(deviceName);
-			}
+			this.refreshDeviceTypeStatus(deviceType);
 		});
 	}
 
@@ -255,7 +310,7 @@ export class ReliaWidgets {
 		const $notice = $("<div class='alert alert-warning text-start mt-2'></div>");
 		$notice.text(t("runner.widget-status.unsupported-block") + ": " + blockName);
 		$deviceContents.append($notice);
-		this.refreshDeviceStatus(deviceName);
+		this.refreshDeviceTypeStatus(this.getDeviceType(deviceName));
 	}
 
 	buildBlock(deviceName, $divContents, blockName) {

@@ -424,6 +424,37 @@ describe('ReliaWidgets runtime', () => {
         expect(widgets.getDeviceStatuses().receiver).toBe('rendered');
     });
 
+    test('keeps the side rendered when snapshots exist under an older tracked device name', () => {
+        const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+        const widgets = new ReliaWidgets(createRoot(), 'task-1', {
+            current: {
+                assignedInstance: 'instance-1',
+                assignedInstanceName: 'uw-s2i1'
+            }
+        });
+
+        widgets.registerBlockState('uw-s1i1:r', 'block-a', {
+            state: 'waiting_for_data',
+            hasSnapshot: true
+        });
+        widgets.setDeviceStatus('receiver', 'waiting_for_data');
+
+        widgets.refreshAllDeviceStatuses();
+        widgets.setDeviceStatusPreservingSnapshot('receiver', 'retrying');
+
+        expect(widgets.getDeviceStatuses().receiver).toBe('rendered');
+        expect(consoleDebugSpy).toHaveBeenCalledWith(
+            'ReliaWidgets detected multiple tracked device names for one side',
+            expect.objectContaining({
+                deviceType: 'receiver',
+                currentDeviceName: 'uw-s2i1:r',
+                trackedDeviceNames: expect.arrayContaining(['uw-s1i1:r', 'uw-s2i1:r'])
+            })
+        );
+
+        consoleDebugSpy.mockRestore();
+    });
+
     test('restarts an existing stopped block instead of duplicating it', () => {
         const firstDevices = createDeferredRequest();
         const firstReceiverBlocks = createDeferredRequest();

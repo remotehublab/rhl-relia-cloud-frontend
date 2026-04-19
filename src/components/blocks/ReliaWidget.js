@@ -17,13 +17,31 @@ class ReliaWidget {
         this.latestSnapshot = null;
         this.latestError = null;
         this.consecutiveFailures = 0;
+        this.debugFlags = {
+            loggedNullSnapshot: false,
+            loggedRenderedWithoutSnapshot: false,
+            loggedWaitingWithoutSnapshotWhileVisible: false
+        };
     }
 
     start() {
         this.running = true;
+        this.debugFlags = {
+            loggedNullSnapshot: false,
+            loggedRenderedWithoutSnapshot: false,
+            loggedWaitingWithoutSnapshotWhileVisible: false
+        };
         this.setWidgetState('initializing');
         this.redraw();
         this.performRequest();
+    }
+
+    hasVisiblePlotDom() {
+        return !!(
+            this.$div
+            && typeof this.$div.find === 'function'
+            && this.$div.find('svg, canvas').length
+        );
     }
 
     performRequest() {
@@ -102,6 +120,15 @@ class ReliaWidget {
 
     setWidgetState(state) {
         this.widgetState = state;
+        if (state === 'rendered' && !this.latestSnapshot && !this.debugFlags.loggedRenderedWithoutSnapshot) {
+            console.debug('ReliaWidget rendered without snapshot', {
+                taskIdentifier: this.taskIdentifier,
+                deviceIdentifier: this.deviceIdentifier,
+                blockIdentifier: this.blockIdentifier,
+                hasVisiblePlotDom: this.hasVisiblePlotDom()
+            });
+            this.debugFlags.loggedRenderedWithoutSnapshot = true;
+        }
         if (this.options && typeof this.options.onStateChange === 'function') {
             this.options.onStateChange(this, this.getWidgetStatus());
         }
@@ -116,11 +143,29 @@ class ReliaWidget {
     }
 
     handleNoDataResponse() {
+        if (!this.latestSnapshot && this.hasVisiblePlotDom() && !this.debugFlags.loggedWaitingWithoutSnapshotWhileVisible) {
+            console.debug('ReliaWidget waiting_for_data while plot DOM exists', {
+                taskIdentifier: this.taskIdentifier,
+                deviceIdentifier: this.deviceIdentifier,
+                blockIdentifier: this.blockIdentifier
+            });
+            this.debugFlags.loggedWaitingWithoutSnapshotWhileVisible = true;
+        }
         this.setWidgetState(this.latestSnapshot ? 'rendered' : 'waiting_for_data');
     }
 
     setSnapshot(snapshot) {
         this.latestSnapshot = snapshot;
+        if (!snapshot && !this.debugFlags.loggedNullSnapshot) {
+            console.debug('ReliaWidget produced an empty snapshot', {
+                taskIdentifier: this.taskIdentifier,
+                deviceIdentifier: this.deviceIdentifier,
+                blockIdentifier: this.blockIdentifier,
+                widgetState: this.widgetState,
+                hasVisiblePlotDom: this.hasVisiblePlotDom()
+            });
+            this.debugFlags.loggedNullSnapshot = true;
+        }
         if (this.options && typeof this.options.onStateChange === 'function') {
             this.options.onStateChange(this, this.getWidgetStatus());
         }

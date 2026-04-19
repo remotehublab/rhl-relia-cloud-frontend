@@ -110,6 +110,15 @@ export class ReliaWidgets {
 		return deviceIdentifier.endsWith(':r') ? 'receiver' : 'transmitter';
 	}
 
+	getDeviceNameForType(deviceType) {
+		const assignedInstanceName = this.currentSessionRef.current && this.currentSessionRef.current.assignedInstanceName;
+		if (!assignedInstanceName) {
+			return null;
+		}
+
+		return assignedInstanceName + ":" + deviceType[0];
+	}
+
 	getStatusMessage(state) {
 		switch (state) {
 			case 'initializing':
@@ -162,7 +171,20 @@ export class ReliaWidgets {
 		$status.removeClass('alert-info alert-warning alert-danger')
 			.addClass(this.getStatusClass(state))
 			.text(messageOverride || this.getStatusMessage(state))
-			.show();
+				.show();
+	}
+
+	setDeviceStatusPreservingSnapshot(deviceType, state, messageOverride = null) {
+		const deviceName = this.getDeviceNameForType(deviceType);
+		if (deviceName) {
+			const statuses = Object.values(this.blockStatusesByDevice[deviceName] || {});
+			if (statuses.some((status) => status.state === 'rendered' || status.hasSnapshot)) {
+				this.setDeviceStatus(deviceType, 'rendered');
+				return;
+			}
+		}
+
+		this.setDeviceStatus(deviceType, state, messageOverride);
 	}
 
 	registerBlockState(deviceName, blockName, widgetStatus) {
@@ -209,6 +231,15 @@ export class ReliaWidgets {
 		}
 
 		this.setDeviceStatus(deviceType, 'waiting_for_block');
+	}
+
+	refreshAllDeviceStatuses() {
+		['receiver', 'transmitter'].forEach((deviceType) => {
+			const deviceName = this.getDeviceNameForType(deviceType);
+			if (deviceName) {
+				this.refreshDeviceStatus(deviceName);
+			}
+		});
 	}
 
 	addUnsupportedBlockNotice($deviceContents, deviceName, blockName) {
@@ -280,12 +311,12 @@ export class ReliaWidgets {
 				self.process();
 			}, CHECK_DEVICES_TIME_MS);
 
-			if (!data.success) {
-				console.log("Error loading devices:", data);
-				self.setDeviceStatus('receiver', 'retrying');
-				self.setDeviceStatus('transmitter', 'retrying');
-				return;
-			}
+				if (!data.success) {
+					console.log("Error loading devices:", data);
+					self.setDeviceStatusPreservingSnapshot('receiver', 'retrying');
+					self.setDeviceStatusPreservingSnapshot('transmitter', 'retrying');
+					return;
+				}
 
 			const assignedInstance = self.currentSessionRef.current.assignedInstance;
 			const assignedInstanceName = self.currentSessionRef.current.assignedInstanceName;
@@ -320,11 +351,11 @@ export class ReliaWidgets {
 						return;
 					}
 
-					if (!blockData.success) {
-						console.log("Error loading blocks:", blockData);
-						self.setDeviceStatus(deviceType, 'retrying');
-						return;
-					}
+						if (!blockData.success) {
+							console.log("Error loading blocks:", blockData);
+							self.setDeviceStatusPreservingSnapshot(deviceType, 'retrying');
+							return;
+						}
 
 					if (!blockData.blocks.length) {
 						self.refreshDeviceStatus(deviceName);
@@ -362,22 +393,22 @@ export class ReliaWidgets {
 					});
 
 					self.refreshDeviceStatus(deviceName);
-				}).fail(function () {
-					if (!self.running) {
-						return;
-					}
-					self.setDeviceStatus(deviceType, 'retrying');
+					}).fail(function () {
+						if (!self.running) {
+							return;
+						}
+						self.setDeviceStatusPreservingSnapshot(deviceType, 'retrying');
+					});
 				});
-			});
-		}).fail(function () {
-			if (!self.running) {
-				return;
-			}
-			self.setDeviceStatus('receiver', 'retrying');
-			self.setDeviceStatus('transmitter', 'retrying');
-			setTimeout(function () {
-				self.process();
-			}, CHECK_DEVICES_TIME_MS);
+			}).fail(function () {
+				if (!self.running) {
+					return;
+				}
+				self.setDeviceStatusPreservingSnapshot('receiver', 'retrying');
+				self.setDeviceStatusPreservingSnapshot('transmitter', 'retrying');
+				setTimeout(function () {
+					self.process();
+				}, CHECK_DEVICES_TIME_MS);
 		});
 	}
 }

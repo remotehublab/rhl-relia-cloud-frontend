@@ -19,11 +19,11 @@ const mockReliaWidgetsState = {
 
 jest.mock('./components/blocks/loaderDevelopment', () => ({
     __esModule: true,
-    ReliaWidgets: class MockReliaWidgets {
-        constructor($divElement, taskId, currentSessionRef) {
-            this.$divElement = $divElement;
-            this.taskId = taskId;
-            this.currentSessionRef = currentSessionRef;
+        ReliaWidgets: class MockReliaWidgets {
+            constructor($divElement, taskId, currentSessionRef) {
+                this.$divElement = $divElement;
+                this.taskId = taskId;
+                this.currentSessionRef = currentSessionRef;
             this.running = false;
             this.start = jest.fn(() => {
                 this.running = true;
@@ -32,6 +32,7 @@ jest.mock('./components/blocks/loaderDevelopment', () => ({
                 this.running = false;
             });
             this.clean = jest.fn();
+            this.refreshAllDeviceStatuses = jest.fn();
             mockReliaWidgetsState.instances.push(this);
         }
     }
@@ -187,7 +188,8 @@ describe('Laboratory component', () => {
     test.each(['completed', 'error', 'deleted'])('stops active widgets when the task becomes %s', (status) => {
         const activeWidgets = {
             stop: jest.fn(),
-            clean: jest.fn()
+            clean: jest.fn(),
+            refreshAllDeviceStatuses: jest.fn()
         };
 
         render(
@@ -205,6 +207,7 @@ describe('Laboratory component', () => {
         );
 
         expect(activeWidgets.stop).toHaveBeenCalled();
+        expect(activeWidgets.refreshAllDeviceStatuses).toHaveBeenCalled();
     });
 
     test('renders chart library alerts only when an instance is assigned', () => {

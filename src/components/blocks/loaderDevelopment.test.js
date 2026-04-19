@@ -388,6 +388,42 @@ describe('ReliaWidgets runtime', () => {
         expect(widgets.getDeviceStatuses().receiver).toBe('rendered');
     });
 
+    test('preserves rendered status when a transient retry state arrives after a snapshot exists', () => {
+        const widgets = new ReliaWidgets(createRoot(), 'task-1', {
+            current: {
+                assignedInstance: 'instance-1',
+                assignedInstanceName: 'uw-s1i1'
+            }
+        });
+
+        widgets.registerBlockState('uw-s1i1:r', 'block-a', {
+            state: 'waiting_for_data',
+            hasSnapshot: true
+        });
+        widgets.setDeviceStatusPreservingSnapshot('receiver', 'retrying');
+
+        expect(widgets.getDeviceStatuses().receiver).toBe('rendered');
+    });
+
+    test('re-derives device statuses from block snapshots on demand', () => {
+        const widgets = new ReliaWidgets(createRoot(), 'task-1', {
+            current: {
+                assignedInstance: 'instance-1',
+                assignedInstanceName: 'uw-s1i1'
+            }
+        });
+
+        widgets.registerBlockState('uw-s1i1:r', 'block-a', {
+            state: 'waiting_for_data',
+            hasSnapshot: true
+        });
+        widgets.setDeviceStatus('receiver', 'waiting_for_data');
+
+        widgets.refreshAllDeviceStatuses();
+
+        expect(widgets.getDeviceStatuses().receiver).toBe('rendered');
+    });
+
     test('restarts an existing stopped block instead of duplicating it', () => {
         const firstDevices = createDeferredRequest();
         const firstReceiverBlocks = createDeferredRequest();

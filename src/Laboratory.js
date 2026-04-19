@@ -162,13 +162,17 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         };
     }, [chartLibraryStatus, currentSession.taskIdentifier]);
 
-    useEffect(() => {
-        if (currentSession.status === "completed" || currentSession.status === "error" || currentSession.status === "deleted") {
-            if (reliaWidgets !== null)
-                reliaWidgets.stop();
-        }
-        currentSessionStatusRef.current = currentSession.status;
-        cameraUrlRef.current = currentSession.cameraUrl;
+	useEffect(() => {
+		if (currentSession.status === "completed" || currentSession.status === "error" || currentSession.status === "deleted") {
+			if (reliaWidgets !== null) {
+				reliaWidgets.stop();
+				if (typeof reliaWidgets.refreshAllDeviceStatuses === 'function') {
+					reliaWidgets.refreshAllDeviceStatuses();
+				}
+			}
+		}
+		currentSessionStatusRef.current = currentSession.status;
+		cameraUrlRef.current = currentSession.cameraUrl;
 
         setCameraUrl(getCameraURL());
     }, [ currentSession ]);

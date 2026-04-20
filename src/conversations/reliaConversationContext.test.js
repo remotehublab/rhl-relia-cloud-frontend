@@ -19,6 +19,9 @@ describe('buildReliaConversationContext', () => {
 
         expect(context.labState.selectedTab).toBe('introduction');
         expect(context.labState.taskStatus).toBe('not_started');
+        expect(context.context).toContain('RELIA laboratory state:');
+        expect(context.context).toContain('Receiver plots: 0');
+        expect(context.context).toContain('Transmitter plots: 0');
         expect(context.receiverPlots).toEqual([]);
         expect(context.transmitterPlots).toEqual([]);
     });
@@ -70,6 +73,11 @@ describe('buildReliaConversationContext', () => {
         expect(context.receiverPlots).toHaveLength(1);
         expect(context.transmitterPlots).toHaveLength(1);
         expect(context.labState.deviceStatuses.receiver).toBe('rendered');
+        expect(context.context).toContain('Receiver plots: 1');
+        expect(context.context).toContain('Receiver Plot [time-sink]');
+        expect(context.context).toContain('Transmitter Plot [frequency-sink]');
+        expect(context.context).toContain('peak y 1 at x 0');
+        expect(context.context).toContain('peak y 5 at x 10');
 
         const serialized = JSON.stringify(context);
         expect(serialized).not.toContain('receiver.grc');
@@ -127,6 +135,52 @@ describe('buildReliaConversationContext', () => {
         widgetContext.receiverPlots[0].series[0].points[0].y = 999;
         expect(context.receiverPlots[0].series[0].points[0].y).toBe(2);
         expect(context.transmitterPlots).toEqual([]);
+    });
+
+    test('summarizes large series without dumping every point into the text context', () => {
+        const points = Array.from({ length: 16 }, (_, index) => ({
+            x: index,
+            y: index * 2
+        }));
+
+        const context = buildReliaConversationContext({
+            selectedTab: 'laboratory',
+            currentSession: {
+                status: 'completed',
+                assignedInstanceName: 'uw-s1i2'
+            },
+            reliaWidgets: {
+                getAssistantContext: () => ({
+                    deviceStatuses: {
+                        receiver: 'rendered',
+                        transmitter: 'rendered'
+                    },
+                    receiverPlots: [
+                        {
+                            blockType: 'vector-sink',
+                            blockName: 'Receiver Plot',
+                            xLabel: 'Point',
+                            yLabel: 'Power',
+                            yUnit: 'dB',
+                            series: [
+                                {
+                                    label: "''",
+                                    points
+                                }
+                            ]
+                        }
+                    ],
+                    transmitterPlots: []
+                })
+            }
+        });
+
+        expect(context.receiverPlots[0].series[0].points).toHaveLength(16);
+        expect(context.context).toContain('Receiver Plot [vector-sink]; axes x=Point, y=Power (dB)');
+        expect(context.context).toContain('unnamed series: 16 points');
+        expect(context.context).toContain('(0, 0)');
+        expect(context.context).toContain('(15, 30)');
+        expect(context.context).not.toContain('(14, 28), (15, 30)');
     });
 
     test('falls back when reliaWidgets does not expose getAssistantContext', () => {

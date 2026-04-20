@@ -43,6 +43,62 @@ describe('reliaConversation helpers', () => {
         expect(component.questions).toEqual(buildDefaultQuestions());
     });
 
+    test('sets init-sensitive widget inputs before the element is connected', () => {
+        const container = document.createElement('div');
+        const originalCreateElement = document.createElement.bind(document);
+        const lifecycleElement = originalCreateElement('div');
+        lifecycleElement.connectedCallback = function () {
+            if (!Array.isArray(this.messages)) {
+                this.messages = [];
+            }
+            if (!Array.isArray(this.suggestedQuestions)) {
+                this.suggestedQuestions = [];
+            }
+
+            if (this.startingMessage && this.messages.length === 0) {
+                this.messages.push(this.startingMessage);
+            }
+
+            if (Array.isArray(this.questions) && this.suggestedQuestions.length === 0) {
+                this.suggestedQuestions.push(...this.questions);
+            }
+        };
+
+        const createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tagName, options) => {
+            if (tagName === 'lle-conversation') {
+                return lifecycleElement;
+            }
+            return originalCreateElement(tagName, options);
+        });
+        const appendChildSpy = jest.spyOn(container, 'appendChild').mockImplementation((node) => {
+            const result = Node.prototype.appendChild.call(container, node);
+            if (typeof node.connectedCallback === 'function') {
+                node.connectedCallback();
+            }
+            return result;
+        });
+
+        const component = ensureConversationComponent({
+            container,
+            config: {
+                available: true,
+                enabled: true,
+                role: 'instructor',
+                questions: ['Configured question'],
+                instructorStartingMessage: 'Instructor hello'
+            },
+            apiEndpoint: 'https://relia.rhlab.ece.uw.edu/pluto/'
+        });
+
+        expect(component.messages).toEqual(['Instructor hello']);
+        expect(component.suggestedQuestions).toEqual([
+            { type: 'standard', content: 'Configured question' }
+        ]);
+
+        appendChildSpy.mockRestore();
+        createElementSpy.mockRestore();
+    });
+
     test('ensureConversationComponent mounts only one component and refreshes properties', () => {
         document.body.innerHTML = '<div id="conversation-container"></div>';
         const container = document.getElementById('conversation-container');

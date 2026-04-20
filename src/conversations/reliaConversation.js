@@ -104,9 +104,10 @@ export function ensureConversationComponent({
     }
 
     let conversationComponent = container.querySelector('lle-conversation');
+    let shouldAppend = false;
     if (!conversationComponent) {
         conversationComponent = document.createElement('lle-conversation');
-        container.appendChild(conversationComponent);
+        shouldAppend = true;
     }
 
     conversationComponent.context = getContextForMessage ? getContextForMessage(null) : {};
@@ -167,6 +168,10 @@ export function ensureConversationComponent({
 
     if (config.settingsUrl) {
         conversationComponent.settingsUrl = config.settingsUrl;
+    }
+
+    if (shouldAppend) {
+        container.appendChild(conversationComponent);
     }
 
     return conversationComponent;

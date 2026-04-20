@@ -471,6 +471,73 @@ describe('Outerloader integration', () => {
         });
     });
 
+    test('preserves LabsLand-configured questions when statusUrl omits them', async () => {
+        window.google = {
+            visualization: {}
+        };
+        global.fetch = createFetchMock({
+            pollData: {
+                success: true,
+                locale: 'en',
+                redirect_to: 'https://labsland.example/back',
+                conversations: {
+                    available: true,
+                    enabled: false,
+                    role: 'student',
+                    questions: ['Configured question'],
+                    statusUrl: 'https://portal.example/status'
+                }
+            },
+            statusData: {
+                success: true,
+                result: {
+                    available: true,
+                    enabled: true,
+                    role: 'student'
+                }
+            }
+        });
+
+        render(<Outerloader />);
+
+        await waitFor(() => {
+            expect(document.querySelectorAll('lle-conversation')).toHaveLength(1);
+        });
+
+        expect(document.querySelector('lle-conversation').questions).toEqual([
+            { type: 'standard', content: 'Configured question' }
+        ]);
+    });
+
+    test('normalizes the conversation API endpoint before mounting the widget', async () => {
+        window.google = {
+            visualization: {}
+        };
+        window.location.href = 'https://relia.rhlab.ece.uw.edu/pluto?foo=1#laboratory';
+        global.fetch = createFetchMock({
+            pollData: {
+                success: true,
+                locale: 'en',
+                redirect_to: 'https://labsland.example/back',
+                conversations: {
+                    available: true,
+                    enabled: true,
+                    role: 'student'
+                }
+            }
+        });
+
+        render(<Outerloader />);
+
+        await waitFor(() => {
+            expect(document.querySelectorAll('lle-conversation')).toHaveLength(1);
+        });
+
+        expect(document.querySelector('lle-conversation').apiEndpoint).toBe(
+            'https://relia.rhlab.ece.uw.edu/pluto/'
+        );
+    });
+
     test('logs file listing network errors and skips conversation mounting when the container is unavailable', async () => {
         window.google = {
             visualization: {}

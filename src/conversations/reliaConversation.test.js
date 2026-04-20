@@ -2,6 +2,7 @@ import {
     buildDefaultQuestions,
     ensureConversationComponent,
     removeConversationComponent,
+    resolveConversationApiEndpoint,
     resolveConversationConfig
 } from './reliaConversation';
 
@@ -239,6 +240,31 @@ describe('reliaConversation helpers', () => {
         expect(result.enabled).toBe(true);
     });
 
+    test('resolveConversationConfig preserves original question config when statusUrl omits it', async () => {
+        const fetchImpl = jest.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                success: true,
+                result: {
+                    available: true,
+                    enabled: true,
+                    role: 'student'
+                }
+            })
+        });
+
+        const result = await resolveConversationConfig({
+            statusUrl: 'https://portal.example/status',
+            enabled: false,
+            questions: ['Configured in LabsLand'],
+            welcomePrompt: 'Start here'
+        }, fetchImpl);
+
+        expect(result.enabled).toBe(true);
+        expect(result.questions).toEqual(['Configured in LabsLand']);
+        expect(result.welcomePrompt).toBe('Start here');
+    });
+
     test('resolveConversationConfig falls back to the original config on fetch issues', async () => {
         const config = {
             statusUrl: 'https://portal.example/status',
@@ -268,5 +294,14 @@ describe('reliaConversation helpers', () => {
         expect(await resolveConversationConfig(config, throwingFetch)).toBe(config);
         expect(consoleErrorSpy).toHaveBeenCalled();
         consoleErrorSpy.mockRestore();
+    });
+
+    test('resolveConversationApiEndpoint normalizes the current page URL for the widget API contract', () => {
+        expect(resolveConversationApiEndpoint('https://relia.rhlab.ece.uw.edu/pluto')).toBe(
+            'https://relia.rhlab.ece.uw.edu/pluto/'
+        );
+        expect(resolveConversationApiEndpoint('https://relia.rhlab.ece.uw.edu/pluto/?foo=1#lab')).toBe(
+            'https://relia.rhlab.ece.uw.edu/pluto/'
+        );
     });
 });

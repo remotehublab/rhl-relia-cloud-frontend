@@ -57,13 +57,33 @@ export async function resolveConversationConfig(config, fetchImpl = window.fetch
 
         const payload = await response.json();
         if (payload && payload.success && payload.result) {
-            return payload.result;
+            return {
+                ...config,
+                ...payload.result
+            };
         }
     } catch (error) {
         console.error('Failed to refresh conversation config', error);
     }
 
     return config;
+}
+
+export function resolveConversationApiEndpoint(locationHref = window.location.href) {
+    try {
+        const url = new URL(locationHref, window.location.origin);
+        url.search = '';
+        url.hash = '';
+        if (!url.pathname.endsWith('/')) {
+            url.pathname = `${url.pathname}/`;
+        }
+        return url.href;
+    } catch (error) {
+        if (typeof locationHref !== 'string' || !locationHref) {
+            return locationHref;
+        }
+        return locationHref.endsWith('/') ? locationHref : `${locationHref}/`;
+    }
 }
 
 export function removeConversationComponent(container) {

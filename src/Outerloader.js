@@ -29,7 +29,13 @@ import './Loader.css';
 import Loader from "./Loader";
 import Laboratory from "./Laboratory";
 import Introduction from "./Introduction";
-import { ensureConversationComponent, removeConversationComponent, buildDefaultQuestions, resolveConversationConfig } from './conversations/reliaConversation';
+import {
+    ensureConversationComponent,
+    removeConversationComponent,
+    buildDefaultQuestions,
+    resolveConversationConfig,
+    resolveConversationApiEndpoint
+} from './conversations/reliaConversation';
 import { buildReliaConversationContext } from './conversations/reliaConversationContext';
 
 //images
@@ -337,7 +343,7 @@ function Outerloader() {
             ensureConversationComponent({
                 container,
                 config: resolvedConfig,
-                apiEndpoint: window.location.href,
+                apiEndpoint: resolveConversationApiEndpoint(),
                 defaultQuestions: buildDefaultQuestions(),
                 getContextForMessage: function () {
                     return buildReliaConversationContext({

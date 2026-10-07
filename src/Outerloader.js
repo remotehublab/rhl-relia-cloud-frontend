@@ -29,6 +29,7 @@ import './Loader.css';
 import Loader from "./Loader";
 import Laboratory from "./Laboratory";
 import Introduction from "./Introduction";
+import DemoIntroduction from './DemoIntroduction';
 import {
     ensureConversationComponent,
     removeConversationComponent,
@@ -67,6 +68,9 @@ function Outerloader() {
     const [selectedTab, setSelectedTab] = useState('introduction');
     const [chartLibraryStatus, setChartLibraryStatus] = useState('loading');
     const [conversationConfig, setConversationConfig] = useState(null);
+    const [demoPending, setDemoPending] = useState(false);
+    const [demoError, setDemoError] = useState(null);
+    const demoToneRef = useRef('middle');
 
     const [userData, setUserData] = useState({
         "locale": "en",
@@ -230,6 +234,9 @@ function Outerloader() {
     const renderContent = () => {
         switch (selectedTab) {
             case 'introduction':
+                if (userData.demo) {
+                    return <DemoIntroduction onRun={tone => manageTask(tone)} pending={demoPending} error={demoError} />;
+                }
                 return <Introduction currentSession={currentSession} setCurrentSession={setCurrentSession}/> ;
             case 'loadFiles':
                 return <Loader currentSession={currentSession} setCurrentSession={setCurrentSession} setSelectedTab={setSelectedTab}
@@ -239,7 +246,7 @@ function Outerloader() {
             case 'laboratory':
                 return <Laboratory currentSession={currentSession} setCurrentSession={setCurrentSession} setReliaWidgets={setReliaWidgets} reliaWidgets={reliaWidgets}
                                     fileStatus={fileStatus} setFileStatus={setFileStatus} checkStatus={checkStatus} manageTask={manageTask}
-                                    chartLibraryStatus={chartLibraryStatus}/> ;
+                                    chartLibraryStatus={chartLibraryStatus} demo={userData.demo}/> ;
             default:
                 return null;
         }
@@ -426,14 +433,20 @@ function Outerloader() {
      * workflow of submitting and monitoring tasks in the application.
      *
     */
-    const manageTask = () => {
+    const manageTask = (tone) => {
+        if (demoPending) return;
+        if (typeof tone === 'string') demoToneRef.current = tone;
+        setDemoPending(true);
+        setDemoError(null);
 
         fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{
-                    method: 'POST'
+                    method: 'POST',
+                    ...(userData.demo ? {headers: {'Content-Type': 'application/json'}, body: JSON.stringify({tone: demoToneRef.current})} : {})
         }).then((response) => {
             if (response.status === 200) {
                 return response.json();
             } else {
+                setDemoError('The measurement could not start. Please try again.');
 
              // TODO
             console.log('Failed to fetch: Status ' + response.status);
@@ -459,12 +472,13 @@ function Outerloader() {
                 setTimeout(checkStatus, 1000 );
                 setSelectedTab("laboratory");
             } else {
+                setDemoError((data && data.message) || 'The measurement could not start. Please try again.');
                if (setFileStatus) {
                 setFileStatus(<span>Error sending files, please try again</span>);
                 }
                 console.error('Failed to create task');
             }
-        });
+        }).catch(() => setDemoError('Connection lost. Please try again.')).finally(() => setDemoPending(false));
     };
 
     /**
@@ -569,15 +583,15 @@ function Outerloader() {
                                 1. { t("loader.upload.introduction") }
                             </Nav.Link>
                         </Nav.Item>
-                        <Nav.Item>
+                        {!userData.demo && <Nav.Item>
                             <Nav.Link eventKey="loadFiles" onClick={() => setSelectedTab('loadFiles')} className={"pill"}>
                                 2. {t("loader.upload.load-files")}
                             </Nav.Link>
-                        </Nav.Item>
+                        </Nav.Item>}
                         <Nav.Item>
                             {/* Laboratory tab is disabled and cannot be clicked. It can only be activated programmatically */}
                             <Nav.Link eventKey="laboratory" disabled className={"pill"}>
-                                3. {t("loader.upload.laboratory")}
+                                {userData.demo ? '2.' : '3.'} {t("loader.upload.laboratory")}
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>

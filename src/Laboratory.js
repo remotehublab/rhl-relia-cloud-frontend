@@ -22,7 +22,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     setFileStatus,
     manageTask,
     checkStatus,
-    chartLibraryStatus}) {
+    chartLibraryStatus,
+    demo}) {
     const [showCamera, setShowCamera] = useState(false);
     const [cameraURL, setCameraUrl] = useState(currentSession.cameraUrl);
     const cameraShouldRunRef = useRef(null);
@@ -46,6 +47,11 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
         if (reliaWidgets !== null) {
             reliaWidgets.stop();
             reliaWidgets.clean();
+        }
+
+        if (demo) {
+            manageTask();
+            return;
         }
 
         fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/tasks/` ,{

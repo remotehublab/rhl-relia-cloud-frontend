@@ -35,3 +35,49 @@
     .relia-demo-panel { flex-direction: column; }
     .relia-demo-options { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* All layout refinements are scoped to the server-selected demo session. */
+.relia-demo-shell { border: 0; box-shadow: none; padding: 0 32px; color: #24344a; }
+.relia-demo-shell .images-container { height: 88px; border-bottom: 1px solid #e4e9ee; }
+.relia-demo-shell .image { width: auto; max-width: 175px; max-height: 58px; }
+.relia-demo-shell .header-container { flex: 3; padding: 24px 0; }
+.relia-demo-shell .relia-title { font-size: 1.5rem; margin: 0; font-weight: 600; }
+.relia-demo-shell .button-container { justify-content: flex-start; }
+.relia-demo-shell .button-container .btn { background: transparent; color: #405b79; border-color: #d8e1ea; white-space: nowrap; }
+.relia-demo-shell .relia-demo-panel { border-left: 3px solid #2765b0; padding: 16px 20px; margin-bottom: 12px; }
+.relia-demo-shell .relia-demo-panel h2 { font-size: 1rem; font-weight: 650; }
+.relia-demo-shell .relia-demo-copy p { font-size: .9rem; }
+.relia-demo-shell .pills-container { padding: 12px 0 24px; }
+.relia-demo-shell .nav { gap: 8px; flex-wrap: nowrap; }
+.relia-demo-shell .nav-link { font-size: .9rem; }
+.relia-demo-introduction { display: grid; grid-template-columns: 1.25fr 1fr; gap: 64px; padding: 24px 24px 40px; }
+.relia-demo-eyebrow { display: block; color: #526c87; text-transform: uppercase; font-size: .72rem; font-weight: 700; letter-spacing: .12em; margin-bottom: 12px; }
+.relia-demo-experiment h2 { font-size: 2rem; line-height: 1.18; font-weight: 650; max-width: 430px; margin-bottom: 16px; }
+.relia-demo-lead { color: #536478; max-width: 460px; margin-bottom: 28px; line-height: 1.6; }
+.relia-demo-experiment .form-label { font-size: .9rem; font-weight: 600; }
+.relia-demo-experiment .form-select { min-height: 46px; }
+.relia-demo-experiment .form-text { display: block; margin-top: 9px; }
+.relia-demo-experiment .btn { padding: 11px 20px; transition: background-color 150ms ease, box-shadow 150ms ease; }
+.relia-demo-guide { border-left: 1px solid #e0e6ed; padding-left: 36px; padding-top: 4px; }
+.relia-demo-guide h3 { font-size: 1rem; font-weight: 650; margin-bottom: 24px; }
+.relia-demo-guide ol { list-style: none; padding: 0; counter-reset: steps; margin: 0; }
+.relia-demo-guide li { counter-increment: steps; position: relative; padding-left: 38px; margin-bottom: 26px; }
+.relia-demo-guide li::before { content: counter(steps, decimal-leading-zero); position: absolute; left: 0; top: 2px; font-size: .75rem; font-weight: 700; color: #42648b; }
+.relia-demo-guide strong { display: block; font-size: .95rem; margin-bottom: 5px; }
+.relia-demo-guide li span { display: block; color: #536478; font-size: .9rem; line-height: 1.6; }
+@media (max-width: 767px) {
+ .relia-demo-shell { padding: 0 16px; }
+ .relia-demo-shell .images-container { height: 68px; }
+ .relia-demo-shell .image { max-width: 90px; max-height: 40px; }
+ .relia-demo-shell .header-container { flex: 0 0 100%; order: -1; padding: 20px 0 8px; }
+ .relia-demo-shell .relia-title { font-size: 1.3rem; }
+ .relia-demo-shell .button-container { padding-bottom: 16px; }
+ .relia-demo-shell .relia-demo-panel { gap: 14px; padding: 14px; }
+ .relia-demo-shell .relia-demo-options { gap: 10px; }
+ .relia-demo-shell .relia-demo-options p { font-size: .8rem; }
+ .relia-demo-introduction { grid-template-columns: 1fr; gap: 32px; padding: 8px 0 24px; }
+ .relia-demo-experiment h2 { font-size: 1.75rem; }
+ .relia-demo-guide { border-left: 0; border-top: 1px solid #e0e6ed; padding: 24px 0 0; }
+ .relia-demo-shell .pills-container { margin: 0; width: 100%; flex: 0 0 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .relia-demo-experiment .btn { transition: none; } }

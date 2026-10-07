@@ -552,7 +552,7 @@ function Outerloader() {
     return (
         <Container>
 
-          <Container className={"outer-container"}>
+          <Container className={`outer-container${userData.demo ? " relia-demo-shell" : ""}`}>
             <Row  className={"images-container"}>
                 <Col className={"image-col"}>
                     <a className={"image-col"} href={"https://ece.uw.edu"} target="_blank" rel="noopener noreferrer"><Image src={UW_logo} fluid  className={"image"}/></a>

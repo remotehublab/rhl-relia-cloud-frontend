@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import Laboratory from './Laboratory';
 
@@ -64,21 +64,23 @@ function createSession(overrides = {}) {
 describe('Laboratory component', () => {
     const originalApiBaseUrl = process.env.REACT_APP_API_BASE_URL;
     let dateCounter = 0;
+    const originalImage = global.Image;
 
     beforeEach(() => {
         jest.useFakeTimers();
         process.env.REACT_APP_API_BASE_URL = 'https://relia.rhlab.ece.uw.edu/pluto';
         mockReliaWidgetsState.instances = [];
         dateCounter = 0;
-        jest.spyOn(Date.prototype, 'toString').mockImplementation(() => {
+        jest.spyOn(Date, 'now').mockImplementation(() => {
             dateCounter += 1;
-            return 'STAMP-' + dateCounter;
+            return dateCounter;
         });
         global.fetch = jest.fn();
     });
 
     afterEach(() => {
-        Date.prototype.toString.mockRestore();
+        Date.now.mockRestore();
+        global.Image = originalImage;
         jest.runOnlyPendingTimers();
         jest.useRealTimers();
         process.env.REACT_APP_API_BASE_URL = originalApiBaseUrl;
@@ -338,6 +340,8 @@ describe('Laboratory component', () => {
     });
 
     test('camera reloads only in active statuses and stops when hidden', () => {
+        const frames = [];
+        global.Image = jest.fn(() => {const frame = {}; frames.push(frame); return frame;});
         const { rerender } = render(
             <Laboratory
                 currentSession={createSession({ status: 'receiver-assigned' })}
@@ -357,13 +361,17 @@ describe('Laboratory component', () => {
         const firstSrc = image.getAttribute('src');
 
         fireEvent.load(image);
-        jest.advanceTimersByTime(50);
+        act(() => jest.advanceTimersByTime(250));
+        expect(image.getAttribute('src')).toEqual(firstSrc);
+        expect(frames[0].src).not.toEqual(firstSrc);
+        act(() => frames[0].onload());
         const secondSrc = image.getAttribute('src');
         expect(secondSrc).not.toEqual(firstSrc);
 
-        fireEvent.click(screen.getByText('runner.buttons.hide'));
         fireEvent.load(image);
-        jest.advanceTimersByTime(50);
+        act(() => jest.advanceTimersByTime(250));
+        fireEvent.click(screen.getByText('runner.buttons.hide'));
+        act(() => frames[1].onload());
         expect(screen.queryByAltText('Camera')).toBeNull();
         expect(image.getAttribute('src')).toEqual(secondSrc);
 
@@ -385,8 +393,20 @@ describe('Laboratory component', () => {
         const completedImage = screen.getByAltText('Camera');
         const completedSrc = completedImage.getAttribute('src');
         fireEvent.load(completedImage);
-        jest.advanceTimersByTime(50);
+        act(() => jest.advanceTimersByTime(250));
         expect(screen.getByAltText('Camera').getAttribute('src')).toEqual(completedSrc);
+        expect(frames).toHaveLength(2);
+    });
+
+    test('status polls keep the complete camera frame instead of starting another visible download', () => {
+        const props = {currentSession: createSession({status:'fully-assigned'}),
+            setCurrentSession: jest.fn(), reliaWidgets: null, setReliaWidgets: jest.fn(),
+            setFileStatus: jest.fn(), manageTask: jest.fn(), checkStatus: jest.fn(), chartLibraryStatus:'ready'};
+        const {rerender} = render(<Laboratory {...props}/>);
+        fireEvent.click(screen.getByText('runner.buttons.show'));
+        const source = screen.getByAltText('Camera').getAttribute('src');
+        rerender(<Laboratory {...props} currentSession={createSession({status:'fully-assigned'})}/>);
+        expect(screen.getByAltText('Camera').getAttribute('src')).toBe(source);
     });
 
     test.each([

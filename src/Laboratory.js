@@ -29,6 +29,8 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     const cameraShouldRunRef = useRef(null);
     const currentSessionStatusRef = useRef(null);
     const cameraUrlRef = useRef(null);
+    const cameraReloadTimerRef = useRef(null);
+    const pendingCameraFrameRef = useRef(null);
     const handleCameraButtonClick = () => {
         let newShowCamera = !showCamera;
         setShowCamera(newShowCamera);
@@ -99,20 +101,37 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
     }
 
     const onImageLoaded = () => {
-        // Only when the image is loaded (or there is an error), try to reload the image again after 50ms
-        // but only if at that moment we are still in the right conditions
-        setTimeout(function () {
+        clearTimeout(cameraReloadTimerRef.current);
+        if (pendingCameraFrameRef.current) return;
+        cameraReloadTimerRef.current = setTimeout(function () {
             if (cameraShouldRunRef.current && shouldCameraReloadInCurrentStatus()) {
-                setCameraUrl(getCameraURL());
-                // for some reason setCameraUrl goes super slow to refresh, so we manipulate DOM directly
-                document.getElementById("camera-image").src = getCameraURL();
+                // Keep the complete current frame visible while the next one loads.
+                const nextFrame = new Image();
+                const currentFeed = cameraUrlRef.current;
+                pendingCameraFrameRef.current = nextFrame;
+                nextFrame.onload = () => {
+                    pendingCameraFrameRef.current = null;
+                    if (cameraShouldRunRef.current && shouldCameraReloadInCurrentStatus()) {
+                        if (currentFeed === cameraUrlRef.current) setCameraUrl(nextFrame.src);
+                        else onImageLoaded();
+                    }
+                };
+                nextFrame.onerror = () => {pendingCameraFrameRef.current = null; onImageLoaded();};
+                nextFrame.src = getCameraURL();
             }
-        }, 50);
+        }, 250);
     };
 
     const getCameraURL = () => {
-        return cameraUrlRef.current + "?t=" + new Date().toString();
+        return cameraUrlRef.current + "?t=" + Date.now();
     };
+
+    useEffect(() => () => {
+        cameraShouldRunRef.current = false;
+        clearTimeout(cameraReloadTimerRef.current);
+        const frame = pendingCameraFrameRef.current;
+        if (frame) {frame.onload = null; frame.onerror = null;}
+    }, []);
 
     function convertStatusMessage(status) {
         switch (status) {
@@ -178,9 +197,9 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
 			}
 		}
 		currentSessionStatusRef.current = currentSession.status;
+        const feedChanged = cameraUrlRef.current !== currentSession.cameraUrl;
 		cameraUrlRef.current = currentSession.cameraUrl;
-
-        setCameraUrl(getCameraURL());
+        if (feedChanged) setCameraUrl(getCameraURL());
     }, [ currentSession ]);
 
 
@@ -239,7 +258,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                 </Row>
             )}
             <Row id={"relia-widgets"}> 
-                <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
+                <Col xs={12} md={6} style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>
                         <h2>{ t("runner.receiver") }</h2>
                         { currentSession.receiverFilename != null && <h4>({ currentSession.receiverFilename })</h4> }
@@ -247,7 +266,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                     
                     <div id={"relia-widgets-receiver"}></div>
                 </Col>
-                <Col style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
+                <Col xs={12} md={6} style={{ display: currentSession.assignedInstance != null ? 'block' : 'none' }} >
                     <center>
                         <h2>{ t("runner.transmitter") }</h2>
                         { currentSession.transmitterFilename != null && <h4>({ currentSession.transmitterFilename })</h4> }

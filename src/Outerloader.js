@@ -285,8 +285,9 @@ function Outerloader() {
                         window.location.href = "https://relia.rhlab.ece.uw.edu"
                 }
 
-                if (data.locale && data.locale !== i18n.language) {
-                    i18n.changeLanguage(data.locale);
+                const locale = data.locale && data.locale.replace('_', '-');
+                if (locale && locale !== i18n.language) {
+                    i18n.changeLanguage(locale);
                 }
 
                 // Update the userData state with the retrieved data

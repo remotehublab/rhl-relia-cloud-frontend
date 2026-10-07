@@ -11,6 +11,7 @@ i18n
         loadPath: `${process.env.REACT_APP_API_BASE_URL}/locales/{{lng}}/{{ns}}.json`
     },
     lng: "en",
+    load: "languageOnly",
     fallbackLng: 'en',
     returnNull: false,
     returnEmptyString: false,

@@ -112,6 +112,8 @@ export class ReliaVectorSink extends ReliaWidget {
 		self.titleVectorSink = '';
 		self.colorsVectorSink = [];
 		self.verticalnameVectorSink = " ";
+		self.xLabelVectorSink = "";
+		self.xUnitVectorSink = "";
 		self.yLabelVectorSink = " ";
 		self.yUnitVectorSink = " ";
 		self.pausePlayVectorSink = true;
@@ -250,8 +252,8 @@ export class ReliaVectorSink extends ReliaWidget {
 
 
 		if (self.$axisLabelsCheckbox.is(':checked')) {
-			self.titleVAxis = self.yLabelVectorSink + " (" + self.yUnitVectorSink + ")";
-			self.titleHAxis = ' ';
+			self.titleVAxis = self.yLabelVectorSink + (self.yUnitVectorSink ? " (" + self.yUnitVectorSink + ")" : "");
+			self.titleHAxis = self.xLabelVectorSink + (self.xUnitVectorSink ? " (" + self.xUnitVectorSink + ")" : "");
 		}
 		else {
 			self.titleVAxis = ' ';
@@ -341,9 +343,14 @@ export class ReliaVectorSink extends ReliaWidget {
 		self.ymax = params.ymax;
 
 		self.colorsVectorSink = params.colors;
-		self.yLabelVectorSink = params.label;
-		self.yUnitVectorSink = params.units
+		self.xLabelVectorSink = params.x_axis_label || t("widgets.general.point");
+		self.xUnitVectorSink = params.x_units || "";
+		self.yLabelVectorSink = params.y_axis_label || params.label || "";
+		self.yUnitVectorSink = params.y_units || params.units || "";
+		const xStart = Number.isFinite(Number(params.x_start)) ? Number(params.x_start) : 0;
+		const xStep = Number.isFinite(Number(params.x_step)) ? Number(params.x_step) : 1;
 		self.average = params.average
+		self.redraw();
 
 
 		//Remove all the unused channels from 5 to nconnections
@@ -443,7 +450,7 @@ export class ReliaVectorSink extends ReliaWidget {
 				if (chEnabledCounter != 0) {
 					//var freqRes=self.bandwidth/self.fftsize
 					for (var pos = 0; pos < self.vlen; ++pos) {
-						var currentRow = [pos];
+						var currentRow = [xStart + pos * xStep];
 						for (var idx = 0; idx < chEnabledCounter; ++idx) {
 							//currentRow.push(realData[pos]+self.noiseFactor*randomArr[pos]);
 							currentRow.push(self.dataAvgOut[idx][pos] / self.average);
@@ -467,7 +474,7 @@ export class ReliaVectorSink extends ReliaWidget {
 					});
 					self.setSnapshot(self.buildSeriesSnapshot(
 						'vector-sink',
-						t("widgets.general.point"),
+						self.titleHAxis || self.xLabelVectorSink,
 						seriesDefinitions,
 						self.yLabelVectorSink,
 						self.yUnitVectorSink

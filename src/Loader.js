@@ -132,17 +132,19 @@ function Loader({
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Upload failed');
+                return response.json();
+            })
             .then(data => {
-                const newFileNames = newUploadedFiles.map(file => file.name);
-                setStoredFiles([...storedFiles, ...newFileNames]);
+                if (!data.success || !Array.isArray(data.files)) throw new Error('Upload failed');
+                // Use canonical server filenames, including replacements and sanitization.
+                setStoredFiles(data.files);
+                setFileStatus(<a>{t("loader.upload.file-status.select-rx-tx")}</a>);
             })
             .catch(error => {
                 console.error('Error uploading files:', error);
                 setFileStatus(<a>{t("loader.upload.file-status.upload-error")}</a>);
-            })
-            .finally(() => {
-                setFileStatus(<a>{t("loader.upload.file-status.select-rx-tx")}</a>);
             });
         } else {
             console.log('No .grc files selected.');
@@ -330,7 +332,7 @@ function Loader({
               <Container>
                   <Row>
                     <Col md={{span: 6, offset: 3}} className={"form-col"}>
-                      <Form.Control type="file" accept=".grc" onChange={handleFileChange}  multiple />
+                      <Form.Control type="file" accept=".grc" onChange={handleFileChange} multiple aria-label="Upload GNU Radio flowgraphs" />
                     </Col>
                   </Row>
               </Container>
@@ -365,6 +367,7 @@ function Loader({
                       <Form.Check
                         type="radio"
                         name="receiver"
+                        aria-label={'Rx: ' + fileName}
                         onChange={() => handleSelect('RX',fileName)}
                         checked={selectedFilesColumnRX.includes(fileName)}
                       />
@@ -373,12 +376,13 @@ function Loader({
                       <Form.Check
                         type="radio"
                         name="transmitter"
+                        aria-label={'Tx: ' + fileName}
                         onChange={() => handleSelect('TX', fileName)}
                         checked={selectedFilesColumnTX.includes(fileName)}
                       />
                     </Col>
                     <Col xs={1}  className={"remove-col"}>
-                      <Button variant="danger" size="sm" onClick={() => handleRemove(fileName)}><i className="bi bi-x-lg"></i></Button>
+                      <Button variant="danger" size="sm" aria-label={t("loader.upload.delete") + ': ' + fileName} onClick={() => handleRemove(fileName)}><i className="bi bi-x-lg"></i></Button>
                     </Col>
                   </Row>
                 ))}

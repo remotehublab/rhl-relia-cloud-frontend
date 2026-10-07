@@ -30,6 +30,7 @@ import Loader from "./Loader";
 import Laboratory from "./Laboratory";
 import Introduction from "./Introduction";
 import DemoIntroduction from './DemoIntroduction';
+import DemoBanner from './DemoBanner';
 import {
     ensureConversationComponent,
     removeConversationComponent,
@@ -575,6 +576,7 @@ function Outerloader() {
                      {/*<a onClick={() => showLibrary()} className={"btn btn-primary"}>Show Library</a>*/}
                 </Col>
             </Row>
+            {userData.demo && <DemoBanner />}
             <Row  >
                 <Col className={"pills-container"} md={{span: 6, offset: 3}} >
                     <Nav variant="pills" defaultActiveKey="introduction" activeKey={selectedTab}>

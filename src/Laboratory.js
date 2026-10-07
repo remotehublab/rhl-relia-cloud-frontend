@@ -272,7 +272,7 @@ function Laboratory({currentSession, setCurrentSession, reliaWidgets, setReliaWi
                         { currentSession.transmitterFilename != null && <h4>({ currentSession.transmitterFilename })</h4> }
                     </center>
                     
-                    {demo && <p>The transmitter sends the selected tone. Look for its peak in the receiver spectrum.</p>}
+                    {demo && <p>{t('demo.transmitter', "The transmitter sends the selected tone. Look for its peak in the receiver spectrum.")}</p>}
                     <div id={"relia-widgets-transmitter"} style={demo ? {display: 'none'} : undefined}></div>
                 </Col>
             </Row>

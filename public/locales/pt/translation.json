@@ -63,7 +63,7 @@
       "upload": "Enviar",
       "receiver-file": "Arquivo receptor",
       "file": "Arquivo",
-      "remove" : "Remover",
+      "remove": "Remover",
       "introduction": "Introdução",
       "load-files": "Carregar arquivos",
       "laboratory": "Laboratorio",
@@ -124,5 +124,31 @@
       "unsupported-block": "Esse tipo de widget ainda não é suportado na interface do laboratório",
       "unsupported-only": "Somente widgets não suportados foram encontrados para este dispositivo."
     }
+  },
+  "demo": {
+    "title": "Demonstração guiada do RELIA",
+    "description": "Experimente uma atividade preparada com rádios Pluto reais da Universidade de Washington.",
+    "available": "Disponível nesta demonstração",
+    "available-description": "Escolha um tom, observe seu espectro e veja a câmera ao vivo.",
+    "full-access": "Com acesso completo ao laboratório",
+    "full-access-description": "Envie seus próprios fluxogramas do GNU Radio e ajuste os parâmetros.",
+    "eyebrow": "Explore sinais de rádio",
+    "heading": "Envie um tom. Encontre-o no espectro.",
+    "lead": "Envie um sinal de um rádio Pluto para outro e encontre-o no espectro recebido.",
+    "tone-label": "Desvio do tom em relação à portadora de 2450 MHz",
+    "peak": "Procure um pico próximo de {{peak}} MHz.",
+    "run": "Executar nos rádios reais",
+    "starting": "Iniciando medição…",
+    "guide-label": "Guia de medição",
+    "guide-heading": "O que observar",
+    "find": "Encontre seu sinal",
+    "find-description": "Procure o pico próximo da frequência selecionada. Pequenas diferenças entre os rádios são normais.",
+    "hardware": "Veja o equipamento",
+    "hardware-description": "Abra a câmera ao vivo para ver os rádios executando seu experimento.",
+    "move": "Mova o pico",
+    "move-description": "Volte aqui e escolha outro tom. Compare onde o pico aparece.",
+    "transmitter": "O transmissor envia o tom selecionado. Procure seu pico no espectro do receptor.",
+    "start-error": "Não foi possível iniciar a medição. Tente novamente.",
+    "connection-error": "A conexão foi perdida. Tente novamente."
   }
 }

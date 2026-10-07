@@ -63,7 +63,7 @@
       "upload": "Upload",
       "receiver-file": "Receiver file",
       "file": "File",
-      "remove" : "Remove",
+      "remove": "Remove",
       "introduction": "Introduction",
       "load-files": "Load Files",
       "laboratory": "Laboratory",
@@ -125,5 +125,31 @@
       "unsupported-block": "This widget type is not yet supported in the laboratory UI",
       "unsupported-only": "Only unsupported widgets were found for this device."
     }
+  },
+  "demo": {
+    "title": "Guided RELIA demonstration",
+    "description": "Try a prepared experiment on real Pluto radios at the University of Washington.",
+    "available": "Available in this demo",
+    "available-description": "Choose a tone, view its spectrum, and watch the live camera.",
+    "full-access": "With full lab access",
+    "full-access-description": "Upload your own GNU Radio flowgraphs and adjust their parameters.",
+    "eyebrow": "Explore radio signals",
+    "heading": "Send a tone. Find it in the spectrum.",
+    "lead": "Send a signal from one Pluto radio to another, then find it in the received spectrum.",
+    "tone-label": "Tone offset from the 2450 MHz carrier",
+    "peak": "Look for a peak near {{peak}} MHz.",
+    "run": "Run on real radios",
+    "starting": "Starting measurement…",
+    "guide-label": "Measurement guide",
+    "guide-heading": "What to look for",
+    "find": "Find your signal",
+    "find-description": "Look for the peak near the selected frequency. Small offsets between radios are normal.",
+    "hardware": "See the hardware",
+    "hardware-description": "Open the live camera to see the radio pair running your experiment.",
+    "move": "Move the peak",
+    "move-description": "Return here and choose another tone. Compare where the peak appears.",
+    "transmitter": "The transmitter sends the selected tone. Look for its peak in the receiver spectrum.",
+    "start-error": "The measurement could not start. Please try again.",
+    "connection-error": "Connection lost. Please try again."
   }
 }

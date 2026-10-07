@@ -447,7 +447,7 @@ function Outerloader() {
             if (response.status === 200) {
                 return response.json();
             } else {
-                setDemoError('The measurement could not start. Please try again.');
+                setDemoError(t('demo.start-error'));
 
              // TODO
             console.log('Failed to fetch: Status ' + response.status);
@@ -473,13 +473,13 @@ function Outerloader() {
                 setTimeout(checkStatus, 1000 );
                 setSelectedTab("laboratory");
             } else {
-                setDemoError((data && data.message) || 'The measurement could not start. Please try again.');
+                setDemoError(t('demo.start-error'));
                if (setFileStatus) {
                 setFileStatus(<span>Error sending files, please try again</span>);
                 }
                 console.error('Failed to create task');
             }
-        }).catch(() => setDemoError('Connection lost. Please try again.')).finally(() => setDemoPending(false));
+        }).catch(() => setDemoError(t('demo.connection-error'))).finally(() => setDemoPending(false));
     };
 
     /**

@@ -89,7 +89,7 @@
     "assigned-instance": "Instancia asignada",
     "no-instance-yet": "Ninguna nistancia todavía",
     "receiver": "Receptor",
-    "transmitter": "Transmisor",    
+    "transmitter": "Transmisor",
     "messages": {
       "your-gnu-radio-code-is-now-running-in-both-remote-devices": "Tu código GNU Radio está en ejecución en ambos dispositivos remotos",
       "waiting-for-a-remote-set-up-to-be-available": "Esperando que una configuración remota esté disponible",
@@ -123,5 +123,31 @@
       "unsupported-block": "Este tipo de widget todavía no está soportado en la interfaz del laboratorio",
       "unsupported-only": "Solo se encontraron widgets no soportados para este dispositivo."
     }
+  },
+  "demo": {
+    "title": "Demostración guiada de RELIA",
+    "description": "Prueba un experimento preparado con radios Pluto reales de la Universidad de Washington.",
+    "available": "Disponible en esta demo",
+    "available-description": "Elige un tono, observa su espectro y mira la cámara en directo.",
+    "full-access": "Con acceso completo al laboratorio",
+    "full-access-description": "Carga tus propios diagramas de GNU Radio y ajusta sus parámetros.",
+    "eyebrow": "Explora las señales de radio",
+    "heading": "Envía un tono. Encuéntralo en el espectro.",
+    "lead": "Envía una señal de una radio Pluto a otra y encuéntrala en el espectro recibido.",
+    "tone-label": "Desplazamiento del tono respecto a la portadora de 2450 MHz",
+    "peak": "Busca un pico cerca de {{peak}} MHz.",
+    "run": "Ejecutar en radios reales",
+    "starting": "Iniciando medición…",
+    "guide-label": "Guía de medición",
+    "guide-heading": "Qué observar",
+    "find": "Encuentra tu señal",
+    "find-description": "Busca el pico cerca de la frecuencia elegida. Es normal que haya pequeñas diferencias entre las radios.",
+    "hardware": "Mira el equipo",
+    "hardware-description": "Abre la cámara en directo para ver las radios que ejecutan tu experimento.",
+    "move": "Desplaza el pico",
+    "move-description": "Vuelve aquí y elige otro tono. Compara dónde aparece el pico.",
+    "transmitter": "El transmisor envía el tono elegido. Busca su pico en el espectro del receptor.",
+    "start-error": "No se pudo iniciar la medición. Inténtalo de nuevo.",
+    "connection-error": "Se perdió la conexión. Inténtalo de nuevo."
   }
 }
